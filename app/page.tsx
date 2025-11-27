@@ -39,17 +39,6 @@ const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> =
   <div className={`container mx-auto px-4 ${className}`}>{children}</div>
 );
 
-
-const Navbar: React.FC = () => (
-  <nav className="hidden md:flex items-center gap-6">
-    <a href="#" className="text-sm text-gray-700 hover:text-[#10b981]">Home</a>
-    <a href="#services" className="text-sm text-gray-700 hover:text-[#10b981]">Services</a>
-    <a href="#how-it-works" className="text-sm text-gray-700 hover:text-[#10b981]">How it works</a>
-    <a href="#testimonials" className="text-sm text-gray-700 hover:text-[#10b981]">Testimonials</a>
-    <a href="#faq" className="text-sm text-gray-700 hover:text-[#10b981]">FAQ</a>
-  </nav>
-);
-
 const StoreButtons: React.FC<{ className?: string }> = ({ className = '' }) => (
   <div className={`flex gap-3 ${className}`}>
     <button className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
@@ -264,12 +253,12 @@ export default function SwiftlyLanding() {
             <div className="group relative inline-block">
               <Button
                 variant="dark"
-                className="relative px-10 py-4 text-sm font-[300] rounded-full z-10 overflow-hidden transition-[padding] duration-[5000ms] ease-out group-hover:px-16"
+                className="relative px-10 py-4 text-sm font-[300] rounded-full z-10 overflow-hidden transition-[padding] duration-[9000ms] ease-out group-hover:px-16"
                 onClick={() => router.push('/auth/role-select')}
               >
-                <div className="flex items-center justify-center duration-[5000ms] transition-all ease-out">
+                <div className="flex items-center justify-center duration-[6000ms] transition-all ease-out">
                   {/* Icons Container - Slides in from left */}
-                  <div className="flex items-center absolute left-6 top-1/2 -translate-y-1/2 opacity-0 -translate-x-4 transition-all duration-[5000ms] ease-out group-hover:opacity-100 group-hover:translate-x-0">
+                  <div className="flex items-center absolute left-6 top-1/2 -translate-y-1/2 opacity-0 -translate-x-4 transition-all duration-[6000ms] ease-out group-hover:opacity-100 group-hover:translate-x-0">
                     {/* App Store Icon */}
                     <div className="w-7 h-7 flex-shrink-0">
                       <svg className="w-full h-full" viewBox="0 0 24 24" fill="currentColor">

@@ -1,10 +1,373 @@
-import React from 'react'
+'use client';
 
-export default function HowItWorks() {
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Footer from '../../components/Footer';
+import NavBar from '../../components/NavBar';
+
+// Component imports - replace with your actual components
+const YummyText: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
+  children, 
+  className = '' 
+}) => (
+  <div className={className}>{children}</div>
+);
+
+const Button: React.FC<{
+  children: React.ReactNode;
+  variant?: 'primary' | 'dark' | 'light' | 'outline';
+  className?: string;
+  onClick?: () => void;
+}> = ({ children, variant = 'primary', className = '', onClick }) => {
+  const baseStyles = 'px-4 py-2 rounded transition-colors';
+  const variantStyles = {
+    primary: 'bg-[#10b981] text-white hover:bg-[#059669]',
+    dark: 'bg-black text-white hover:bg-gray-800',
+    light: 'bg-white text-black hover:bg-gray-100',
+    outline: 'border border-white text-white hover:bg-white hover:text-black'
+  };
+  
   return (
-    <section className="min-h-screen p-8">
-      <h1 className="text-3xl font-bold">How It Works</h1>
-      <p className="mt-2">Steps to use Swiftly Express.</p>
-    </section>
-  )
+    <button 
+      className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+};
+
+const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
+  children, 
+  className = '' 
+}) => (
+  <div className={`container mx-auto px-4 ${className}`}>{children}</div>
+);
+
+// use shared NavBar component from components/NavBar.tsx
+
+
+// ProcessStep Component
+interface ProcessStepProps {
+  icon: string;
+  title: string;
+}
+
+const ProcessStep: React.FC<ProcessStepProps> = ({ icon, title }) => (
+  <div className="flex flex-col items-center text-center">
+    <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
+      title === 'Enter Package Details' ? 'bg-violet-500' :
+      title === 'Secure payment' ? 'bg-[#FF4D00]' :
+      title === 'Choose Pickup/Delivery' ? 'bg-blue-500' :
+      title === 'Create Your Account' ? 'bg-[#00D68F]' :
+      title === 'Delivery Confirmation' ? 'bg-[#00D68F]' :
+      'bg-red-500' // Real-Time Tracking
+    }`}>
+      <Image src={icon} alt={title} width={32} height={32} />
+    </div>
+    <YummyText className="mt-2 text-[#111827] text-sm">{title}</YummyText>
+  </div>
+);
+
+// Main HowItWorks Component
+export default function HowItWorks() {
+  const router = useRouter();
+
+  const steps = [
+    { icon: '/phoneicon.svg', title: 'Create Your Account' },
+    { icon: '/blockicon-white.svg', title: 'Enter Package Details' },
+    { icon: '/locationicon-white.svg', title: 'Choose Pickup/Delivery' },
+    { icon: '/cardicon.svg', title: 'Secure payment' },
+    { icon: '/vanicon-white.svg', title: 'Real-Time Tracking' },
+    { icon: '/checkicon.svg', title: 'Delivery Confirmation' }
+  ];
+
+  return (
+    <div className="bg-[#f5f5f5] min-h-screen">
+      {/* Navbar */}
+      <div className="sticky top-0 z-50 bg-white border-b border-gray-100">
+        <PageWrapper className="py-3 flex items-center justify-between">
+          <YummyText className="text-3xl px-3 font-sm text-black">
+            Swiftly
+          </YummyText>
+          <NavBar />
+          <div className="flex items-center px-4 gap-3">
+            <Button
+              variant="primary"
+              className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
+              onClick={() => router.push('/auth/customer/signup')}
+            >
+              <YummyText>Book a delivery</YummyText>
+            </Button>
+            <Button
+              variant="dark"
+              className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
+              onClick={() => router.push('/auth/role-select')}
+            >
+              <YummyText>Get Started</YummyText>
+            </Button>
+          </div>
+        </PageWrapper>
+      </div>
+
+      {/* Hero Section */}
+      <div className="relative w-full bg-[#006837] py-6 md:py-10 lg:py-6 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/riderman.svg"
+            alt="Traffic Light"
+            fill
+            className="object-cover opacity-20"
+            unoptimized
+          />
+        </div>
+
+        <PageWrapper>
+          <div className="relative py-8 md:py-12 lg:py-8 text-center text-white">
+            <YummyText className="text-5xl font-medium mb-4">
+              How Swiftly Works
+            </YummyText>
+            <YummyText className="text-lg opacity-90 flex max-w-2xl mx-auto">
+              From booking to delivery, we've made the entire process simple, transparent, and reliable. Here's everything you need to know.
+            </YummyText>
+          </div>
+        </PageWrapper>
+      </div>
+
+      <PageWrapper>
+        {/* Process Section */}
+        <section className="py-0">
+          <div className="text-center -mb-1 mt-3 md:mt-4 lg:mt-3 space-y-1">
+            <YummyText className="text-4xl font-[300] text-[#111827]">
+              The Complete Process
+            </YummyText>
+            <YummyText className="text-[#4B5563] flex !justify-center text-sm">
+              Six simple steps to get your package from point A to point B
+              <br />with complete peace of mind
+            </YummyText>
+          </div>
+
+          <div className="relative min-h-[500px]">
+            <div className="absolute inset-0 -left-36 -right-36 h-[430px]">
+              <Image 
+                src="/spiralicon.svg" 
+                alt="Process Flow"
+                fill
+                className="object-fill"
+                unoptimized
+              />
+            </div>
+            
+            <div className="relative z-10">
+              <div className="absolute top-20 mt-20 left-[2%]">
+                <ProcessStep {...steps[0]} />
+              </div>
+              <div className="absolute top-20 left-[28%]">
+                <ProcessStep {...steps[1]} />
+              </div>
+              <div className="absolute top-[90px] right-[26%]">
+                <ProcessStep {...steps[3]} />
+              </div>
+
+              <div className="absolute top-[350px] left-[26%]">
+                <ProcessStep {...steps[2]} />
+              </div>
+              <div className="absolute top-[364px] right-[23%]">
+                <ProcessStep {...steps[4]} />
+              </div>
+
+              <div className="absolute top-[130px] right-[0%]">
+                <ProcessStep {...steps[5]} />
+              </div>
+            </div>
+          </div>
+        </section>
+      </PageWrapper>
+
+      <PageWrapper>
+        {/* Detailed Steps Section */}
+        <section className="py-4 md:py-6 lg:py-4 grid grid-cols-1 md:grid-cols-3 gap-4 px-3">
+          {/* Step 01 */}
+          <div className="bg-[#00D68F] rounded-2xl p-8 h-[410px] text-white">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <YummyText className="text-2xl font-light">01</YummyText>
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <Image src="/phoneicon.svg" alt="" width={20} height={20} />
+                </div>
+              </div>
+              <YummyText className="text-2xl mb-3 whitespace-nowrap">Create Your Account</YummyText>
+              <YummyText className="text-sm opacity-90 mb-6">
+                Sign up in seconds using your email or phone number. No complicated forms, no hidden fees. Get instant access to our platform via web or mobile app.
+              </YummyText>
+              <ul className="space-y-2">
+                {['Secure account setup', 'Instant verification', 'Multi-platform access'].map((feature, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <Image src="/checkicon.svg" alt="" width={16} height={16} />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Step 02 */}
+          <div className="bg-violet-500 rounded-2xl p-8 h-[410px] text-white">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <YummyText className="text-2xl font-light">02</YummyText>
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <Image src="/blockicon-white.svg" alt="" width={20} height={20} />
+                </div>
+              </div>
+              <YummyText className="text-2xl mb-3 whitespace-nowrap">Enter Package Details</YummyText>
+              <YummyText className="text-sm opacity-90 mb-6">
+                Provide information about your package including size, weight, notes and essentials. Our smart system calculates the best option for you.
+              </YummyText>
+              <ul className="space-y-2">
+                {['Smart information form', 'Automatic pricing calculation', 'Multiple package support', 'Special handling options'].map((feature, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <Image src="/checkicon.svg" alt="" width={16} height={16} />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Step 03 */}
+          <div className="bg-blue-500 rounded-2xl p-8 h-[410px] text-white">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <YummyText className="text-2xl font-light">03</YummyText>
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <Image src="/locationicon-white.svg" alt="" width={20} height={20} />
+                </div>
+              </div>
+              <YummyText className="text-2xl mb-3 whitespace-nowrap">Choose Pickup/Delivery</YummyText>
+              <YummyText className="text-sm opacity-90 mb-6">
+                Select your preferred pickup time and delivery address, including alternative addresses or set a convenient time that works for your schedule.
+              </YummyText>
+              <ul className="space-y-2">
+                {['Flexible scheduling', 'Multiple address management', 'Recurring delivery options', 'Address validation'].map((feature, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <Image src="/checkicon.svg" alt="" width={16} height={16} />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Step 04 */}
+          <div className="bg-[#FF4D00] rounded-2xl p-8 h-[410px] text-white">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <YummyText className="text-2xl font-light">04</YummyText>
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <Image src="/cardicon.svg" alt="" width={20} height={20} />
+                </div>
+              </div>
+              <YummyText className="text-2xl mb-3 whitespace-nowrap">Secure Payment</YummyText>
+              <YummyText className="text-sm opacity-90 mb-6">
+                Choose your payment method and complete the transaction securely. We accept all major credit cards, digital wallets and other cash on delivery options.
+              </YummyText>
+              <ul className="space-y-2">
+                {['Multiple payment methods', 'Secure encryption', 'Save payment info', 'Instant confirmation'].map((feature, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <Image src="/checkicon.svg" alt="" width={16} height={16} />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Step 05 */}
+          <div className="bg-red-500 rounded-2xl p-8 h-[410px] text-white">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <YummyText className="text-2xl font-light">05</YummyText>
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <Image src="/vanicon-white.svg" alt="" width={20} height={20} />
+                </div>
+              </div>
+              <YummyText className="text-2xl mb-3 whitespace-nowrap">Real-Time Tracking</YummyText>
+              <YummyText className="text-sm opacity-90 mb-6">
+                Track your package every step of the way with live GPS tracking. Get real-time updates at each milestone from pickup to delivery.
+              </YummyText>
+              <ul className="space-y-2">
+                {['Live GPS tracking', 'Driver contact information', 'ETA updates', 'Route visualization'].map((feature, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <Image src="/checkicon.svg" alt="" width={16} height={16} />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Step 06 */}
+          <div className="bg-[#00D68F] rounded-2xl p-8 h-[410px] text-white">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-4">
+                <YummyText className="text-2xl font-light">06</YummyText>
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <Image src="/checkicon.svg" alt="" width={20} height={20} />
+                </div>
+              </div>
+              <YummyText className="text-2xl mb-3 whitespace-nowrap">Delivery Confirmation</YummyText>
+              <YummyText className="text-sm opacity-90 mb-6">
+                Receive photos of delivery and electronic signature from your experience and help us maintain our high service standards.
+              </YummyText>
+              <ul className="space-y-2">
+                {['Photo proof of delivery', 'Digital signature', 'Delivery rating system', 'Issue resolution support'].map((feature, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <Image src="/checkicon.svg" alt="" width={16} height={16} />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      </PageWrapper>
+
+      {/* GPS Tracking Section */}
+      <section className="w-full flex justify-center mt-2 px-12">
+        <div className="relative w-full max-w-5xl bg-[#1A1A1A] rounded-[40px] py-12 mb-8 px-14 flex items-center justify-between overflow-hidden">
+          <div className="max-w-lg z-10">
+            <YummyText className="text-3xl mb-3 text-[#F9FAFB] flex">Live GPS Tracking</YummyText>
+            <YummyText className="text-sm opacity-90 leading-relaxed mb-7 text-[#F9FAFB]">
+              Our advanced tracking system uses GPS technology to give you real-time
+              updates on your package location. Watch as your driver moves closer to
+              the destination, with accurate ETA calculations based on traffic conditions.
+            </YummyText>
+
+            <Button
+              variant="light"
+              className="!bg-[#16A34A] hover:!bg-[#149C46] flex text-xs !text-white mt-4 !px-4 !py-3 rounded-lg"
+            >
+              <YummyText>Try Demo Tracking</YummyText>
+            </Button>
+          </div>
+
+          <div className="relative w-[30%] flex items-center justify-center">
+            <Image
+              src="/phonemap-flyingbox.svg"
+              alt="Flying Package"
+              width={340}
+              height={400}
+              className="absolute right-10 w-85 h-auto object-contain z-20"
+              unoptimized
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <Footer />
+    </div>
+  );
 }

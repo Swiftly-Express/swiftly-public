@@ -9,7 +9,7 @@ type NavBarProps = {
 }
 
 const LINKS: { href: string; label: string }[] = [
-  { href: '/home', label: 'Home' },
+  { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
   { href: '/howitworks', label: 'How It Works' },
   { href: '/smartride', label: 'Smart Ride' },
