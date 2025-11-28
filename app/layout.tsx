@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
-      <body className="bricolage-font">
+      <body className="bricolage-font overflow-x-hidden">
         <Layout>{children}</Layout>
       </body>
     </html>

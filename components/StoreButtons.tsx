@@ -1,21 +1,16 @@
-"use client"
+import React from 'react';
 
-import React from 'react'
-import Link from 'next/link'
-
-type Props = { className?: string }
-
-export default function StoreButtons({ className = '' }: Props) {
+const StoreButtons = ({ className = '' }) => {
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <Link href="#" className="inline-flex items-center gap-2 px-3 py-2 bg-black text-white rounded-lg">
-        <span className="w-5 h-5 bg-white/10 rounded-sm" />
-        <span className="text-xs">App Store</span>
-      </Link>
-      <Link href="#" className="inline-flex items-center gap-2 px-3 py-2 bg-black text-white rounded-lg">
-        <span className="w-5 h-5 bg-white/10 rounded-sm" />
-        <span className="text-xs">Google Play</span>
-      </Link>
+    <div className={`flex gap-2 ${className}`}>
+      <a href="https://play.google.com/store" target="_blank" rel="noopener noreferrer" aria-label="Get it on Google Play">
+        <img src="/playstore.svg" alt="Get it on Google Play" className="h-11" />
+      </a>
+      <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer" aria-label="Download on the App Store">
+        <img src="/applestore.svg" alt="Download on the App Store" className="h-11" />
+      </a>
     </div>
-  )
-}
+  );
+};
+
+export default StoreButtons;

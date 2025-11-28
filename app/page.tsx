@@ -8,6 +8,7 @@ import NavBar from '../components/NavBar';
 import Image from 'next/image';
 import YummyText from '../components/YummyText';
 import HandDrawnSvg from '../components/HandDrawnSvg';
+import StoreButtons from '../components/StoreButtons';
 
 const Button: React.FC<{
   children: React.ReactNode;
@@ -39,24 +40,6 @@ const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> =
   <div className={`container mx-auto px-4 ${className}`}>{children}</div>
 );
 
-const StoreButtons: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div className={`flex gap-3 ${className}`}>
-    <button className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-      <span className="text-xl">🍎</span>
-      <div className="text-left">
-        <div className="text-[10px]">Download on the</div>
-        <div className="text-sm font-semibold">App Store</div>
-      </div>
-    </button>
-    <button className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-      <span className="text-xl">▶️</span>
-      <div className="text-left">
-        <div className="text-[10px]">GET IT ON</div>
-        <div className="text-sm font-semibold">Google Play</div>
-      </div>
-    </button>
-  </div>
-);
 
 interface Step {
   title: string;

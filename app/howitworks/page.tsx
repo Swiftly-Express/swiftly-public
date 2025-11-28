@@ -149,7 +149,7 @@ export default function HowItWorks() {
           </div>
 
           <div className="relative min-h-[500px]">
-            <div className="absolute inset-0 -left-36 -right-36 h-[430px]">
+            <div className="absolute inset-0 h-[430px] -left-36 -right-36">
               <Image 
                 src="/spiralicon.svg" 
                 alt="Process Flow"
