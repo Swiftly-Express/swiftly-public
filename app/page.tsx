@@ -15,7 +15,7 @@ const Button: React.FC<{
   className?: string;
   onClick?: () => void;
 }> = ({ children, variant = 'primary', className = '', onClick }) => {
-  const baseStyles = 'px-4 py-2 rounded transition-colors';
+  const baseStyles = 'px-4 py-2 rounded';
   const variantStyles = {
     primary: 'bg-[#10b981] text-white hover:bg-[#059669]',
     dark: 'bg-black text-white hover:bg-gray-800',
