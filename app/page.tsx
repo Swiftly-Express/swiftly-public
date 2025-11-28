@@ -464,19 +464,19 @@ export default function SwiftlyLanding() {
 
               <div className="flex items-center justify-center">
                 <div className="w-11 h-11 mr-2 -mb-3 rounded-full bg-gray-300 mt-8 border-2 border-white overflow-hidden">
-                  <img src="/lockedhair.svg" alt="Customer" className="w-full h-full object-cover" />
+                  <Image src="/lockedhair.svg" alt="Customer" width={44} height={44} className="w-full h-full object-cover" />
                 </div>
                 <div className="w-11 h-11 mt-28 mb-3 -mr-4 rounded-full bg-gray-400 border-2 border-white overflow-hidden opacity-30">
-                  <img src="/normalwig.svg" alt="Customer" className="w-full h-full object-cover" />
+                  <Image src="/normalwig.svg" alt="Customer" width={44} height={44} className="w-full h-full object-cover" />
                 </div>
                 <div className="w-[75px] h-[75px] rounded-full bg-purple-200 border-2 border-[#10b981] overflow-hidden relative -ml-5 -mt-12 -mb-5 z-10">
-                  <img src="/lockedhair.svg" alt="Chinonso Eze" className="w-full h-full object-cover" />
+                  <Image src="/lockedhair.svg" alt="Chinonso Eze" width={75} height={75} className="w-full h-full object-cover" />
                 </div>
                 <div className="w-11 h-11 rounded-full bg-gray-200 mt-[52%] -ml-8 border-2 border-white overflow-hidden opacity-30 -ml-1">
-                  <img src="/roundcuthair.svg" alt="Customer" className="w-full h-full object-cover" />
+                  <Image src="/roundcuthair.svg" alt="Customer" width={44} height={44} className="w-full h-full object-cover" />
                 </div>
                 <div className="w-11 h-11 rounded-full bg-gray-500 border-2 border-white overflow-hidden opacity-30 ml-1.5 mt-9">
-                  <img src="/afrowig.svg" alt="Customer" className="w-full h-full object-cover" />
+                  <Image src="/afrowig.svg" alt="Customer" width={44} height={44} className="w-full h-full object-cover" />
                 </div>
               </div>
             </div>
@@ -536,10 +536,12 @@ export default function SwiftlyLanding() {
 
             <div className="hidden md:flex items-end justify-center">
               <div className="sticky top-20">
-                <img
+                <Image
                   src="/deliverybike.svg"
                   alt="Delivery Bike"
-                  className="w-[5200px] object-contain"
+                  width={520}
+                  height={300}
+                  className="object-contain"
                 />
               </div>
             </div>
@@ -565,9 +567,11 @@ export default function SwiftlyLanding() {
                 <StoreButtons />
               </div>
               <div className="absolute bottom-0 right-0 w-full">
-                <img
+                <Image
                   src="/orderbox.svg"
                   alt="Mobile App"
+                  width={800}
+                  height={300}
                   className="w-full object-contain"
                 />
               </div>
@@ -595,14 +599,18 @@ export default function SwiftlyLanding() {
                 </Button>
               </div>
               <div className="absolute bottom-0 right-9 w-[70%] h-[200px]">
-                <img
+                <Image
                   src="/quotes.svg"
                   alt="Quotes"
+                  width={800}
+                  height={200}
                   className="w-full h-full object-contain absolute bottom-0 left-32"
                 />
-                <img
+                <Image
                   src="/quotation.svg"
                   alt="Quotation"
+                  width={680}
+                  height={220}
                   className="w-[85%] h-auto object-contain absolute bottom-0 left-16 z-10"
                 />
               </div>

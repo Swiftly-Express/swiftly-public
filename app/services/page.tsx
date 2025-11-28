@@ -216,7 +216,7 @@ export default function Services() {
             </YummyText>
 
             <YummyText className="text-[#4A5563] text-base leading-6 !mt-3">
-              From same-day express to international shipping, we've got
+              From same-day express to international shipping, we have got
               <br /> you covered with reliable, affordable delivery solutions.
             </YummyText>
 
