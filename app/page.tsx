@@ -153,7 +153,7 @@ export default function SwiftlyLanding() {
             <Button
               variant="dark"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
-              onClick={() => router.push('/auth/role-select')}
+              onClick={() => router.push('https://swiftly-dashboard.vercel.app/auth/role-select')}
             >
               <YummyText>Get Started</YummyText>
             </Button>
