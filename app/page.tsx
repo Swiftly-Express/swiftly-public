@@ -146,23 +146,27 @@ export default function SwiftlyLanding() {
             <Button
               variant="primary"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
-              onClick={() => router.push('/auth/customer/signup')}
+              onClick={() => {
+                const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+                window.location.href = `${dashboardUrl}/auth/customer/signup`;
+              }}
             >
               <YummyText>Book a delivery</YummyText>
             </Button>
             <Button
               variant="dark"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
-              onClick={() => router.push('https://swiftly-dashboard.vercel.app/auth/role-select')}
+              onClick={() => {
+                const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+                window.location.href = `${dashboardUrl}/auth/role-select`;
+              }}
             >
               <YummyText>Get Started</YummyText>
             </Button>
           </div>
         </PageWrapper>
       </div>
-      
-      {/* Hero Section */}
-      <div className="relative flex flex-col items-center justify-between h-screen h-full px-4 text-center bg-white overflow-hidden">
+      <div className="relative flex flex-col items-center justify-between h-screen h-full px-4 text-center bg-white overflow-hidden">  
         {/* Background Image with Gradient Overlay */}
         <div className="absolute inset-0 w-full h-full z-10">
           <div className="relative w-full h-full">
@@ -237,7 +241,10 @@ export default function SwiftlyLanding() {
               <Button
                 variant="dark"
                 className="relative px-10 py-4 text-sm font-[300] rounded-full z-10 overflow-hidden transition-[padding] duration-[9000ms] ease-out group-hover:px-16"
-                onClick={() => router.push('/auth/role-select')}
+                onClick={() => {
+                  const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+                  window.location.href = `${dashboardUrl}/auth/role-select`;
+                }}
               >
                 <div className="flex items-center justify-center duration-[6000ms] transition-all ease-out">
                   {/* Icons Container - Slides in from left */}
@@ -591,7 +598,10 @@ export default function SwiftlyLanding() {
                 <Button
                   variant="light"
                   className="!bg-white !text-[#10b981] hover:!bg-gray-100 !px-5 !py-2.5 !rounded-full"
-                  onClick={() => router.push('/auth/customer/signup')}
+                  onClick={() => {
+                    const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+                    window.location.href = `${dashboardUrl}/auth/customer/signup`;
+                  }}
                 >
                   <YummyText className="font-[400] text-[#001900] text-xs">
                     Book a delivery

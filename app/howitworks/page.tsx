@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Footer from '../../components/Footer';
 import NavBar from '../../components/NavBar';
@@ -72,7 +71,6 @@ const ProcessStep: React.FC<ProcessStepProps> = ({ icon, title }) => (
 
 // Main HowItWorks Component
 export default function HowItWorks() {
-  const router = useRouter();
 
   const steps = [
     { icon: '/phoneicon.svg', title: 'Create Your Account' },
@@ -96,18 +94,25 @@ export default function HowItWorks() {
             <Button
               variant="primary"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
-              onClick={() => router.push('/auth/customer/signup')}
+              onClick={() => {
+                const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+                window.location.href = `${dashboardUrl}/auth/customer/signup`;
+              }}
             >
               <YummyText>Book a delivery</YummyText>
             </Button>
             <Button
               variant="dark"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
-              onClick={() => router.push('https://swiftly-dashboard.vercel.app/auth/role-select')}
+              onClick={() => {
+                const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+                window.location.href = `${dashboardUrl}/auth/role-select`;
+              }}
             >
               <YummyText>Get Started</YummyText>
             </Button>
           </div>
+          
         </PageWrapper>
       </div>
 

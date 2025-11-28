@@ -189,14 +189,20 @@ export default function Services() {
             <Button
               variant="primary"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
-              onClick={() => router.push('/auth/customer/signup')}
+              onClick={() => {
+                const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+                window.location.href = `${dashboardUrl}/auth/customer/signup`;
+              }}
             >
               <YummyText>Book a delivery</YummyText>
             </Button>
             <Button
               variant="dark"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
-              onClick={() => router.push('https://swiftly-dashboard.vercel.app/auth/role-select')}
+              onClick={() => {
+                const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+                window.location.href = `${dashboardUrl}/auth/role-select`;
+              }}
             >
               <YummyText>Get Started</YummyText>
             </Button>
@@ -224,7 +230,10 @@ export default function Services() {
               <Button
                 variant="primary"
                 className="!px-4 !py-3 shadow-sm hover:shadow-md transition-all duration-300"
-                onClick={() => router.push('/auth/role-select')}
+                onClick={() => {
+                  const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+                  window.location.href = `${dashboardUrl}/auth/role-select`;
+                }}
               >
                 <YummyText className="font-[300] text-sm">Get Started</YummyText>
               </Button>
