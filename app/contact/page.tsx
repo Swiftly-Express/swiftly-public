@@ -317,7 +317,7 @@ export default function Contact() {
         </section>
 
         {/* Contact Info Cards */}
-        <section className="py-4 md:py-6 lg:py-4 px-6">
+        <section className="py-4 md:py-6 lg:py-4 px-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {contactInfo.map((info, index) => (
               <ContactInfoCard
@@ -332,9 +332,9 @@ export default function Contact() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-3 md:py-4 lg:py-3 px-32 bg-[#F9FAFB]">
+        <section className="py-12 md:py-10 lg:py-10 mb-8 px-32 bg-[#F9FAFB]">
           <div className="text-center mb-8">
-            <YummyText className="text-4xl font-[300] text-[#111827] mb-4">
+            <YummyText className="text-4xl font-[300] text-[#111827] mb-1">
               Frequently Asked Questions
             </YummyText>
             <YummyText className="text-[#6B7280] flex justify-center text-base">
