@@ -128,7 +128,7 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={() => {
                   onClose();
-                  router.push('/smartbooking/smartride-booking');
+                  router.push('/smartride-booking');
                 }}
                 className="flex-1 bg-[#00D68F] hover:bg-[#00B876] text-white font-semibold py-3 px-4 rounded-lg transition-colors text-sm"
               >
