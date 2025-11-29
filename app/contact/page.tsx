@@ -316,8 +316,17 @@ export default function Contact() {
               </form>
             </div>
 
-            {/* Right - Map Placeholder */}
-            <div className="bg-[#00D68F] rounded-2xl overflow-hidden mt-10 md:mt-8 lg:mt-10 h-[91%] flex items-center justify-center">
+            {/* Right - Contact Image */}
+            <div className="bg-[#1E1E1E] rounded-2xl overflow-hidden mt-10 md:mt-8 lg:mt-10 h-[91%] flex items-center justify-center">
+              <div className="max-w-[520px] w-full px-6 py-8 flex items-center justify-center">
+                <Image
+                  src="/contact-image.svg"
+                  alt="Contact"
+                  width={520}
+                  height={420}
+                  className="w-full h-auto object-contain"
+                />
+              </div>
             </div>
           </div>
         </section>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import Footer from '../components/Footer';
@@ -9,6 +9,7 @@ import Image from 'next/image';
 import YummyText from '../components/YummyText';
 import HandDrawnSvg from '../components/HandDrawnSvg';
 import StoreButtons from '../components/StoreButtons';
+import SmartRideModal from '../components/SmartRideModal';
 
 const Button: React.FC<{
   children: React.ReactNode;
@@ -82,6 +83,22 @@ const steps: Step[] = [
 export default function SwiftlyLanding() {
   const router = useRouter();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [showSmartRideModal, setShowSmartRideModal] = useState(false);
+
+  React.useEffect(() => {
+    const t = setTimeout(() => setShowSmartRideModal(true), 3000);
+    return () => clearTimeout(t);
+  }, []);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Show modal after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsModalOpen(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const services: Service[] = [
     {
@@ -135,6 +152,7 @@ export default function SwiftlyLanding() {
 
   return (
     <div className="bg-[#f5f5f5] min-h-screen fullscreen">
+    
       {/* Navbar */}
       <div className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <PageWrapper className="py-3 flex items-center justify-between">
@@ -166,6 +184,7 @@ export default function SwiftlyLanding() {
           </div>
         </PageWrapper>
       </div>
+    <SmartRideModal isOpen={showSmartRideModal} onClose={() => setShowSmartRideModal(false)} />
       <div className="relative flex flex-col items-center justify-between h-screen h-full px-4 text-center bg-white overflow-hidden">  
         {/* Background Image with Gradient Overlay */}
         <div className="absolute inset-0 w-full h-full z-10">
