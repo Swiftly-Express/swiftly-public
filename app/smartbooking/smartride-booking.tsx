@@ -52,21 +52,36 @@ export default function SmartRideBooking() {
   };
 
   const calculateTotal = () => {
-    let baseRate = 0;
+    // Base rate starts from delivery type base
+    const baseDelivery = formData.deliveryType === 'Smart Ride' ? 500 : 1000;
 
-    if (formData.deliveryType === 'Smart Ride') {
-      baseRate = 500;
-    } else {
-      baseRate = 1000;
-    }
+    // Parse numeric package inputs
+    const weight = parseFloat(formData.weight as unknown as string) || 0; // kg
+    const length = parseFloat(formData.length as unknown as string) || 0; // cm
+    const width = parseFloat(formData.width as unknown as string) || 0; // cm
+    const height = parseFloat(formData.height as unknown as string) || 0; // cm
 
-    const declaredValue = parseFloat(formData.declaredValue) || 0;
-    const insurance = declaredValue > 0 ? Math.max(declaredValue * 0.01, 200) : 0;
+    // Calculate volumetric weight (common divisor 5000 for cm -> kg)
+    const volumetricWeight = (length * width * height) / 5000;
+    const effectiveWeight = Math.max(weight, volumetricWeight, 0);
+
+    // Per-kg rate (tweakable)
+    const perKgRate = 200; // ₦ per kg
+    const weightCharge = Math.ceil(effectiveWeight) * perKgRate;
+
+    const baseRate = baseDelivery + weightCharge;
+
+    // Insurance: 1% of declared value, min ₦200 if declared > 0
+    const declaredValue = parseFloat(formData.declaredValue as unknown as string) || 0;
+    const insurance = declaredValue > 0 ? Math.max(Math.round(declaredValue * 0.01), 200) : 0;
+
+    const total = baseRate + insurance;
 
     return {
       baseRate,
       insurance,
-      total: baseRate + insurance,
+      total,
+      details: { weight, length, width, height, volumetricWeight, effectiveWeight, weightCharge, declaredValue }
     };
   };
 
@@ -381,6 +396,7 @@ export default function SmartRideBooking() {
   // Package Summary
   if (currentStep === 'summary') {
     const pricing = calculateTotal();
+    const declaredValueNumber = pricing.details?.declaredValue ?? (parseFloat(formData.declaredValue as unknown as string) || 0);
     
     return (
       <div className="min-h-screen bg-[#FFFFFF]">
@@ -522,32 +538,48 @@ export default function SmartRideBooking() {
 
             <div className="mb-8">
               <p className="text-sm text-[#1E1E1E] font-medium mb-1">Declared Value (₦)</p>
-              <p className="font-sm text-[#1E1E1E] bg-[#FBFBFB] rounded-md px-3 py-3">₦{parseFloat(formData.declaredValue).toLocaleString()}</p>
+              <p className="font-sm text-[#1E1E1E] bg-[#FBFBFB] rounded-md px-3 py-3">₦{declaredValueNumber.toLocaleString()}</p>
             </div>
 
             {/* Pricing */}
-            <div className="space-y-3 pt-6 border-t">
-              <div className="flex justify-between py-2 px-4 bg-gray-50 rounded">
-                <span className="text-[#1E1E1E]">Base Rate</span>
-                <span className="font-sm text-[#1E1E1E]">₦{pricing.baseRate.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between py-2 px-4 bg-gray-50 rounded">
-                <span className="text-gray-700">Insurance</span>
-                <span className="font-medium">₦{pricing.insurance.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between py-3 px-4 bg-green-50 rounded font-semibold text-lg">
-                <span className="text-gray-900">Total</span>
-                <span className="text-[#00B75A]">₦{pricing.total.toLocaleString()}</span>
+            <div className="bg-[#F0FDF4] rounded-xl p-6 mb-6">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-[#0F172A]">
+                  <span className="text-[15px]">Base Rate</span>
+                  <span className="text-[15px]">₦{pricing.baseRate.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center text-[#0F172A]">
+                  <span className="text-[15px]">Insurance (1% of declared value)</span>
+                  <span className="text-[15px]">₦{pricing.insurance.toLocaleString()}</span>
+                </div>
+                
+                {/* Divider for Total */}
+                <div className="border-t border-gray-300 pt-3 mt-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-medium text-[#0F172A]">Total</span>
+                    <span className="text-2xl font-medium text-[#00B75A]">₦{pricing.total.toLocaleString()}</span>
+                  </div>
+                </div>
               </div>
             </div>
+            
+            <div className="flex gap-4">
+              <button
+                type="button"
+                className="px-4 py-2 mt-6 bg-white border border-gray-200 hover:bg-gray-50 rounded-full transition-colors text-[#1E1E1E] font-medium text-[15px]"
+                onClick={() => setCurrentStep('form')}
+              >
+                Back
+              </button>
 
-            <Button
-              variant="primary"
-              className="!w-full !py-4 !bg-[#00B75A] !text-sm !font-[400] !rounded-lg mt-6"
-              onClick={findRider}
-            >
-              Find a Rider
-            </Button>
+              <Button
+                variant="primary"
+                className="!flex-1 !py-4 !bg-[#00B75A] !text-sm !font-[400] !rounded-full mt-6"
+                onClick={findRider}
+              >
+                Find a Rider
+              </Button>
+            </div>
           </div>
         </div>
       </div>
