@@ -188,7 +188,7 @@ export default function Services() {
           <div className="flex items-center px-4 gap-3">
             <Button
               variant="primary"
-              className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
+              className="px-4 py-3 !bg-[#00B75A] text-medium rounded-full font-[300] text-[10px]"
               onClick={() => {
                 const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
                 window.location.href = `${dashboardUrl}/auth/customer/signup`;
@@ -229,7 +229,7 @@ export default function Services() {
             <div className="pt-2">
               <Button
                 variant="primary"
-                className="!px-4 !py-3 shadow-sm hover:shadow-md transition-all duration-300"
+                className="!px-4 !py-3 !bg-[#00B75A] shadow-sm rounded-full hover:shadow-md transition-all duration-300"
                 onClick={() => {
                   const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
                   window.location.href = `${dashboardUrl}/auth/role-select`;

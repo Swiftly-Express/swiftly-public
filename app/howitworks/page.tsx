@@ -82,7 +82,7 @@ export default function HowItWorks() {
   ];
 
   return (
-    <div className="bg-[#f5f5f5] min-h-screen">
+    <div className="bg-[#ffffff] min-h-screen">
       {/* Navbar */}
       <div className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <PageWrapper className="py-3 flex items-center justify-between">
@@ -93,7 +93,7 @@ export default function HowItWorks() {
           <div className="flex items-center px-4 gap-3">
             <Button
               variant="primary"
-              className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
+              className="px-4 py-3 !bg-[#00B75A] text-medium rounded-full font-[300] text-[10px]"
               onClick={() => {
                 const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
                 window.location.href = `${dashboardUrl}/auth/customer/signup`;
@@ -117,23 +117,26 @@ export default function HowItWorks() {
       </div>
 
       {/* Hero Section */}
-      <div className="relative w-full bg-[#006837] py-6 md:py-10 lg:py-6 overflow-hidden">
+      <div className="relative w-full min-h-[400px] bg-[#00B75A] py-6 md:py-10 lg:py-6 overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/riderman.svg"
             alt="Traffic Light"
             fill
-            className="object-cover opacity-20"
+            className="object-cover"
             unoptimized
           />
         </div>
 
+        {/* Glass overlay for deep green translucent effect */}
+        <div className="absolute inset-0 bg-[#02321496]/90"></div>
+
         <PageWrapper>
-          <div className="relative py-8 md:py-12 lg:py-8 text-center text-white">
+          <div className="relative py-8 md:py-12 lg:py-8 text-center mt-20 text-white flex flex-col items-center justify-center">
             <YummyText className="text-5xl font-medium mb-4">
               How Swiftly Works
             </YummyText>
-            <YummyText className="text-lg opacity-90 flex max-w-2xl mx-auto">
+            <YummyText className="text-lg opacity-90 max-w-2xl">
               From booking to delivery, we've made the entire process simple, transparent, and reliable. Here's everything you need to know.
             </YummyText>
           </div>

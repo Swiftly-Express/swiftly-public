@@ -33,7 +33,7 @@ export default function NavBar({ className = '' }: NavBarProps) {
             <Link
               key={l.href}
               href={l.href}
-              className={`${isActive(l.href) ? 'text-[#10b981]' : 'text-gray-700'} font-sm text-sm hover:text-[#059669] transition-colors`}
+              className={`${isActive(l.href) ? 'text-[#00B75A]' : 'text-gray-700'} font-sm text-sm hover:text-[#059669] transition-colors`}
               aria-current={isActive(l.href) ? 'page' : undefined}
             >
               {l.label}

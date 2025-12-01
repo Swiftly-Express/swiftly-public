@@ -12,9 +12,9 @@ type Props = {
 export default function Button({ children, className = '', variant = 'primary', onClick }: Props) {
   const base = 'inline-flex items-center justify-center rounded-full'
   const variants: Record<string, string> = {
-    primary: 'bg-[#10b981] text-white',
+    primary: 'bg-[#00B75A] text-white',
     dark: 'bg-[#111111] text-white',
-    light: 'bg-white text-[#10b981] border border-gray-200',
+    light: 'bg-white text-[#00B75A] border border-gray-200',
   }
 
   return (
