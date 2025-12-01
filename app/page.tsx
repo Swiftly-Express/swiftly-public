@@ -299,6 +299,50 @@ export default function SwiftlyLanding() {
               </Button>
             </div>
           </div>
+
+          {/* Notification Card - Add this right after the CTA button */}
+          <div 
+            className="absolute bottom-20 left-1/2 bg-white rounded-3xl shadow-xl p-3 max-w-xs w-full mx-3 flex items-center gap-3 z-20"
+            style={{
+              animation: 'slideUp 0.6s ease-out forwards',
+              animationDelay: '2s',
+            
+              transform: 'translateX(calc(-46% - 20px))',
+            }}
+          >
+            {/* App Icon */}
+            <div className="w-12 h-12 bg-gradient-to-br from-[#00D68F] to-[#00B876] rounded-xl flex items-center justify-center flex-shrink-0">
+              <span className="text-white text-2xl font-bold">S</span>
+            </div>
+            
+            {/* Notification Content */}
+            <div className="flex-1 text-left">
+              <h3 className="text-xs font-semibold text-gray-900 mb-0.5">
+                Swiftly Express
+              </h3>
+              <p className="text-[10px] font-medium text-gray-700 mb-1">
+                Package secured!
+              </p>
+              <p className="text-[7.5px] text-[#1E1E1E] font-[300] leading-1">
+                You've successfully picked up the package. Update the delivery status when you're on the move.
+              </p>
+            </div>
+          </div>
+
+          {/* Add this style tag right before the closing div of your component */}
+          <style jsx>{`
+            @keyframes slideUp {
+              from {
+                opacity: 0;
+                transform: translate(calc(-46% - 20px), 50px);
+              }
+              to {
+                opacity: 1;
+                transform: translate(calc(-46% - 20px), 0);
+              }
+            }
+          `}</style>
+
         </div>
       </div>
 

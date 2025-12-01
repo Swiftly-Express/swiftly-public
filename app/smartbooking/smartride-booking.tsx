@@ -6,6 +6,7 @@ import { Calendar, Bike, Phone, MessageCircle, Package, CheckCircle } from 'luci
 import Button from '../../components/Button';
 import YummyText from '../../components/YummyText';
 import Breadcrumb from '../../components/Breadcrumb';
+import GoogleMap from '../../components/GoogleMap';
 
 
 const sideBottomShadow = {
@@ -608,33 +609,82 @@ export default function SmartRideBooking() {
           <Breadcrumb steps={breadcrumbSteps} currentStep={getCurrentStepIndex()} />
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 py-12">
-          {/* Map placeholder */}
-          <div className="bg-gray-300 rounded-3xl h-80 mb-8 flex items-center justify-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-300"></div>
-            <div className="relative z-10 w-16 h-16 bg-[#00B75A] rounded-full flex items-center justify-center">
-              <Bike className="w-8 h-8 text-white" />
-            </div>
-          </div>
-
-          {/* Status */}
-          <div className="text-center">
-            {isSearching ? (
-              <>
-                <h2 className="text-3xl font-semibold text-gray-900 mb-3">Finding Nearby Riders</h2>
-                <p className="text-gray-600 mb-8">You can make payment as soon as you are paired with a rider.<br />Hold On</p>
-                <div className="flex justify-center">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* Map with loader overlay */}
+          <div className="bg-white rounded-2xl overflow-hidden shadow-sm mb-6 relative" style={{ height: '420px' }}>
+            <GoogleMap 
+              center={{ lat: 5.0378, lng: 7.9085 }}
+              zoom={14}
+              showMarker={!isSearching}
+              className="w-full h-full"
+            />
+            
+            {/* Centered loader overlay on map */}
+            {isSearching && (
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <div className="bg-white rounded-full p-6 shadow-lg">
                   <div className="w-16 h-16 border-4 border-[#00B75A] border-t-transparent rounded-full animate-spin"></div>
                 </div>
+              </div>
+            )}
+          </div>
+
+          {/* Status text and content */}
+          <div className="text-center mb-8">
+            {isSearching ? (
+              <>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2">Finding Nearby Riders</h2>
+                <p className="text-gray-600 text-sm">You can make payment as soon as you are paired with a rider.<br />Hold On</p>
               </>
             ) : (
               <>
-                <h2 className="text-3xl font-semibold text-gray-900 mb-3">Rider Found 🎉</h2>
-                <p className="text-gray-600 mb-8">Great news! We found a rider near your pickup location.</p>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2">Rider Found 🎉</h2>
+                <p className="text-gray-600 text-sm mb-6">Great news! We found a rider near your pickup location.</p>
                 <Button variant="primary" className="!bg-[#00B75A] !text-white !py-3 !px-12 !rounded-lg" onClick={proceedToPayment}>Make Payment</Button>
               </>
             )}
           </div>
+
+          {/* Skeleton placeholders when searching */}
+          {isSearching && (
+            <div className="space-y-4 max-w-4xl mx-auto">
+              {/* Skeleton card 1 */}
+              <div className="bg-white rounded-lg p-4 shadow-sm animate-pulse">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                  <div className="w-20 h-8 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+
+              {/* Skeleton card 2 */}
+              <div className="bg-white rounded-lg p-4 shadow-sm animate-pulse">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                  </div>
+                  <div className="w-20 h-8 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+
+              {/* Skeleton card 3 */}
+              <div className="bg-white rounded-lg p-4 shadow-sm animate-pulse">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+                    <div className="h-3 bg-gray-200 rounded w-2/5"></div>
+                  </div>
+                  <div className="w-20 h-8 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
