@@ -10,6 +10,7 @@ import YummyText from '../components/YummyText';
 import HandDrawnSvg from '../components/HandDrawnSvg';
 import StoreButtons from '../components/StoreButtons';
 import SmartRideModal from '../components/SmartRideModal';
+import './home.css';
 
 const Button: React.FC<{
   children: React.ReactNode;
@@ -193,6 +194,43 @@ const vibrate = React.useCallback(() => {
   }
 }, []);
 
+// Sample notification templates for dynamic addition
+// const notificationTemplates = [
+//   {
+//     title: "Swiftly Express",
+//     subtitle: "Package Delivered!",
+//     message: "Your package has been successfully delivered to the recipient."
+//   },
+//   {
+//     title: "Swiftly Express",
+//     subtitle: "Pickup Request",
+//     message: "New pickup request from Lagos. Tap to view details."
+//   },
+//   {
+//     title: "Swiftly Express",
+//     subtitle: "Payment Received",
+//     message: "Payment of ₦5,000 has been credited to your account."
+//   },
+//   {
+//     title: "Swiftly Express",
+//     subtitle: "Route Update",
+//     message: "Traffic detected on your route. Consider alternative path."
+//   }
+// ];
+
+// // Function to add new notification dynamically
+// const addNewNotification = React.useCallback(() => {
+//   const randomTemplate = notificationTemplates[Math.floor(Math.random() * notificationTemplates.length)];
+//   const newNotification = {
+//     id: Date.now(),
+//     ...randomTemplate
+//   };
+//   setNotifications(prev => [...prev, newNotification]);
+//   if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+//     navigator.vibrate(50);
+//   }
+// }, []);
+
 // Auto-rotate every 5 seconds
 useEffect(() => {
   const interval = setInterval(() => {
@@ -253,7 +291,7 @@ useEffect(() => {
         </PageWrapper>
       </div>
     <SmartRideModal isOpen={showSmartRideModal} onClose={() => setShowSmartRideModal(false)} />
-      <div className="relative flex flex-col items-center justify-between h-screen h-full px-4 text-center bg-white overflow-hidden">  
+      <div className="relative flex flex-col items-center justify-center min-h-screen px-4 text-center bg-white overflow-hidden">  
         {/* Background Image with Gradient Overlay */}
         <div className="absolute inset-0 w-full h-full z-10">
           <div className="relative w-full h-full">
@@ -263,7 +301,7 @@ useEffect(() => {
                 src="/bike.svg"
                 alt="bike"
                 fill
-                className="w-full h-full object-cover object-bottom !max-w-12xl mx-auto"
+                className="w-full h-full object-cover object-bottom"
                 style={{
                   filter: "drop-shadow(0 20px 36px rgba(0,0,0,0.08))",
                 }}
@@ -278,7 +316,7 @@ useEffect(() => {
         </div>
 
         {/* Content positioned at top */}
-        <div className="h-screen z-10 w-full max-w-5xl">
+        <div className="min-h-screen z-10 w-full max-w-5xl">
           {/* Trust Badge */}
           <div className="inline-flex items-center gap-2 bg-[#d1fae5] border border-[#008C45] rounded-full px-3 py-1.5 z-10 mt-8 md:mt-8 lg:mt-8 mb-1">
             <div className="flex -space-x-2 mr-2">
@@ -317,17 +355,17 @@ useEffect(() => {
           </div>
 
           {/* Main Heading */}
-          <YummyText className="text-5xl md:text-6xl font-semibold leading-[1] mb-6 text-black">
+          <YummyText className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 sm:mb-6 text-black px-2">
             Delivering <span className="text-[#008C45]">Swiftly</span>,<br />
             Anywhere, Anytime
           </YummyText>
 
           {/* CTA Button */}
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center mt-4 sm:mt-6 mb-8 sm:mb-12">
             <div className="group relative inline-block">
               <Button
                 variant="dark"
-                className="relative px-10 py-4 text-sm font-[300] rounded-full z-10 overflow-hidden transition-[padding] duration-[9000ms] ease-out group-hover:px-16"
+                className="px-6 sm:px-10 py-3 sm:py-4 text-xs sm:text-sm font-[300] rounded-full overflow-hidden transition-[padding] duration-[9000ms] ease-out group-hover:px-12 sm:group-hover:px-16"
                 onClick={() => {
                   const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
                   window.location.href = `${dashboardUrl}/auth/role-select`;
@@ -369,31 +407,30 @@ useEffect(() => {
           </div>
 
           {/* Notification Stack */}
-          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-20">
-            <div className="relative w-[260px] h-[120px]">
+          <div className="relative md:absolute md:bottom-20 md:left-1/2 md:transform md:-translate-x-1/2 z-20 mt-8 md:mt-0">
+            <div className="relative w-full max-w-[280px] sm:w-[280px] md:w-[260px] h-[100px] sm:h-[120px] mx-auto">
               {notifications.map((item, index) => (
                 <div
                   key={item.id}
                   onMouseEnter={vibrate}
                   onTouchStart={vibrate}
-                  className="absolute w-full bg-white rounded-3xl shadow-xl p-3 flex items-center gap-3 transition-all duration-700"
+                  className="notification-card absolute w-full bg-white rounded-2xl sm:rounded-3xl shadow-xl p-2 sm:p-3 flex items-center gap-2 sm:gap-3"
                   style={{
                     transform: `translateY(${index * 14}px) scale(${1 - index * 0.07})`,
                     opacity: index === 0 ? 1 : 0.95 - index * 0.05,
                     zIndex: notifications.length - index,
-                    transition: "all 0.7s ease, opacity 0.5s ease",
                   }}
                 >
                   {/* Icon */}
-                  <div className="w-12 h-12 bg-gradient-to-br from-[#00D68F] to-[#00B876] rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-2xl font-bold">S</span>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#00D68F] to-[#00B876] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xl sm:text-2xl font-bold">S</span>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 text-left">
-                    <h3 className="text-xs font-semibold text-gray-900">{item.title}</h3>
-                    <p className="text-[10px] font-medium text-gray-700 mb-1">{item.subtitle}</p>
-                    <p className="text-[7px] text-[#1E1E1E] font-light leading-tight">{item.message}</p>
+                    <h3 className="text-[10px] sm:text-xs font-semibold text-gray-900">{item.title}</h3>
+                    <p className="text-[9px] sm:text-[10px] font-medium text-gray-700 mb-0.5 sm:mb-1">{item.subtitle}</p>
+                    <p className="text-[7px] sm:text-[7px] text-[#1E1E1E] font-light leading-tight">{item.message}</p>
                   </div>
                 </div>
               ))}
@@ -405,36 +442,36 @@ useEffect(() => {
       </div>
 
       {/* Services Section */}
-      <section id="services" className="bg-white">
+      <section id="services" className="bg-white py-0 sm:py-0 md:py-0 lg:py-0">
         <PageWrapper className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center text-center mb-8 space-y-1">
+          <div className="flex flex-col items-center text-center mb-6 sm:mb-8 space-y-1 px-4">
             <YummyText className="text-[#10b981] text-xs font-xs -mb-1">
               What we do best.
             </YummyText>
-            <YummyText className="text-2xl font-medium text-black">
+            <YummyText className="text-xl sm:text-2xl font-medium text-black">
               Our Services
             </YummyText>
-            <YummyText className="text-gray-600 text-sm font-sm max-w-2xl">
+            <YummyText className="text-gray-600 text-base font-[400] max-w-2xl">
               Comprehensive logistics solutions designed to meet <br /> your
               every delivery need
             </YummyText>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ml-3 mr-0.5 -mt-4 px-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-3">
             {services.map((service, index) => (
               <div
                 key={index}
-                className="bg-[#1E1E1E] rounded-3xl p-5 text-left flex flex-col items-start h-[420px] relative overflow-hidden"
+                className="bg-[#1E1E1E] rounded-3xl p-5 text-left flex flex-col items-start h-[350px] sm:h-[420px] relative overflow-hidden"
                 style={{
                   background:
                     "radial-gradient(circle at center, #1a1a1a, #0d0d0d)",
                 }}
               >
                 <div className="flex flex-col">
-                  <YummyText className="text-[#F9FAFB] text-xl font-[400]">
+                  <YummyText className="text-[#F9FAFB] text-lg sm:text-xl font-[400]">
                     {service.title}
                   </YummyText>
-                  <YummyText className="text-[#E5E7EB] font-[300] text-[14px] leading-snug mt-2">
+                  <YummyText className="text-[#E5E7EB] font-[400] text-[14px] sm:text-[14px] leading-snug mt-2">
                     {service.description}
                   </YummyText>
                 </div>
@@ -444,7 +481,7 @@ useEffect(() => {
                     alt={service.title}
                     width={220}
                     height={220}
-                    className="max-w-[220px] h-auto object-contain"
+                    className="sm:max-w-[220px] max-w-[180px] h-auto object-contain"
                   />
                 </div>
               </div>
@@ -678,10 +715,10 @@ useEffect(() => {
       </section>
 
       {/* Download App & Quote Section */}
-      <section className="bg-white py-10">
-        <PageWrapper className="max-w-6xl mx-auto px-20">
-          <div className="grid grid-cols-2 w-[106%] h-[668px] gap-4 -ml-7">
-            <div className="bg-[#1a1a1a] rounded-3xl p-14 relative overflow-hidden">
+      <section className="bg-white py-6 sm:py-10">
+        <PageWrapper className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:w-[106%] lg:-ml-7">
+            <div className="bg-[#1a1a1a] rounded-3xl p-8 sm:p-14 relative overflow-hidden min-h-[400px] lg:h-[668px]">
               <div className="relative z-10 -mt-5">
                 <YummyText className="text-white text-5xl font-[300] mb-4 leading-tight">
                   Download Our
@@ -705,7 +742,7 @@ useEffect(() => {
               </div>
             </div>
 
-            <div className="bg-[#10b981] rounded-3xl p-10 relative overflow-hidden">
+            <div className="bg-[#10b981] rounded-3xl p-8 sm:p-10 relative overflow-hidden min-h-[400px] lg:h-[668px]">
               <div className="relative z-10">
                 <YummyText className="text-white text-5xl font-[300] mb-4 leading-tight">
                   Get a Free
