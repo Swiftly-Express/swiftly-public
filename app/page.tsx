@@ -150,6 +150,64 @@ export default function SwiftlyLanding() {
     },
   ];
 
+  const [notifications, setNotifications] = React.useState([
+  {
+    id: 1,
+    title: "Swiftly Express",
+    subtitle: "Package secured!",
+    message: "You've successfully picked up the package. Update the delivery status when you're on the move."
+  },
+  {
+    id: 2,
+    title: "Swiftly Express",
+    subtitle: "Delivery Reminder",
+    message: "Don't forget to update your delivery progress to keep customers informed."
+  },
+  {
+    id: 3,
+    title: "Swiftly Express",
+    subtitle: "New Assignment",
+    message: "A new package has been assigned to you. Check your route to get started."
+  }
+]);
+
+// Function to play notification sound
+const playSound = React.useCallback(() => {
+  try {
+    const audio = new Audio("/notify.mp3");
+    audio.volume = 0.95;
+    audio.play().catch(err => {
+      console.log("Audio playback failed:", err);
+    });
+  } catch (error) {
+    console.log("Audio error:", error);
+  }
+}, []);
+
+// Function to vibrate device
+const vibrate = React.useCallback(() => {
+  if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+    navigator.vibrate(50);
+  }
+}, []);
+
+// Auto-rotate every 5 seconds
+useEffect(() => {
+  const interval = setInterval(() => {
+    setNotifications(prev => {
+      const updated = [...prev];
+      const first = updated.shift(); // Remove first card
+      if (first) {
+        updated.push(first); // Move it to the bottom
+        playSound(); // Play sound when card rotates
+      }
+      return updated;
+    });
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, [playSound]);
+
   return (
     <div className="bg-[#f5f5f5] min-h-screen fullscreen">
     
@@ -300,48 +358,38 @@ export default function SwiftlyLanding() {
             </div>
           </div>
 
-          {/* Notification Card - Add this right after the CTA button */}
-          <div 
-            className="absolute bottom-20 left-1/2 bg-white rounded-3xl shadow-xl p-3 max-w-xs w-full mx-3 flex items-center gap-3 z-20"
-            style={{
-              animation: 'slideUp 0.6s ease-out forwards',
-              animationDelay: '2s',
-            
-              transform: 'translateX(calc(-46% - 20px))',
-            }}
-          >
-            {/* App Icon */}
-            <div className="w-12 h-12 bg-gradient-to-br from-[#00D68F] to-[#00B876] rounded-xl flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-2xl font-bold">S</span>
-            </div>
-            
-            {/* Notification Content */}
-            <div className="flex-1 text-left">
-              <h3 className="text-xs font-semibold text-gray-900 mb-0.5">
-                Swiftly Express
-              </h3>
-              <p className="text-[10px] font-medium text-gray-700 mb-1">
-                Package secured!
-              </p>
-              <p className="text-[7.5px] text-[#1E1E1E] font-[300] leading-1">
-                You've successfully picked up the package. Update the delivery status when you're on the move.
-              </p>
+          {/* Notification Stack */}
+          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-20">
+            <div className="relative w-[260px] h-[120px]">
+              {notifications.map((item, index) => (
+                <div
+                  key={item.id}
+                  onMouseEnter={vibrate}
+                  onTouchStart={vibrate}
+                  className="absolute w-full bg-white rounded-3xl shadow-xl p-3 flex items-center gap-3 transition-all duration-700"
+                  style={{
+                    transform: `translateY(${index * 14}px) scale(${1 - index * 0.07})`,
+                    opacity: index === 0 ? 1 : 0.95 - index * 0.05,
+                    zIndex: notifications.length - index,
+                    transition: "all 0.7s ease, opacity 0.5s ease",
+                  }}
+                >
+                  {/* Icon */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#00D68F] to-[#00B876] rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-2xl font-bold">S</span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 text-left">
+                    <h3 className="text-xs font-semibold text-gray-900">{item.title}</h3>
+                    <p className="text-[10px] font-medium text-gray-700 mb-1">{item.subtitle}</p>
+                    <p className="text-[7px] text-[#1E1E1E] font-light leading-tight">{item.message}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Add this style tag right before the closing div of your component */}
-          <style jsx>{`
-            @keyframes slideUp {
-              from {
-                opacity: 0;
-                transform: translate(calc(-46% - 20px), 50px);
-              }
-              to {
-                opacity: 1;
-                transform: translate(calc(-46% - 20px), 0);
-              }
-            }
-          `}</style>
 
         </div>
       </div>
@@ -696,3 +744,5 @@ export default function SwiftlyLanding() {
     </div>
   );
 }
+
+
