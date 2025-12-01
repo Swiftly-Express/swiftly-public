@@ -171,6 +171,8 @@ export default function SwiftlyLanding() {
   }
 ]);
 
+const [initialLoad, setInitialLoad] = React.useState(true);
+
 // Function to play notification sound
 const playSound = React.useCallback(() => {
   try {
@@ -199,14 +201,22 @@ useEffect(() => {
       const first = updated.shift(); // Remove first card
       if (first) {
         updated.push(first); // Move it to the bottom
-        playSound(); // Play sound when card rotates
       }
       return updated;
     });
   }, 5000);
 
   return () => clearInterval(interval);
-}, [playSound]);
+}, []);
+
+// Play sound only when new notifications are added (not on rotation)
+useEffect(() => {
+  if (initialLoad) {
+    setInitialLoad(false);
+    return;
+  }
+  playSound();
+}, [notifications.length, playSound, initialLoad]);
 
   return (
     <div className="bg-[#f5f5f5] min-h-screen fullscreen">
