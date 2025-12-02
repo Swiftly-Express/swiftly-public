@@ -457,7 +457,7 @@ useEffect(() => {
             </YummyText>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-2">
             {services.map((service, index) => (
               <div
                 key={index}
@@ -491,7 +491,7 @@ useEffect(() => {
       </section>
 
       {/* No Hassle Section */}
-      <section className="px-4 mt-4 md:mt-6 lg:mt-4 mb-6 md:mb-8 lg:mb-6">
+      <section className="hidden bg-[#ffffff] md:block px-4 mt-4 md:mt-6 lg:mt-4 mb-6 md:mb-8 lg:mb-6">
         <PageWrapper className="max-w-7xl">
           <div className="relative rounded-3xl overflow-hidden h-[430px] flex items-center">
             <div
@@ -522,42 +522,42 @@ useEffect(() => {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="-mt-4 md:-mt-6 lg:-mt-4">
+      <section id="how-it-works" className="py-8 bg-[#ffffff] sm:py-12 md:-mt-4 md:md:-mt-6 lg:-mt-4">
         <PageWrapper className="max-w-6xl mx-auto text-center">
-          <div className="flex flex-col items-center mb-6 md:mb-8 lg:mb-6">
+          <div className="flex flex-col items-center mb-6 md:mb-8 lg:mb-6 px-4">
             <div className="flex justify-center mt-4 md:mt-6 lg:mt-4">
-              <YummyText className="px-6 py-1.5 bg-[#A7F3D0] text-[#00B75A] rounded-full text-xs font-[400]">
+              <YummyText className="px-4 sm:px-6 py-1.5 bg-[#A7F3D0] text-[#00B75A] rounded-full text-xs font-[400]">
                 How It Works
               </YummyText>
             </div>
-            <YummyText className="text-4xl font-semibold text-[#1E1E1E] mb-1">
+            <YummyText className="text-xl sm:text-3xl md:text-4xl font-semibold text-[#1E1E1E] mb-1 mt-4 leading-tight">
               Three simple steps to get your <br /> package delivered
             </YummyText>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 ml-3.5 -mt-6 md:-mt-7 lg:-mt-6 mb-4 md:mb-5 lg:mb-4 px-3 mx-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:px-4 md:ml-3.5 md:-mt-6 md:md:-mt-7 lg:-mt-6 mb-4 md:mb-5 lg:mb-4 md:px-3 md:mx-2">
             {steps.map((step, index) => (
               <div
                 key={index}
-                className="bg-[#1E1E1E] !rounded-3xl p-14 px-12 h-[460px] text-left flex flex-col items-start relative overflow-hidden"
+                className="bg-[#1E1E1E] rounded-3xl p-6 sm:p-8 md:p-14 md:px-12 !h-[460px] !sm:h-[400px] !md:h-[460px] text-left flex flex-col items-start relative overflow-hidden"
               >
                 <div className="flex flex-col">
-                  <YummyText className="text-[#F9FAFB] text-3xl font-sm">
+                  <YummyText className="text-[#F9FAFB] text-2xl sm:text-2xl md:text-3xl font-sm">
                     {step.title}
                   </YummyText>
-                  <YummyText className="text-[#E5E7EB] text-sm font-[200] leading-snug mt-2">
+                  <YummyText className="text-[#E5E7EB] text-xs sm:text-sm font-[200] leading-snug mt-2">
                     {step.description}
                   </YummyText>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 w-full flex justify-center pb-0">
+                <div className="mt-6 sm:mt-auto md:absolute md:bottom-0 md:left-0 md:right-0 w-full flex justify-center md:pb-0">
                   <Image
                     src={step.image}
                     alt={step.title}
                     width={240}
                     height={220}
-                    className="w-full max-w-[240px] h-auto object-contain"
+                    className="w-full max-w-[180px] sm:max-w-[200px] md:max-w-[240px] h-auto object-contain"
                     style={{
-                      maxHeight: "220px",
+                      maxHeight: "180px",
                     }}
                   />
                 </div>
@@ -568,8 +568,8 @@ useEffect(() => {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="relative py-8 md:py-12 lg:py-8 overflow-hidden">
-          <div className="absolute left-8 top-80 mt-3 -translate-y-1/2 w-60 h-60 pointer-events-none">
+      <section id="testimonials" className="relative bg-[#ffffff] py-8 md:py-12 lg:py-8 overflow-hidden">
+          <div className="hidden md:block absolute left-8 top-80 mt-3 -translate-y-1/2 w-60 h-60 pointer-events-none">
           <Image
             src="/cartonback.svg"
             alt="Carton Box"
@@ -583,7 +583,7 @@ useEffect(() => {
           />
         </div>
 
-        <div className="absolute right-14 top-24 z-20 -translate-y-1/2 w-60 h-60 pointer-events-none">
+        <div className="hidden md:block absolute right-14 top-24 z-20 -translate-y-1/2 w-60 h-60 pointer-events-none">
           <Image
             src="/carton.svg"
             alt="Carton Box"
@@ -597,37 +597,34 @@ useEffect(() => {
           />
         </div>
 
-        <PageWrapper className="max-w-5xl mx-auto relative -mb-8 z-10">
-          <div className="flex flex-col items-center text-center mb-12 -mt-6">
-            <YummyText className="px-6 py-1.5 bg-green-200 text-green-700 rounded-full text-xs font-[400] mb-1">
+        <PageWrapper className="max-w-5xl mx-auto relative -mb-8 z-10 px-4">
+          <div className="flex flex-col items-center text-center mb-8 sm:mb-12 md:-mt-6">
+            <YummyText className="px-4 sm:px-6 py-1.5 bg-green-200 text-green-700 rounded-full text-xs font-[400] mb-2 sm:mb-1">
               Testimonials
             </YummyText>
-            <YummyText className="text-3xl font-medium text-black mb-0.5">
-              Results that speaks volumes
+            <YummyText className="text-4xl sm:text-3xl font-medium text-black mb-2 sm:mb-0.5">
+              Results that <br className="sm:hidden" /> speaks volumes
             </YummyText>
-            <YummyText className="text-gray-600 text-[12.5px] -mb-12">
-              Don't just take our word for it - hear from our satisfied clients
+            <YummyText className="text-gray-600 text-sm sm:text-[12.5px] lg:text-sm -mb-5 sm:-mb-12">
+              Don't just take our word for it, hear from our <br className="sm:hidden" /> satisfied clients
             </YummyText>
           </div>
 
           <div className="rounded-2xl text-center max-w-2xl mx-auto">
-            <YummyText className="text-xl md:text-xl font-medium text-black leading-relaxed">
-              Swiftly saved my day! My client needed documents
-              <br />
-              in less than an hour, and these guys showed up
-              <br />
-              sharp-sharp. Very reliable!
+            <YummyText className="text-xl sm:text-lg md:text-xl font-medium text-black leading-relaxed px-3">
+              Swiftly saved my day! My client <br className="sm:hidden"/> needed documents in less than an <br className="sm:hidden"/> hour, and these guys showed up <br className="sm:hidden"/> sharp-sharp. Very reliable!
             </YummyText>
 
-            <div className="flex flex-col items-center">
-              <YummyText className="text-gray-700 text-sm mb-1 mt-3">
+            <div className="flex flex-col items-center mt-2">
+              <YummyText className="text-gray-700 text-base mb-1 mt-3">
                 Chinonso Eze,{" "}
                 <span className="text-[#10b981] font-medium">Lagos</span>
               </YummyText>
 
               <HandDrawnSvg className="-mb-3 mr-0 -mt-2" />
 
-              <div className="flex items-center justify-center">
+              {/* Avatar cluster - responsive sizes */}
+              <div className="flex items-center justify-center scale-75 sm:scale-90 md:scale-100">
                 <div className="w-11 h-11 mr-2 -mb-3 rounded-full bg-gray-300 mt-8 border-2 border-white overflow-hidden">
                   <Image src="/lockedhair.svg" alt="Customer" width={44} height={44} className="w-full h-full object-cover" />
                 </div>
@@ -718,68 +715,68 @@ useEffect(() => {
       <section className="bg-white py-6 sm:py-10">
         <PageWrapper className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:w-[106%] lg:-ml-7">
-            <div className="bg-[#1a1a1a] rounded-3xl p-8 sm:p-14 relative overflow-hidden min-h-[400px] lg:h-[668px]">
-              <div className="relative z-10 -mt-5">
-                <YummyText className="text-white text-5xl font-[300] mb-4 leading-tight">
+            {/* Download App Card */}
+            <div className="bg-[#1a1a1a] rounded-3xl p-8 sm:p-10 lg:p-14 relative overflow-hidden min-h-[450px] sm:min-h-[500px] lg:h-[668px]">
+              <div className="relative z-10 lg:-mt-5">
+                <YummyText className="text-white text-3xl sm:text-4xl lg:text-5xl font-[300] mb-3 sm:mb-4 leading-tight">
                   Download Our
                   <br />
                   Mobile App
                 </YummyText>
-                <YummyText className="text-[#FFEDD4] flex text-sm font-[300] mb-6 max-w-xs mt-4 leading-relaxed">
-                  Book deliveries, track packages, and manage your shipments
-                  on the go. Available for iOS and Android.
+                <YummyText className="text-[#FFEDD4] flex text-xs sm:text-sm font-[300] mb-4 sm:mb-6 max-w-xs mt-3 sm:mt-4 leading-relaxed">
+                  Book deliveries, track packages, and manage your shipments on the go. Available for iOS and Android.
                 </YummyText>
                 <StoreButtons />
               </div>
-              <div className="absolute bottom-0 right-0 w-full">
+              <div className="absolute bottom-0 right-0 w-full max-w-full sm:max-w-full">
                 <Image
                   src="/orderbox.svg"
                   alt="Mobile App"
-                  width={800}
+                  width={600}
                   height={300}
                   className="w-full object-contain"
                 />
               </div>
             </div>
 
-            <div className="bg-[#10b981] rounded-3xl p-8 sm:p-10 relative overflow-hidden min-h-[400px] lg:h-[668px]">
+            {/* Quote Card */}
+            <div className="bg-[#10b981] rounded-3xl p-8 sm:p-10 relative overflow-hidden min-h-[450px] sm:min-h-[500px] lg:h-[668px]">
               <div className="relative z-10">
-                <YummyText className="text-white text-5xl font-[300] mb-4 leading-tight">
+                <YummyText className="text-white text-3xl sm:text-4xl lg:text-5xl font-[300] mb-3 sm:mb-4 leading-tight">
                   Get a Free
                   <br />
                   Quote
                 </YummyText>
-                <YummyText className="text-[#FFEDD4] flex text-sm font-[300] mb-6 max-w-xs mt-4 leading-relaxed">
-                  Need a custom logistics solution? Contact us for a
-                  personalized quote tailored to your business needs.
+                <YummyText className="text-[#FFEDD4] flex text-xs sm:text-sm font-[300] mb-4 sm:mb-6 max-w-xs mt-3 sm:mt-4 leading-relaxed">
+                  Need a custom logistics solution? Contact us for a personalized quote tailored to your business needs.
                 </YummyText>
                 <Button
                   variant="light"
-                  className="!bg-white !text-[#10b981] hover:!bg-gray-100 !px-5 !py-2.5 !rounded-full"
+                  className="!bg-white !text-[#10b981] hover:!bg-gray-100 !px-4 sm:!px-5 !py-2 sm:!py-2.5 !rounded-full text-xs sm:text-sm"
                   onClick={() => {
                     const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
                     window.location.href = `${dashboardUrl}/auth/customer/signup`;
                   }}
                 >
-                  <YummyText className="font-[400] text-[#001900] text-xs">
+                  <YummyText className="font-[400] text-[#001900]">
                     Book a delivery
                   </YummyText>
                 </Button>
               </div>
-              <div className="absolute bottom-0 right-9 w-[70%] h-[200px]">
+              <div className="absolute bottom-0 right-4 sm:right-9 w-[75%] sm:w-[70%] h-[150px] sm:h-[200px]">
                 <Image
                   src="/quotes.svg"
                   alt="Quotes"
-                  width={800}
+                  width={600}
                   height={200}
-                  className="w-full h-full object-contain absolute bottom-0 left-32"
+                  className="w-full h-full object-contain absolute bottom-14 left-16 sm:left-32"
                 />
                 <Image
                   src="/quotation.svg"
                   alt="Quotation"
-                  width={680}
+                  width={500}
                   height={220}
-                  className="w-[85%] h-auto object-contain absolute bottom-0 left-16 z-10"
+                  className="w-[85%] h-auto object-contain absolute bottom-0 left-7 sm:left-16 z-10"
                 />
               </div>
             </div>
