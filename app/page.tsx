@@ -336,7 +336,8 @@ useEffect(() => {
           </div>
         </PageWrapper>
       </div>
-    <SmartRideModal isOpen={showSmartRideModal} onClose={() => setShowSmartRideModal(false)} />
+
+      <SmartRideModal isOpen={showSmartRideModal} onClose={() => setShowSmartRideModal(false)} />
       <div className="relative flex flex-col items-center justify-center min-h-screen px-4 text-center bg-white overflow-hidden">  
         {/* Background Image with Gradient Overlay */}
         <div className="absolute inset-0 w-full h-full z-10">
@@ -356,7 +357,7 @@ useEffect(() => {
               />
             </div>
             {/* White gradient overlay on top of image */}
-            <div className="absolute inset-0 bg-gradient-to-b from-white via-white/100 to-transparent" style={{ height: "60%" }} />
+            <div className="absolute inset-0 bg-gradient-to-b from-white via-white/100 to-transparent" style={{ height: "70%" }} />
             
           </div>
         </div>
@@ -364,7 +365,7 @@ useEffect(() => {
         {/* Content positioned at top */}
         <div className="min-h-screen z-10 w-full max-w-5xl">
           {/* Trust Badge */}
-          <div className="inline-flex items-center gap-2 bg-[#d1fae5] border border-[#008C45] rounded-full px-3 py-1.5 z-10 mt-8 md:mt-8 lg:mt-8 mb-1">
+          <div className="inline-flex items-center gap-2 bg-[#d1fae5] border border-[#008C45] rounded-full px-3 py-1.5 z-10 mt-16 md:mt-8 lg:mt-8 mb-1">
             <div className="flex -space-x-2 mr-2">
               <Image
                 src="/roundcuthair.svg"
@@ -401,13 +402,13 @@ useEffect(() => {
           </div>
 
           {/* Main Heading */}
-          <YummyText className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 sm:mb-6 text-black px-2">
+          <YummyText className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 sm:mb-6 text-black px-2 mt-4 md:mt-4">
             Delivering <span className="text-[#008C45]">Swiftly</span>,<br />
             Anywhere, Anytime
           </YummyText>
 
           {/* CTA Button */}
-          <div className="flex justify-center mt-4 sm:mt-6 mb-8 sm:mb-12">
+          <div className="flex justify-center mt-10 md:mt-1 sm:mt-6 mb-8 sm:mb-12">
             <div className="group relative inline-block">
               <Button
                 variant="dark"
@@ -453,7 +454,7 @@ useEffect(() => {
           </div>
 
           {/* Notification Stack */}
-          <div className="relative md:absolute md:bottom-20 md:left-1/2 md:transform md:-translate-x-1/2 z-20 mt-8 md:mt-0">
+          <div className="relative md:absolute md:bottom-20 md:left-1/2 md:transform md:-translate-x-1/2 z-20 mt-52 md:mt-0">
             <div className="relative w-full max-w-[280px] sm:w-[280px] md:w-[260px] h-[100px] sm:h-[120px] mx-auto">
               {notifications.map((item, index) => (
                 <div
