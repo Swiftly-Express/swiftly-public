@@ -219,6 +219,7 @@ export default function SwiftlyLanding() {
 ]);
 
 const [initialLoad, setInitialLoad] = React.useState(true);
+const prevNotificationCountRef = React.useRef(3); // Track initial count
 
 // Function to play notification sound
 const playSound = React.useCallback(() => {
@@ -293,13 +294,22 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, []);
 
-// Play sound only when new notifications are added (not on rotation)
+// Play sound only when new notifications are added (not on rotation or page load)
 useEffect(() => {
+  // Skip on initial load
   if (initialLoad) {
     setInitialLoad(false);
+    prevNotificationCountRef.current = notifications.length;
     return;
   }
-  playSound();
+  
+  // Only play sound if count actually increased (new notification added)
+  if (notifications.length > prevNotificationCountRef.current) {
+    playSound();
+  }
+  
+  // Update the ref with current count
+  prevNotificationCountRef.current = notifications.length;
 }, [notifications.length, playSound, initialLoad]);
 
   return (
