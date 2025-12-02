@@ -569,21 +569,7 @@ useEffect(() => {
 
       {/* Testimonials Section */}
       <section id="testimonials" className="relative bg-[#ffffff] py-8 md:py-12 lg:py-8 overflow-hidden">
-          <div className="hidden md:block absolute left-8 top-80 mt-3 -translate-y-1/2 w-60 h-60 pointer-events-none">
-          <Image
-            src="/cartonback.svg"
-            alt="Carton Box"
-            width={240}
-            height={240}
-            className="w-full h-full object-contain"
-            style={{
-              transform: "translateX(-30%)",
-              filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.1))",
-            }}
-          />
-        </div>
-
-        <div className="hidden md:block absolute right-14 top-24 z-20 -translate-y-1/2 w-60 h-60 pointer-events-none">
+        <div className="absolute right-2 md:right-14 top-10 md:top-16 z-20 -translate-y-1/2 w-32 md:w-60 h-32 md:h-60 pointer-events-none">
           <Image
             src="/carton.svg"
             alt="Carton Box"
@@ -646,20 +632,38 @@ useEffect(() => {
         </PageWrapper>
       </section>
 
+      {/* Carton between Testimonials and FAQ */}
+      <div className="relative w-full h-0">
+        <div className="absolute left-2 md:left-8 -top-20 md:-top-32 w-32 md:w-60 h-32 md:h-60 pointer-events-none z-10">
+          <Image
+            src="/cartonback.svg"
+            alt="Carton Box"
+            width={240}
+            height={240}
+            className="w-full h-full object-contain"
+            style={{
+              transform: "translateX(-30%)",
+              filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.1))",
+            }}
+          />
+        </div>
+      </div>
+
       {/* FAQ Section */}
       <section id="faq" className="bg-[#1a1a1a] h-auto relative overflow-hidden">
+
         <PageWrapper className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 px-6">
             <div className="space-y-6">
               <div className="flex flex-col">
-                <YummyText className="text-[#10b981] font-[400] text-sm mb-4 mt-12 py-10">
+                <YummyText className="text-[#10b981] font-[400] text-sm mb-4 mt-12 md:mt-12 md:py-10">
                   FAQs - Frequently asked questions
                 </YummyText>
-                <YummyText className="text-4xl text-[#F9FAFB] font-medium leading-tight -mt-14 mb-6">
+                <YummyText className="text-3xl md:text-4xl text-[#F9FAFB] font-medium leading-tight mb-4 md:-mt-14 md:mb-6">
                   Got questions?
                 </YummyText>
-                <YummyText className="text-sm text-[#F9FAFB] font-[300] mb-18 -mt-6">
-                  Here are a few things people always ask — and our <br /> answers to them
+                <YummyText className="text-sm text-[#F9FAFB] font-[300] mb-6 md:mb-18 md:-mt-6">
+                  Here are a few things people always ask — and our <br className="hidden md:block" /> answers to them
                 </YummyText>
               </div>
               <div className="space-y-3">
@@ -696,7 +700,7 @@ useEffect(() => {
               </div>
             </div>
 
-            <div className="hidden md:flex items-end justify-center">
+            <div className="md:flex items-end justify-center">
               <div className="sticky top-20">
                 <Image
                   src="/deliverybike.svg"
