@@ -215,15 +215,13 @@ export default function Services() {
         <section className="relative min-h-[50vh] md:min-h-[calc(75vh-55px)] flex items-center justify-center md:left-16 md:gap-14 px-4 md:px-6 lg:px-20 py-8 md:py-0">
           {/* Left Content */}
           <div className="flex flex-col justify-center items-center md:items-start text-center md:text-left w-full max-w-md space-y-3">
-            <YummyText className="text-3xl md:text-4xl leading-tight md:leading-snug font-sm text-[#111827]">
-              Delivery Services for
-              <br />
-              Every Need
+            <YummyText className="text-4xl md:text-4xl leading-tight md:leading-snug font-medium text-[#1E1E1E]">
+            Delivery Services for <br className="hidden md:block"/> Every Need
             </YummyText>
 
-            <YummyText className="text-[#4A5563] text-sm md:text-base leading-6 !mt-3">
+            <YummyText className="text-[#4B5563] font-[500] text-sm md:text-base leading-6 !mt-3">
               From same-day express to international shipping, we have got
-              <br className="hidden md:block" /> you covered with reliable, affordable delivery solutions.
+             you covered with reliable, <br className="sm:hidden"/> affordable delivery solutions.
             </YummyText>
 
             <div className="pt-2">
