@@ -56,20 +56,20 @@ interface ServiceCardProps {
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ imageSrc, title, desc, bullets }) => (
-  <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg p-8 text-left flex flex-col items-start h-[360px] transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+  <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-lg p-5 md:p-8 text-left flex flex-col items-start h-auto md:h-[360px] transition-all duration-300 hover:shadow-md hover:-translate-y-1">
     {/* Icon */}
-    <div className="w-full flex justify-start mb-6">
-      <Image src={imageSrc} alt={title} width={44} height={44} className="object-contain" />
+    <div className="w-full flex justify-start mb-4 md:mb-6">
+      <Image src={imageSrc} alt={title} width={40} height={40} className="md:w-[44px] md:h-[44px] object-contain" />
     </div>
 
     {/* Title & Description */}
     <div className="flex flex-col">
-      <YummyText className="text-[#111827] text-2xl !font-sm mb-1 -mt-1">{title}</YummyText>
-      <YummyText className="text-[#4A5563] text-sm leading-tighter">{desc}</YummyText>
+      <YummyText className="text-[#111827] text-xl md:text-2xl !font-sm mb-1 -mt-1">{title}</YummyText>
+      <YummyText className="text-[#4A5563] text-xs md:text-sm leading-tight md:leading-tighter">{desc}</YummyText>
     </div>
 
     {/* Bullet points */}
-    <ul className="space-y-2 text-left text-sm text-[#4B5563] mt-3 leading-tight">
+    <ul className="space-y-1.5 md:space-y-2 text-left text-xs md:text-sm text-[#4B5563] mt-3 leading-tight">
       {bullets.map((bullet, i) => (
         <li key={i} className="flex items-start">
           <span className="text-green-500 mr-2">✓</span>
@@ -181,11 +181,11 @@ export default function Services() {
       {/* Navbar */}
       <div className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <PageWrapper className="py-3 flex items-center justify-between">
-          <YummyText className="text-3xl px-3 font-sm text-black">
+          <YummyText className="text-2xl md:text-3xl px-2 md:px-3 font-sm text-black">
             Swiftly
           </YummyText>
           <NavBar />
-          <div className="flex items-center px-4 gap-3">
+          <div className="hidden md:flex items-center px-4 gap-3">
             <Button
               variant="primary"
               className="px-4 py-3 !bg-[#00B75A] text-medium rounded-full font-[300] text-[10px]"
@@ -212,24 +212,24 @@ export default function Services() {
 
       <PageWrapper>
         {/* Hero Section */}
-        <section className="relative min-h-[calc(75vh-55px)] flex items-center justify-center left-16 gap-14 px-6 lg:px-20">
+        <section className="relative min-h-[50vh] md:min-h-[calc(75vh-55px)] flex items-center justify-center md:left-16 md:gap-14 px-4 md:px-6 lg:px-20 py-8 md:py-0">
           {/* Left Content */}
-          <div className="flex flex-col justify-center w-full max-w-md space-y-3">
-            <YummyText className="text-4xl leading-snug font-sm text-[#111827]">
+          <div className="flex flex-col justify-center items-center md:items-start text-center md:text-left w-full max-w-md space-y-3">
+            <YummyText className="text-3xl md:text-4xl leading-tight md:leading-snug font-sm text-[#111827]">
               Delivery Services for
               <br />
               Every Need
             </YummyText>
 
-            <YummyText className="text-[#4A5563] text-base leading-6 !mt-3">
+            <YummyText className="text-[#4A5563] text-sm md:text-base leading-6 !mt-3">
               From same-day express to international shipping, we have got
-              <br /> you covered with reliable, affordable delivery solutions.
+              <br className="hidden md:block" /> you covered with reliable, affordable delivery solutions.
             </YummyText>
 
             <div className="pt-2">
               <Button
                 variant="primary"
-                className="!px-4 !py-3 !bg-[#00B75A] shadow-sm rounded-full hover:shadow-md transition-all duration-300"
+                className="!px-6 md:!px-4 !py-3 !bg-[#00B75A] shadow-sm rounded-full hover:shadow-md transition-all duration-300"
                 onClick={() => {
                   const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
                   window.location.href = `${dashboardUrl}/auth/role-select`;
@@ -252,19 +252,35 @@ export default function Services() {
           </div>
         </section>
 
+        <div className="relative w-full h-0">
+          <div className="absolute left-0 md:left-4 -top-12 md:-top-32 w-34 md:w-60 h-32 md:h-60 pointer-events-none z-10">
+            <Image
+              src="/cartonback.svg"
+              alt="Carton Box"
+              width={240}
+              height={240}
+              className="w-full h-full object-contain"
+              style={{
+                transform: "translateX(-30%)",
+                filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.1))",
+              }}
+            />
+          </div>
+        </div>
+
         {/* Services Section */}
-        <section className="py-8 md:py-12 lg:py-8 px-16 bg-[#FFFFFF] rounded-3xl">
+        <section className="py-6 md:py-8 lg:py-8 px-2 md:px-16 bg-[#FFFFFF] rounded-3xl">
           <div className="text-center mb-6">
-            <YummyText className="text-3xl font-sm text-[#111827] mb-4">
+            <YummyText className="text-2xl md:text-3xl font-sm text-[#111827] mb-3 md:mb-4">
               Our Services
             </YummyText>
-            <YummyText className="text-[#6B7280] flex text-base items-center justify-center leading-relaxed">
+            <YummyText className="text-[#6B7280] text-sm md:text-base px-4 md:px-0 leading-relaxed">
               Choose from our comprehensive range of delivery services designed to
-              <br /> meet your specific needs.
+              <br className="hidden md:block" /> meet your specific needs.
             </YummyText>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 sm:px-0 md:px-0">
             {services.map((service, index) => (
               <ServiceCard
                 key={index}
@@ -277,15 +293,30 @@ export default function Services() {
           </div>
         </section>
 
+
+        <div className="absolute right-0 md:right-0 top-50 md:top-50 z-20 -translate-y-1/2 w-32 md:w-60 h-32 md:h-60 pointer-events-none overflow-hidden">
+          <Image
+            src="/carton.svg"
+            alt="Carton Box"
+            width={240}
+            height={240}
+            className="w-full h-full object-contain"
+            style={{
+              transform: "translateX(30%) rotate(1deg)",
+              filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.1))",
+            }}
+          />
+        </div>
+
         {/* Why Choose Swiftly */}
-        <section className="bg-[#1E1E1E] text-white rounded-2xl mt-4 md:mt-6 lg:mt-4 mx-3 py-6 md:py-8 lg:py-6">
+        <section className="bg-[#1E1E1E] text-white rounded-2xl mt-4 md:mt-6 lg:mt-4 mx-3 py-6 md:py-8 lg:py-6 px-2 md:px-6 lg:px-8">
           <div className="flex justify-center items-center">
-            <YummyText className="text-[45px] font-[300] tracking-tight">
-              Why Choose Swiftly?
+            <YummyText className="text-4xl md:text-[45px] font-[500] tracking-tight text-center">
+              Why Choose <br className="sm:hidden" /> Swiftly?
             </YummyText>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 px-8 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 px-0 md:px-8 mt-4">
             {features.map((feature, index) => (
               <div
                 key={index}
@@ -300,10 +331,10 @@ export default function Services() {
                     className="item-center"
                   />
                 </div>
-                <YummyText className="text-lg font-medium mb-2">
+                <YummyText className="text-xl sm:text-lg md:text-lg lg:text-lg font-medium">
                   {feature.title}
                 </YummyText>
-                <YummyText className="text-sm text-gray-400 leading-snug">
+                <YummyText className="text-medium sm:text-xs md:text-sm lg:text-sm text-[#4B5563]">
                   {feature.desc}
                 </YummyText>
               </div>
@@ -327,27 +358,27 @@ export default function Services() {
         </div>
 
         {/* Centered Content */}
-        <div className="relative text-center text-white !py-20 px-6 max-w-5xl mx-auto">
-          <YummyText className="text-3xl font-[300] mb-5">
-            Ready to Get Started?
+        <div className="relative text-center text-white !py-12 md:!py-20 px-4 md:px-6 max-w-5xl mx-auto">
+          <YummyText className="text-3xl md:text-3xl font-[500] mb-4 md:mb-5">
+            Ready to Get <br className="sm:hidden"/> Started?
           </YummyText>
 
-          <YummyText className="mb-2 flex text-lg font-[200] !items-center !justify-center leading-tight">
-            Join thousands of satisfied customers who trust Swiftly for their <br />
-            delivery needs.
+          <YummyText className="mb-2 text-base md:text-lg font-[200] leading-tight md:leading-tight px-4">
+            Join thousands of satisfied customers <br className="sm:hidden" /> who trust Swiftly for their
+            delivery <br className="sm:hidden" /> needs.
           </YummyText>
 
-          <div className="flex justify-center gap-4 mt-6">
+          <div className="flex justify-center gap-3 md:gap-4 mt-6 px-4">
             <Button
               variant="light"
-              className="!bg-[#16A34A] hover:!bg-[#149C46] !text-white !px-3 text-sm !py-2 rounded-lg transition-all duration-300"
+              className="!bg-[#16A34A] hover:!bg-[#149C46] !text-white !px-6 md:!px-3 text-sm !py-3 md:!py-2 rounded-full transition-all duration-300 w-full sm:w-auto"
             >
               <YummyText>Contact Us</YummyText>
             </Button>
 
             <Button
               variant="outline"
-              className="!px-3 !py-2 !border-white text-sm bg-[#F9FAFB] !text-[#1E1E1E] hover:!bg-white hover:!text-green-700 rounded-lg transition-all duration-300"
+              className="!px-6 md:!px-3 !py-3 md:!py-2 !border-white text-sm bg-[#F9FAFB] !text-[#1E1E1E] hover:!bg-white hover:!text-green-700 rounded-full transition-all duration-300 w-full sm:w-auto"
             >
               <YummyText>View Pricing</YummyText>
             </Button>
