@@ -542,22 +542,22 @@ useEffect(() => {
                 className="bg-[#1E1E1E] rounded-3xl p-6 sm:p-8 md:p-14 md:px-12 !h-[460px] !sm:h-[400px] !md:h-[460px] text-left flex flex-col items-start relative overflow-hidden"
               >
                 <div className="flex flex-col">
-                  <YummyText className="text-[#F9FAFB] text-2xl sm:text-2xl md:text-3xl font-sm">
+                  <YummyText className="text-[#F9FAFB] text-3xl sm:text-2xl md:text-3xl font-sm">
                     {step.title}
                   </YummyText>
-                  <YummyText className="text-[#E5E7EB] text-xs sm:text-sm font-[200] leading-snug mt-2">
+                  <YummyText className="text-[#E5E7EB] text-sm sm:text-sm font-[200] leading-snug mt-2">
                     {step.description}
                   </YummyText>
                 </div>
-                <div className="mt-6 sm:mt-auto md:absolute md:bottom-0 md:left-0 md:right-0 w-full flex justify-center md:pb-0">
+                <div className="absolute bottom-0 md:bottom-0 left-0 right-0 w-full flex justify-center">
                   <Image
                     src={step.image}
                     alt={step.title}
                     width={240}
                     height={220}
-                    className="w-full max-w-[180px] sm:max-w-[200px] md:max-w-[240px] h-auto object-contain"
+                    className="w-full max-w-[260px] sm:max-w-[200px] md:max-w-[240px] h-auto object-contain"
                     style={{
-                      maxHeight: "180px",
+                      maxHeight: "200px",
                     }}
                   />
                 </div>
@@ -597,7 +597,7 @@ useEffect(() => {
           </div>
 
           <div className="rounded-2xl text-center max-w-2xl mx-auto">
-            <YummyText className="text-xl sm:text-lg md:text-xl font-medium text-black leading-relaxed px-3">
+            <YummyText className="text-lg sm:text-lg md:text-xl font-medium text-black leading-relaxed px-3">
               Swiftly saved my day! My client <br className="sm:hidden"/> needed documents in less than an <br className="sm:hidden"/> hour, and these guys showed up <br className="sm:hidden"/> sharp-sharp. Very reliable!
             </YummyText>
 
@@ -634,7 +634,7 @@ useEffect(() => {
 
       {/* Carton between Testimonials and FAQ */}
       <div className="relative w-full h-0">
-        <div className="absolute left-2 md:left-8 -top-20 md:-top-32 w-32 md:w-60 h-32 md:h-60 pointer-events-none z-10">
+        <div className="absolute left-2 md:left-8 -top-24 md:-top-32 w-32 md:w-60 h-32 md:h-60 pointer-events-none z-10">
           <Image
             src="/cartonback.svg"
             alt="Carton Box"
@@ -653,20 +653,20 @@ useEffect(() => {
       <section id="faq" className="bg-[#1a1a1a] h-auto relative overflow-hidden">
 
         <PageWrapper className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 px-6">
-            <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 px-2 md:px-6">
+            <div className="space-y-4 md:space-y-6">
               <div className="flex flex-col">
-                <YummyText className="text-[#10b981] font-[400] text-sm mb-4 mt-12 md:mt-12 md:py-10">
+                <YummyText className="text-[#10b981] font-[400] text-xs md:text-sm mb-3 md:mb-4 mt-8 md:mt-12 md:py-10">
                   FAQs - Frequently asked questions
                 </YummyText>
-                <YummyText className="text-3xl md:text-4xl text-[#F9FAFB] font-medium leading-tight mb-4 md:-mt-14 md:mb-6">
+                <YummyText className="text-2xl md:text-4xl text-[#F9FAFB] font-medium leading-tight mb-3 md:-mt-14 md:mb-6">
                   Got questions?
                 </YummyText>
-                <YummyText className="text-sm text-[#F9FAFB] font-[300] mb-6 md:mb-18 md:-mt-6">
+                <YummyText className="text-xs md:text-sm text-[#F9FAFB] font-[300] mb-4 md:mb-18 md:-mt-6">
                   Here are a few things people always ask — and our <br className="hidden md:block" /> answers to them
                 </YummyText>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2 md:space-y-3 pb-8 md:pb-0">
                 {faqs.map((faq, index) => (
                   <div
                     key={index}
@@ -676,21 +676,21 @@ useEffect(() => {
                       onClick={() =>
                         setOpenIndex(openIndex === index ? null : index)
                       }
-                      className="w-full flex justify-between items-center px-5 py-3 text-left focus:outline-none hover:bg-[#222] transition-colors"
+                      className="w-full flex justify-between items-center px-4 md:px-5 py-3 md:py-3 text-left focus:outline-none hover:bg-[#222] transition-colors"
                     >
-                      <YummyText className="text-base font-[300] text-[#10b981]">
+                      <YummyText className="text-sm md:text-base font-[300] text-[#10b981] pr-2">
                         {faq.question}
                       </YummyText>
                       {openIndex === index ? (
-                        <ChevronUp className="text-[#10b981] w-5 h-5 flex-shrink-0 ml-4" />
+                        <ChevronUp className="text-[#10b981] w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
                       ) : (
-                        <ChevronDown className="text-[#10b981] w-5 h-5 flex-shrink-0 ml-4" />
+                        <ChevronDown className="text-[#10b981] w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
                       )}
                     </button>
 
                     {openIndex === index && (
-                      <div className="px-5 pb-4">
-                        <YummyText className="text-gray-400 text-sm font-[300] leading-relaxed">
+                      <div className="px-4 md:px-5 pb-3 md:pb-4">
+                        <YummyText className="text-gray-400 text-xs md:text-sm font-[300] leading-relaxed">
                           {faq.answer}
                         </YummyText>
                       </div>
@@ -700,14 +700,14 @@ useEffect(() => {
               </div>
             </div>
 
-            <div className="md:flex items-end justify-center">
-              <div className="sticky top-20">
+            <div className="flex items-center justify-center">
+              <div className="sticky md:sticky md:top-24 flex items-center justify-center w-full">
                 <Image
                   src="/deliverybike.svg"
                   alt="Delivery Bike"
                   width={520}
                   height={300}
-                  className="object-contain"
+                  className="object-contain w-70 mr-20 sm:w-72 md:w-[520px] mx-auto"
                 />
               </div>
             </div>
