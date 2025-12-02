@@ -129,7 +129,7 @@ export default function HowItWorks() {
         </div>
 
         {/* Glass overlay for deep green translucent effect */}
-        <div className="absolute inset-0 bg-[#02321496]/90"></div>
+        <div className="absolute inset-0 bg-green-800/95 mix-blend-multiply"></div>
 
         <PageWrapper>
           <div className="relative py-8 md:py-12 lg:py-8 text-center mt-20 text-white flex flex-col items-center justify-center">

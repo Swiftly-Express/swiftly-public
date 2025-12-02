@@ -236,6 +236,16 @@ export default function Services() {
                 <YummyText className="font-[300] text-sm">Get Started</YummyText>
               </Button>
             </div>
+            
+            <div className="block md:hidden !mt-10 sm:mt-6 md:mt-8 w-full flex justify-center">
+              <Image
+                src="/drone.svg"
+                alt="Drone Delivery"
+                width={220}
+                height={140}
+                className="w-56 sm:w-48 md:w-48 h-auto object-contain drop-shadow-lg"
+              />
+            </div>
           </div>
 
           {/* Right Image */}
@@ -251,7 +261,7 @@ export default function Services() {
         </section>
 
         <div className="relative w-full h-0">
-          <div className="absolute left-0 md:left-4 -top-12 md:-top-32 w-34 md:w-60 h-32 md:h-60 pointer-events-none z-10">
+          <div className="absolute -left-8 md:left-4 -top-24 md:-top-32 w-42 md:w-60 h-42 md:h-60 pointer-events-none z-10">
             <Image
               src="/cartonback.svg"
               alt="Carton Box"
@@ -272,7 +282,7 @@ export default function Services() {
             <YummyText className="text-2xl md:text-3xl font-sm text-[#111827] mb-3 md:mb-4">
               Our Services
             </YummyText>
-            <YummyText className="text-[#6B7280] text-sm md:text-base px-4 md:px-0 leading-relaxed">
+            <YummyText className="text-[#4A5565] font-[500] text-sm md:text-base px-4 md:px-0 leading-relaxed">
               Choose from our comprehensive range of delivery services designed to
               <br className="hidden md:block" /> meet your specific needs.
             </YummyText>
@@ -343,7 +353,6 @@ export default function Services() {
 
       {/* CTA Section - Full width */}
       <section className="relative w-full overflow-hidden mt-10">
-        {/* Background Image */}
         <div className="absolute inset-0">
           <Image
             src="/happylady.svg"
