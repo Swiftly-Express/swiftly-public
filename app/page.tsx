@@ -128,6 +128,52 @@ export default function SwiftlyLanding() {
     },
   ];
 
+
+  const testimonials = [
+    {
+      name: "Chinonso Eze",
+      location: "Lagos",
+      avatar: "/lockedhair.svg",
+      message:
+        "Swiftly saved my day! My client needed documents in less than an hour, and these guys showed up sharp-sharp. Very reliable!",
+    },
+    {
+      name: "Ngozi Eze",
+      location: "Abuja",
+      avatar: "/normalwig.svg",
+      message:
+        "Exceptional service! Delivery was smooth and the rider was very professional. Highly recommended!",
+    },
+    {
+      name: "Emmanuel Udoh",
+      location: "Uyo",
+      avatar: "/roundcuthair.svg",
+      message:
+        "Fast and secure! I've used them multiple times and they’ve never disappointed. Perfect for urgent tasks.",
+    },
+    {
+      name: "Adaeze Nwoko",
+      location: "PH",
+      avatar: "/afrowig.svg",
+      message:
+        "Great experience! They communicate well and deliver exactly on time. Will definitely use again.",
+    },
+  ];
+
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  // Auto-rotate every 5s
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const active = testimonials[activeIndex];
+
+
   const faqs: FAQ[] = [
     {
       question: "How fast can I get a delivery?",
@@ -597,35 +643,97 @@ useEffect(() => {
           </div>
 
           <div className="rounded-2xl text-center max-w-2xl mx-auto">
-            <YummyText className="text-lg sm:text-lg md:text-xl font-medium text-black leading-relaxed px-3">
-              Swiftly saved my day! My client <br className="sm:hidden"/> needed documents in less than an <br className="sm:hidden"/> hour, and these guys showed up <br className="sm:hidden"/> sharp-sharp. Very reliable!
+            <YummyText className="text-xl sm:text-lg md:text-xl font-medium text-black leading-relaxed px-3 transition-all duration-500">
+              {active.message}
             </YummyText>
 
             <div className="flex flex-col items-center mt-2">
-              <YummyText className="text-gray-700 text-base mb-1 mt-3">
-                Chinonso Eze,{" "}
-                <span className="text-[#10b981] font-medium">Lagos</span>
+              <YummyText className="text-gray-700 text-base mb-1 mt-3 transition-all duration-500">
+                {active.name},{" "}
+                <span className="text-[#10b981] font-medium">{active.location}</span>
               </YummyText>
 
               <HandDrawnSvg className="-mb-3 mr-0 -mt-2" />
 
-              {/* Avatar cluster - responsive sizes */}
-              <div className="flex items-center justify-center scale-75 sm:scale-90 md:scale-100">
-                <div className="w-11 h-11 mr-2 -mb-3 rounded-full bg-gray-300 mt-8 border-2 border-white overflow-hidden">
-                  <Image src="/lockedhair.svg" alt="Customer" width={44} height={44} className="w-full h-full object-cover" />
+              {/* Avatar cluster with concave positioning - responsive sizes */}
+              <div className="flex items-center justify-center mb-4 sm:mb-6 md:mb-8 scale-100 sm:scale-75 md:scale-90 lg:scale-100 relative">
+                {/* Small Avatar 1 - Top Left */}
+                <button
+                  onClick={() => setActiveIndex(0)}
+                  className={`w-14 h-14 sm:w-11 sm:h-11 mr-2 -mb-3 rounded-full mt-8 overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 ${
+                    activeIndex === 0 
+                      ? 'border-2 border-[#10b981] opacity-100' 
+                      : 'border-2 border-white opacity-30 hover:opacity-60'
+                  }`}
+                  aria-label={`View ${testimonials[0].name}'s testimonial`}
+                >
+                  <Image src={testimonials[0].avatar} alt={testimonials[0].name} width={56} height={56} className="w-full h-full object-cover" />
+                </button>
+
+                {/* Small Avatar 2 - Top Right */}
+                <button
+                  onClick={() => setActiveIndex(1)}
+                  className={`w-14 h-14 sm:w-11 sm:h-11 mt-40 sm:mt-6 md:mt-32 mb-5 -mr-3 rounded-full overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 ${
+                    activeIndex === 1 
+                      ? 'border-2 border-[#10b981] opacity-100' 
+                      : 'border-2 border-white opacity-30 hover:opacity-60'
+                  }`}
+                  aria-label={`View ${testimonials[1].name}'s testimonial`}
+                >
+                  <Image src={testimonials[1].avatar} alt={testimonials[1].name} width={56} height={56} className="w-full h-full object-cover" />
+                </button>
+
+                {/* Big Avatar Display - Center (active testimonial) */}
+                <div className="w-[95px] h-[95px] sm:w-[75px] sm:h-[75px] rounded-full bg-purple-200 border-2 border-[#10b981] overflow-hidden relative -ml-5 -mt-12 -mb-5 z-10 transition-all duration-500">
+                  <Image 
+                    src={active.avatar} 
+                    alt={active.name} 
+                    width={95} 
+                    height={95} 
+                    className="w-full h-full object-cover transition-opacity duration-500" 
+                  />
                 </div>
-                <div className="w-11 h-11 mt-28 mb-3 -mr-4 rounded-full bg-gray-400 border-2 border-white overflow-hidden opacity-30">
-                  <Image src="/normalwig.svg" alt="Customer" width={44} height={44} className="w-full h-full object-cover" />
-                </div>
-                <div className="w-[75px] h-[75px] rounded-full bg-purple-200 border-2 border-[#10b981] overflow-hidden relative -ml-5 -mt-12 -mb-5 z-10">
-                  <Image src="/lockedhair.svg" alt="Chinonso Eze" width={75} height={75} className="w-full h-full object-cover" />
-                </div>
-                <div className="w-11 h-11 rounded-full bg-gray-200 mt-[52%] -ml-8 border-2 border-white overflow-hidden opacity-30 -ml-1">
-                  <Image src="/roundcuthair.svg" alt="Customer" width={44} height={44} className="w-full h-full object-cover" />
-                </div>
-                <div className="w-11 h-11 rounded-full bg-gray-500 border-2 border-white overflow-hidden opacity-30 ml-1.5 mt-9">
-                  <Image src="/afrowig.svg" alt="Customer" width={44} height={44} className="w-full h-full object-cover" />
-                </div>
+
+                {/* Small Avatar 3 - Bottom Left */}
+                <button
+                  onClick={() => setActiveIndex(2)}
+                  className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full mt-[52%] -ml-8 overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 -ml-1 ${
+                    activeIndex === 2 
+                      ? 'border-2 border-[#10b981] opacity-100' 
+                      : 'border-2 border-white opacity-30 hover:opacity-60'
+                  }`}
+                  aria-label={`View ${testimonials[2].name}'s testimonial`}
+                >
+                  <Image src={testimonials[2].avatar} alt={testimonials[2].name} width={56} height={56} className="w-full h-full object-cover" />
+                </button>
+
+                {/* Small Avatar 4 - last Right */}
+                <button
+                  onClick={() => setActiveIndex(3)}
+                  className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full overflow-hidden ml-1.5 mt-9 transition-all duration-500 cursor-pointer hover:scale-110 ${
+                    activeIndex === 3 
+                      ? 'border-2 border-[#10b981] opacity-100' 
+                      : 'border-2 border-white opacity-30 hover:opacity-60'
+                  }`}
+                  aria-label={`View ${testimonials[3].name}'s testimonial`}
+                >
+                  <Image src={testimonials[3].avatar} alt={testimonials[3].name} width={56} height={56} className="w-full h-full object-cover" />
+                </button>
+
+                {/* Small Avatar 5 - If exists */}
+                {testimonials[4] && (
+                  <button
+                    onClick={() => setActiveIndex(4)}
+                    className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full overflow-hidden ml-1.5 mt-9 transition-all duration-500 cursor-pointer hover:scale-110 ${
+                      activeIndex === 4 
+                        ? 'border-2 border-[#10b981] opacity-100' 
+                        : 'border-2 border-white opacity-30 hover:opacity-60'
+                    }`}
+                    aria-label={`View ${testimonials[4].name}'s testimonial`}
+                  >
+                    <Image src={testimonials[4].avatar} alt={testimonials[4].name} width={56} height={56} className="w-full h-full object-cover" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
