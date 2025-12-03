@@ -4,6 +4,20 @@ const nextConfig = {
   experimental: {
     appDir: true
   },
+  // Expose base URL to client-side via NEXT_PUBLIC_BASE_URL
+  env: {
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'https://swiftlyxpress.com',
+  },
+  // Simple redirect so `/search` on this app forwards users to the public site search
+  async redirects() {
+    return [
+      {
+        source: '/search',
+        destination: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://swiftlyxpress.com'}/search`,
+        permanent: false,
+      },
+    ];
+  },
   images: {
     // Allow SVG files to be used with next/image
     dangerouslyAllowSVG: true,
