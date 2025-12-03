@@ -190,8 +190,7 @@ export default function Services() {
               variant="primary"
               className="px-4 py-3 !bg-[#00B75A] text-medium rounded-full font-[300] text-[10px]"
               onClick={() => {
-                const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
-                window.location.href = `${dashboardUrl}/auth/customer/signup`;
+                window.location.href = 'https://dashboard.swiftlyxpress.com/auth/register';
               }}
             >
               <YummyText>Book a delivery</YummyText>
@@ -200,8 +199,7 @@ export default function Services() {
               variant="dark"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
               onClick={() => {
-                const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
-                window.location.href = `${dashboardUrl}/auth/role-select`;
+                window.location.href = 'https://dashboard.swiftlyxpress.com/auth/role-select';
               }}
             >
               <YummyText>Get Started</YummyText>
@@ -229,8 +227,7 @@ export default function Services() {
                 variant="primary"
                 className="!px-6 md:!px-4 !py-3 !bg-[#00B75A] shadow-sm rounded-full hover:shadow-md transition-all duration-300"
                 onClick={() => {
-                  const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL;
-                  window.location.href = `${dashboardUrl}/auth/role-select`;
+                  window.location.href = 'https://dashboard.swiftlyxpress.com/auth/role-select';
                 }}
               >
                 <YummyText className="font-[300] text-sm">Get Started</YummyText>
