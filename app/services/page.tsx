@@ -361,7 +361,7 @@ export default function Services() {
             className="object-cover"
             unoptimized
           />
-          <div className="absolute inset-0 bg-green-800/90 mix-blend-multiply"></div>
+          <div className="absolute inset-0 bg-green-800/95 mix-blend-multiply"></div>
         </div>
 
         {/* Centered Content */}
