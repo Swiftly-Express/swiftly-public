@@ -1,0 +1,10 @@
+# Robots.txt for Swiftly Express
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://swiftlyxpress.com/sitemap.xml
+
+# Disallow admin/auth routes if any
+Disallow: /api/
+Disallow: /_next/

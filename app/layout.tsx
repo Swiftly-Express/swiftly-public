@@ -3,8 +3,61 @@ import React from 'react'
 import Layout from '../components/Layout'
 
 export const metadata = {
-  title: 'Swiftly Express',
-  description: 'Swiftly Express public site',
+  metadataBase: new URL('https://swiftlyxpress.com'),
+  title: {
+    default: 'Swiftly Express - Fast, Reliable Delivery Services',
+    template: '%s | Swiftly Express'
+  },
+  description: 'Swiftly Express offers same-day delivery, next-day shipping, and international courier services. Track your packages in real-time with our reliable delivery solutions.',
+  keywords: ['delivery service', 'courier', 'same-day delivery', 'package tracking', 'shipping', 'express delivery', 'international shipping', 'logistics'],
+  authors: [{ name: 'Swiftly Express' }],
+  creator: 'Swiftly Express',
+  publisher: 'Swiftly Express',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: 'Swiftly Express - Fast, Reliable Delivery Services',
+    description: 'Same-day delivery, next-day shipping, and international courier services. Track your packages in real-time.',
+    url: 'https://swiftlyxpress.com',
+    siteName: 'Swiftly Express',
+    images: [
+      {
+        url: 'https://swiftlyxpress.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Swiftly Express Delivery Services',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Swiftly Express - Fast, Reliable Delivery Services',
+    description: 'Same-day delivery, next-day shipping, and international courier services.',
+    images: ['https://swiftlyxpress.com/og-image.png'],
+    creator: '@swiftlyexpress',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    // Add your verification codes here when available
+    // google: 'your-google-verification-code',
+    // yandex: 'your-yandex-verification-code',
+    // bing: 'your-bing-verification-code',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

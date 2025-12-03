@@ -14,7 +14,7 @@ const nextConfig = {
       {
         source: '/search',
         destination: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://swiftlyxpress.com'}/search`,
-        permanent: false,
+        permanent: true,
       },
     ];
   },
