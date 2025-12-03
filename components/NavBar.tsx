@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 
 type NavBarProps = {
@@ -10,18 +10,30 @@ type NavBarProps = {
 
 const PUBLIC_BASE = process.env.NEXT_PUBLIC_BASE_URL || ''
 
-const LINKS: { href: string; label: string }[] = [
+const LINKS_LOCAL: { href: string; label: string }[] = [
   { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
   { href: '/howitworks', label: 'How It Works' },
   { href: '/smartride', label: 'Smart Ride' },
   { href: '/contact', label: 'Contact' },
-  // Public search should open the hosted public site search
-  { href: `${PUBLIC_BASE}/search`, label: 'Search' },
+]
+
+const LINKS_PUBLIC: { href: string; label: string }[] = [
+  { href: '/', label: 'Home' },
+  { href: '/services', label: 'Services' },
+  { href: '/howitworks', label: 'How It Works' },
+  { href: '/smartride', label: 'Smart Ride' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/search', label: 'Search' },
 ]
 
 export default function NavBar({ className = '' }: NavBarProps) {
   const pathname = usePathname() || '/'
+  const [origin, setOrigin] = useState('')
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') setOrigin(window.location.origin)
+  }, [])
 
   const isActive = (path: string) => {
     if (path === '/') return pathname === '/'
@@ -33,16 +45,37 @@ export default function NavBar({ className = '' }: NavBarProps) {
       <div className="flex items-center gap-4">
         
         <div className="hidden md:flex items-center gap-6">
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`${isActive(l.href) ? 'text-[#00B75A]' : 'text-gray-700'} font-sm text-sm hover:text-[#059669] transition-colors`}
-              aria-current={isActive(l.href) ? 'page' : undefined}
-            >
-              {l.label}
-            </Link>
-          ))}
+          {(origin && PUBLIC_BASE && origin !== PUBLIC_BASE
+            ? LINKS_PUBLIC.map((l) => ({ href: `${PUBLIC_BASE}${l.href}`, label: l.label }))
+            : LINKS_LOCAL
+          ).map((l) => {
+            const rawHref = l.href
+            const key = rawHref
+            // If href is absolute (starts with http) render anchor, else use Next Link
+            const isExternal = rawHref.startsWith('http')
+            if (isExternal) {
+              return (
+                <a
+                  key={key}
+                  href={rawHref}
+                  className={`${isActive(rawHref.replace(PUBLIC_BASE, '') ) ? 'text-[#00B75A]' : 'text-gray-700'} font-sm text-sm hover:text-[#059669] transition-colors`}
+                >
+                  {l.label}
+                </a>
+              )
+            }
+
+            return (
+              <Link
+                key={key}
+                href={rawHref}
+                className={`${isActive(rawHref) ? 'text-[#00B75A]' : 'text-gray-700'} font-sm text-sm hover:text-[#059669] transition-colors`}
+                aria-current={isActive(rawHref) ? 'page' : undefined}
+              >
+                {l.label}
+              </Link>
+            )
+          })}
         </div>
       </div>
 
