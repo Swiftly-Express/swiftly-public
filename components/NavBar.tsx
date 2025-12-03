@@ -8,12 +8,16 @@ type NavBarProps = {
   className?: string
 }
 
+const PUBLIC_BASE = process.env.NEXT_PUBLIC_BASE_URL || ''
+
 const LINKS: { href: string; label: string }[] = [
   { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
   { href: '/howitworks', label: 'How It Works' },
   { href: '/smartride', label: 'Smart Ride' },
   { href: '/contact', label: 'Contact' },
+  // Public search should open the hosted public site search
+  { href: `${PUBLIC_BASE}/search`, label: 'Search' },
 ]
 
 export default function NavBar({ className = '' }: NavBarProps) {
