@@ -190,7 +190,7 @@ export default function Services() {
               variant="primary"
               className="px-4 py-3 !bg-[#00B75A] text-medium rounded-full font-[300] text-[10px]"
               onClick={() => {
-                window.location.href = 'https://dashboard.swiftlyxpress.com/auth/register';
+                window.location.href = 'https://dashboard.swiftlyxpress.com/auth/customer/signup';
               }}
             >
               <YummyText>Book a delivery</YummyText>
