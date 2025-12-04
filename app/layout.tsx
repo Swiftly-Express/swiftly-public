@@ -6,29 +6,29 @@ export const metadata = {
   metadataBase: new URL('https://swiftlyxpress.com'),
   title: {
     default: 'Swiftly Express - Fast, Reliable Delivery Services',
-    template: '%s | Swiftly Express'
+    template: '%s | Swiftly Xpress'
   },
-  description: 'Swiftly Express offers same-day delivery, next-day shipping, and international courier services. Track your packages in real-time with our reliable delivery solutions.',
+  description: 'Swiftly Xpress offers same-day delivery, next-day shipping, and international courier services. Track your packages in real-time with our reliable delivery solutions.',
   keywords: ['delivery service', 'courier', 'same-day delivery', 'package tracking', 'shipping', 'express delivery', 'international shipping', 'logistics'],
-  authors: [{ name: 'Swiftly Express' }],
-  creator: 'Swiftly Express',
-  publisher: 'Swiftly Express',
+  authors: [{ name: 'Swiftly Xpress' }],
+  creator: 'Swiftly Xpress',
+  publisher: 'Swiftly Xpress',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
   openGraph: {
-    title: 'Swiftly Express - Fast, Reliable Delivery Services',
+    title: 'Swiftly Xpress - Fast, Reliable Delivery Services',
     description: 'Same-day delivery, next-day shipping, and international courier services. Track your packages in real-time.',
     url: 'https://swiftlyxpress.com',
-    siteName: 'Swiftly Express',
+    siteName: 'Swiftly Xpress',
     images: [
       {
         url: 'https://swiftlyxpress.com/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Swiftly Express Delivery Services',
+        alt: 'Swiftly Xpress Delivery Services',
       },
     ],
     locale: 'en_US',
@@ -36,10 +36,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Swiftly Express - Fast, Reliable Delivery Services',
+    title: 'Swiftly Xpress - Fast, Reliable Delivery Services',
     description: 'Same-day delivery, next-day shipping, and international courier services.',
     images: ['https://swiftlyxpress.com/og-image.png'],
-    creator: '@swiftlyexpress',
+    creator: '@swiftlyxpress',
   },
   robots: {
     index: true,
