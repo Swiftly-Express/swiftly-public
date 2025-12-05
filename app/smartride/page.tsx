@@ -200,36 +200,84 @@ export default function SmartRide() {
       </div>
 
       {/* Hero Section */}
-      <div className="relative w-full bg-[#00B75A] py-12 md:py-18 lg:py-12 overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 opacity-20">
-            <Image 
-              src="/despatch-rider.svg" 
-              alt="Background Pattern" 
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </div>
-        </div>
-
+      <div className="relative w-full bg-white py-16 md:py-24 lg:py-20 overflow-hidden">
         <PageWrapper>
-          <div className="relative text-center text-white py-6 md:py-8 lg:py-6">
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <Image src="/toybike.svg" alt="Motorcycle Icon" width={40} height={40} />
-              <YummyText className="text-medium font-[300] uppercase tracking-wider">
-                SMART RIDES
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div className="relative text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-[#00B75A] rounded-full mb-6">
+                <YummyText className="text-xs font-[400] text-[#00B75A] uppercase tracking-wider">
+                  SMART RIDES - Same day Delivery
+                </YummyText>
+              </div>
+              
+              <YummyText className="text-5xl md:text-6xl font-[400] text-gray-900 mb-6 leading-tight">
+                Lightning-Fast Delivery on<br />Two Wheels
               </YummyText>
+              
+              <YummyText className="text-base font-[300] text-gray-600 mb-8 leading-relaxed max-w-xl">
+                Skip the traffic and beat the clock with our Same-Day Smart Rides. Our motorcycles and scooters weave through the city with speed and precision, ensuring your packages arrive today — and on time.
+              </YummyText>
+
+              <Button
+                variant="primary"
+                className="px-8 py-4 !bg-[#00B75A] text-base rounded-full font-[400] hover:!bg-[#00a352]"
+                onClick={() => {
+                  window.location.href = 'https://dashboard.swiftlyxpress.com/auth/customer/signup';
+                }}
+              >
+                <YummyText>Send A Package Now</YummyText>
+              </Button>
             </div>
-            
-            <YummyText className="text-5xl font-[300] !mb-4">
-              Lightning-Fast Delivery on<br />Two Wheels
-            </YummyText>
-            
-            <YummyText className="text-base font-[200] justify-center opacity-90 flex max-w-4xl mx-auto mt-2">
-              Skip the traffic with our Smart Rides service. Motorcycles and scooters that zip through the city,<br />
-              delivering your packages in record time.
-            </YummyText>
+
+            {/* Right Content - Phone Mockup with Testimonials */}
+            <div className="relative flex justify-center items-center min-h-[600px]">
+              {/* Large Green Circle Background */}
+              <div className="absolute w-[500px] h-[500px] bg-[#00B75A] rounded-full"></div>
+              
+              {/* Phone Mockup */}
+              <div className="relative z-10">
+                <div className="w-[280px] h-[560px] bg-gray-900 rounded-[40px] shadow-2xl overflow-hidden border-8 border-gray-800">
+                  <div className="w-full h-full bg-gray-800"></div>
+                </div>
+              </div>
+
+              {/* Floating Testimonials */}
+              {/* Top Right Testimonial */}
+              <div className="absolute top-0 right-0 bg-white rounded-2xl shadow-lg p-4 max-w-[240px] z-20">
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex-shrink-0"></div>
+                  <div>
+                    <YummyText className="font-[600] text-sm text-gray-900 mb-1">
+                      Imabong Essien
+                    </YummyText>
+                    <YummyText className="text-xs text-gray-600 leading-relaxed">
+                      My package arrived faster than I expected. Super reliable service!
+                    </YummyText>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Left Testimonial */}
+              <div className="absolute bottom-8 left-0 bg-white rounded-2xl shadow-lg p-4 max-w-[240px] z-20">
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-teal-400 flex-shrink-0"></div>
+                  <div>
+                    <YummyText className="font-[600] text-sm text-gray-900 mb-1">
+                      Suleiman Musa
+                    </YummyText>
+                    <YummyText className="text-xs text-gray-600 leading-relaxed">
+                      Every time I use them, delivery is unbelievably quick.
+                    </YummyText>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Avatar Circles */}
+              <div className="absolute top-32 left-8 w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 border-4 border-white shadow-lg z-20"></div>
+              <div className="absolute top-48 right-12 w-14 h-14 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 border-4 border-white shadow-lg z-20"></div>
+              <div className="absolute bottom-32 right-4 w-16 h-16 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 border-4 border-white shadow-lg z-20"></div>
+            </div>
           </div>
         </PageWrapper>
       </div>
