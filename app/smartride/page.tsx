@@ -212,11 +212,14 @@ export default function SmartRide() {
 
           {/* LEFT SIDE TEXT */}
           <div className="space-y-6">
-            <YummyText className="px-4 py-1.5 bg-green-200 text-green-700 rounded-full text-xs font-medium">
-              SMART RIDES Same-day Delivery
-            </YummyText>
+            {/* Trust-style badge (no avatars) */}
+            <div className="inline-flex items-center gap-2 bg-[#D8FFEB] border border-dashed border-[#00B75A] rounded-full px-3 py-1.5 z-10 mt-0 mb-0">
+              <YummyText className="text-[#059669] text-[9px] font-medium whitespace-nowrap">
+                SMART RIDES - Same day Delivery
+              </YummyText>
+            </div>
 
-            <YummyText className="text-4xl md:text-[46px] font-bold leading-tight text-black">
+            <YummyText className="text-4xl md:text-4xl font-[300] leading-tight text-black">
               Lightning-Fast Delivery on <br /> Two Wheels
             </YummyText>
 
@@ -226,7 +229,7 @@ export default function SmartRide() {
               ensuring your packages arrive today — and on time.
             </YummyText>
 
-            <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-sm px-5 py-3 rounded-full transition-all">
+            <button className="flex items-center gap-2 bg-[#00B75A] hover:bg-green-600 text-white text-xs px-5 py-3 rounded-full transition-all">
               Send A Package Now
             </button>
           </div>
@@ -320,11 +323,12 @@ export default function SmartRide() {
 
             {/* ⭐ MOBILE VERSION (cluster tight, smaller) */}
             <div className="flex lg:hidden gap-3 absolute bottom-[-50px]">
-              <Image src="/avatar1.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
-              <Image src="/avatar2.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
-              <Image src="/avatar3.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
-              <Image src="/avatar4.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+              <Image src="/roundcuthair.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+              <Image src="/normalwig.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+              <Image src="/lockedhair.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+              <Image src="/afrowig.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
               <Image src="/avatar5.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+              <Image src="/avatar6.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
             </div>
 
           </div>
