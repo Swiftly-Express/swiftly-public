@@ -279,24 +279,27 @@ export default function SmartRide() {
                     id: 0,
                     src: '/lockedhair.svg',
                     alt: 'Reviewer 1',
-                    pos: 'absolute hidden lg:block left-[40%] top-[-6%]',
-                    popup: 'absolute -top-20 left-1/2 -translate-x-1/2',
+                    pos: 'absolute hidden lg:block left-[45%] top-[-6%]',
+                    side: 'left',
+                    popup: 'absolute top-0 left-full ml-3',
                     review: '"Incredible speed — my package arrived within 15 minutes. Highly recommend Smart Ride!"'
                   },
                   {
                     id: 1,
                     src: '/afrowig.svg',
                     alt: 'Reviewer 2',
-                    pos: 'absolute hidden lg:block left-[8%] top-[24%]',
-                    popup: 'absolute left-full top-0 ml-3',
+                    pos: 'absolute hidden lg:block left-[11%] top-[24%]',
+                    side: 'left',
+                    popup: 'absolute top-0 left-full ml-3',
                     review: '"Fantastic service. The rider was professional and my delivery was flawless."'
                   },
                   {
                     id: 2,
                     src: '/roundcuthair.svg',
                     alt: 'Reviewer 3',
-                    pos: 'absolute hidden lg:block right-8 top-[48%]',
-                    popup: 'absolute -right-64 top-0 w-56',
+                    pos: 'absolute hidden lg:block right-12 top-[48%]',
+                    side: 'right',
+                    popup: 'absolute top-0 right-full mr-3',
                     review: '"Quick, reliable, and convenient. Smart Ride saved my day."'
                   },
                   {
@@ -304,7 +307,8 @@ export default function SmartRide() {
                     src: '/normalwig.svg',
                     alt: 'Reviewer 4',
                     pos: 'absolute hidden lg:block right-[12%] bottom-[-3%]',
-                    popup: 'absolute -right-48 -bottom-24 w-56',
+                    side: 'right',
+                    popup: 'absolute bottom-0 right-full mr-3',
                     review: '"Excellent communication from pickup to delivery — no surprises."'
                   },
                   {
@@ -312,7 +316,8 @@ export default function SmartRide() {
                     src: '/blackchic.svg',
                     alt: 'Reviewer 5',
                     pos: 'absolute hidden lg:block left-[12%] bottom-[-3%]',
-                    popup: 'absolute -left-48 -bottom-24 w-56',
+                    side: 'left',
+                    popup: 'absolute bottom-0 left-full ml-3',
                     review: '"Affordable and fast. I use Smart Ride for urgent errands."'
                   },
                   {
@@ -321,31 +326,38 @@ export default function SmartRide() {
                     alt: 'Reviewer 6',
                     // position this avatar near the left edge of the delivery bike
                     pos: 'absolute hidden lg:block left-[34%] z-20 top-[40%] -translate-y-1/2',
-                    popup: 'absolute -left-64 top-0 w-56',
+                    side: 'left',
+                    popup: 'absolute top-0 left-full ml-3',
                     review: '"Seamless experience from booking to delivery — great app!"'
                   }
                 ];
 
                 return avatars.map((a, i) => (
                   <div key={a.id} className={a.pos}>
-                    {selectedAvatar !== a.id && (
-                      <button
-                        onClick={() => setSelectedAvatar(prev => prev === a.id ? null : a.id)}
-                        className="w-16 h-16 rounded-full border-[2px] border-[#00B75A] bg-sky-500 overflow-hidden focus:outline-none cursor-pointer flex items-center justify-center"
-                        data-index={i}
-                        aria-label={`Open review ${i + 1}`}
-                      >
-                        <Image src={a.src} alt={a.alt} width={65} height={65} className="rounded-full" />
-                      </button>
-                    )}
+                    {/* avatar button always remains in place */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedAvatar(prev => prev === a.id ? null : a.id);
+                      }}
+                      className="w-12 h-12 rounded-full border-2 border-[#00B75A] bg-sky-200 overflow-hidden focus:outline-none cursor-pointer flex items-center justify-center"
+                      data-index={i}
+                      aria-label={`Open review ${i + 1}`}
+                    >
+                      <Image src={a.src} alt={a.alt} width={40} height={40} className="rounded-full" />
+                    </button>
 
+                    {/* popup: stays absolutely positioned beside the avatar; does not move the avatar */}
                     {selectedAvatar === a.id && (
                       <div className={`${a.popup} z-50`}>
-                        <div className="bg-white text-sm text-gray-800 p-3 rounded-lg shadow-lg max-w-xs flex items-start gap-3 cursor-pointer" onClick={() => setSelectedAvatar(null)}>
+                        <div
+                          className={`bg-white text-sm text-gray-800 p-3 rounded-lg shadow-lg w-64 max-w-xs max-h-40 overflow-auto flex items-start gap-3 cursor-pointer`}
+                          onClick={() => setSelectedAvatar(null)}
+                        >
                           <div className="w-10 h-10 flex-shrink-0 bg-sky-200 rounded-full overflow-hidden border-2 border-[#00B75A] flex items-center justify-center">
-                              <Image src={a.src} alt={a.alt} width={30} height={30} className="rounded-full" />
-                            </div>
-                          <div>
+                            <Image src={a.src} alt={a.alt} width={36} height={36} className="rounded-full" />
+                          </div>
+                          <div className="w-full">
                             <div className="text-xs text-gray-500 mb-1">Customer Review</div>
                             <div className="text-sm">{a.review}</div>
                           </div>
@@ -377,10 +389,10 @@ export default function SmartRide() {
                 <Image src="/afrowig.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
               </div>
               <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
-                <Image src="/avatar5.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
+                <Image src="/blackchic.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
               </div>
               <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
-                <Image src="/avatar6.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
+                <Image src="/lightcolorwig.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
               </div>
             </div>
 
