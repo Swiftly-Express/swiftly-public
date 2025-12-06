@@ -1,6 +1,6 @@
-'use client';
+ 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Footer from '../../components/Footer';
 import NavBar from '../../components/NavBar';
@@ -35,7 +35,8 @@ const Button: React.FC<{
       {children}
     </button>
   );
-};
+
+}
 
 const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
   children, 
@@ -96,6 +97,8 @@ const StepCard: React.FC<StepCardProps> = ({ number, title, description }) => (
 
 // Main SmartRide Component
 export default function SmartRide() {
+
+  const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
 
   const features = [
     {
@@ -266,69 +269,119 @@ export default function SmartRide() {
 
             </div>
 
-            {/* Right bubble (Desktop)*/}
-            <div className="absolute hidden lg:block right-0 top-[38%]">
-              <Image
-                src="/avatar4.svg"
-                alt="testimonial"
-                width={65}
-                height={65}
-                className="rounded-full border-[3px] border-white"
-              />
-            </div>
+            {/* Avatar bubbles (desktop) - clickable to reveal reviews */}
+            {/* We'll render these from a local array so each has a popup position and review content */}
+            {/** Desktop avatars **/}
+            {
+              (() => {
+                const avatars = [
+                  {
+                    id: 0,
+                    src: '/lockedhair.svg',
+                    alt: 'Reviewer 1',
+                    pos: 'absolute hidden lg:block left-[40%] top-[-6%]',
+                    popup: 'absolute -top-20 left-1/2 -translate-x-1/2',
+                    review: '"Incredible speed — my package arrived within 15 minutes. Highly recommend Smart Ride!"'
+                  },
+                  {
+                    id: 1,
+                    src: '/afrowig.svg',
+                    alt: 'Reviewer 2',
+                    pos: 'absolute hidden lg:block left-[8%] top-[24%]',
+                    popup: 'absolute left-full top-0 ml-3',
+                    review: '"Fantastic service. The rider was professional and my delivery was flawless."'
+                  },
+                  {
+                    id: 2,
+                    src: '/roundcuthair.svg',
+                    alt: 'Reviewer 3',
+                    pos: 'absolute hidden lg:block right-8 top-[48%]',
+                    popup: 'absolute -right-64 top-0 w-56',
+                    review: '"Quick, reliable, and convenient. Smart Ride saved my day."'
+                  },
+                  {
+                    id: 3,
+                    src: '/normalwig.svg',
+                    alt: 'Reviewer 4',
+                    pos: 'absolute hidden lg:block right-[12%] bottom-[-3%]',
+                    popup: 'absolute -right-48 -bottom-24 w-56',
+                    review: '"Excellent communication from pickup to delivery — no surprises."'
+                  },
+                  {
+                    id: 4,
+                    src: '/blackchic.svg',
+                    alt: 'Reviewer 5',
+                    pos: 'absolute hidden lg:block left-[12%] bottom-[-3%]',
+                    popup: 'absolute -left-48 -bottom-24 w-56',
+                    review: '"Affordable and fast. I use Smart Ride for urgent errands."'
+                  },
+                  {
+                    id: 5,
+                    src: '/lightcolorwig.svg',
+                    alt: 'Reviewer 6',
+                    // position this avatar near the left edge of the delivery bike
+                    pos: 'absolute hidden lg:block left-[34%] z-20 top-[40%] -translate-y-1/2',
+                    popup: 'absolute -left-64 top-0 w-56',
+                    review: '"Seamless experience from booking to delivery — great app!"'
+                  }
+                ];
 
-            {/* Bottom left bubble */}
-            <div className="absolute hidden lg:block left-[12%] bottom-[8%]">
-              <Image
-                src="/avatar3.svg"
-                alt="testimonial"
-                width={65}
-                height={65}
-                className="rounded-full border-[3px] border-white"
-              />
-            </div>
+                return avatars.map((a, i) => (
+                  <div key={a.id} className={a.pos}>
+                    {selectedAvatar !== a.id && (
+                      <button
+                        onClick={() => setSelectedAvatar(prev => prev === a.id ? null : a.id)}
+                        className="w-16 h-16 rounded-full border-[2px] border-[#00B75A] bg-sky-500 overflow-hidden focus:outline-none cursor-pointer flex items-center justify-center"
+                        data-index={i}
+                        aria-label={`Open review ${i + 1}`}
+                      >
+                        <Image src={a.src} alt={a.alt} width={65} height={65} className="rounded-full" />
+                      </button>
+                    )}
 
-            {/* Top bubble */}
-            <div className="absolute hidden lg:block left-[25%] top-[-6%]">
-              <Image
-                src="/avatar1.svg"
-                alt="testimonial"
-                width={65}
-                height={65}
-                className="rounded-full border-[3px] border-white"
-              />
-            </div>
+                    {selectedAvatar === a.id && (
+                      <div className={`${a.popup} z-50`}>
+                        <div className="bg-white text-sm text-gray-800 p-3 rounded-lg shadow-lg max-w-xs flex items-start gap-3 cursor-pointer" onClick={() => setSelectedAvatar(null)}>
+                          <div className="w-10 h-10 flex-shrink-0 bg-sky-200 rounded-full overflow-hidden border-2 border-[#00B75A] flex items-center justify-center">
+                              <Image src={a.src} alt={a.alt} width={30} height={30} className="rounded-full" />
+                            </div>
+                          <div>
+                            <div className="text-xs text-gray-500 mb-1">Customer Review</div>
+                            <div className="text-sm">{a.review}</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ));
+              })()
+            }
 
-            {/* Mid left bubble */}
-            <div className="absolute hidden lg:block left-[-10%] top-[42%]">
-              <Image
-                src="/avatar2.svg"
-                alt="testimonial"
-                width={65}
-                height={65}
-                className="rounded-full border-[3px] border-white"
-              />
-            </div>
-
-            {/* Bottom right bubble */}
-            <div className="absolute hidden lg:block right-[12%] bottom-[-3%]">
-              <Image
-                src="/avatar5.svg"
-                alt="testimonial"
-                width={65}
-                height={65}
-                className="rounded-full border-[3px] border-white"
-              />
-            </div>
+            {/* overlay to close popups when clicking anywhere (covers cluster area) */}
+            {selectedAvatar !== null && (
+              <div className="absolute inset-0 z-40" onClick={() => setSelectedAvatar(null)} />
+            )}
 
             {/* ⭐ MOBILE VERSION (cluster tight, smaller) */}
             <div className="flex lg:hidden gap-3 absolute bottom-[-50px]">
-              <Image src="/roundcuthair.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
-              <Image src="/normalwig.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
-              <Image src="/lockedhair.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
-              <Image src="/afrowig.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
-              <Image src="/avatar5.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
-              <Image src="/avatar6.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+              <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
+                <Image src="/roundcuthair.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
+              </div>
+              <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
+                <Image src="/normalwig.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
+              </div>
+              <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
+                <Image src="/lockedhair.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
+              </div>
+              <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
+                <Image src="/afrowig.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
+              </div>
+              <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
+                <Image src="/avatar5.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
+              </div>
+              <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
+                <Image src="/avatar6.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
+              </div>
             </div>
 
           </div>
