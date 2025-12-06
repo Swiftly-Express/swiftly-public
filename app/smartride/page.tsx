@@ -212,7 +212,7 @@ export default function SmartRide() {
 
           {/* LEFT SIDE TEXT */}
           <div className="space-y-6">
-            {/* Trust-style badge (no avatars) */}
+            {/* text badge */}
             <div className="inline-flex items-center gap-2 bg-[#D8FFEB] border border-dashed border-[#00B75A] rounded-full px-3 py-1.5 z-10 mt-0 mb-0">
               <YummyText className="text-[#059669] text-[9px] font-medium whitespace-nowrap">
                 SMART RIDES - Same day Delivery
