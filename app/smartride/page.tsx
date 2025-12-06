@@ -179,6 +179,10 @@ export default function SmartRide() {
               variant="primary"
               className="px-4 py-3 !bg-[#00B75A] text-medium rounded-full font-[300] text-[10px]"
               onClick={() => {
+                if (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || process.env.NODE_ENV !== 'production')) {
+                  window.location.href = '/';
+                  return;
+                }
                 window.location.href = 'https://dashboard.swiftlyxpress.com/auth/customer/signup';
               }}
             >
@@ -189,6 +193,10 @@ export default function SmartRide() {
               variant="dark"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
               onClick={() => {
+                if (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || process.env.NODE_ENV !== 'production')) {
+                  window.location.href = '/';
+                  return;
+                }
                 window.location.href = 'https://dashboard.swiftlyxpress.com/auth/role-select';
               }}
             >
@@ -199,88 +207,130 @@ export default function SmartRide() {
         </PageWrapper>
       </div>
 
-      {/* Hero Section */}
-      <div className="relative w-full bg-white py-16 md:py-24 lg:py-20 overflow-hidden">
-        <PageWrapper>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="relative text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 border-2 border-[#00B75A] rounded-full mb-6">
-                <YummyText className="text-xs font-[400] text-[#00B75A] uppercase tracking-wider">
-                  SMART RIDES - Same day Delivery
-                </YummyText>
-              </div>
-              
-              <YummyText className="text-5xl md:text-6xl font-[400] text-gray-900 mb-6 leading-tight">
-                Lightning-Fast Delivery on<br />Two Wheels
-              </YummyText>
-              
-              <YummyText className="text-base font-[300] text-gray-600 mb-8 leading-relaxed max-w-xl">
-                Skip the traffic and beat the clock with our Same-Day Smart Rides. Our motorcycles and scooters weave through the city with speed and precision, ensuring your packages arrive today — and on time.
-              </YummyText>
+      <PageWrapper className="relative w-full overflow-hidden">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0 items-center max-w-6xl mx-auto px-6 md:px-10 py-14">
 
-              <Button
-                variant="primary"
-                className="px-8 py-4 !bg-[#00B75A] text-base rounded-full font-[400] hover:!bg-[#00a352]"
-                onClick={() => {
-                  window.location.href = 'https://dashboard.swiftlyxpress.com/auth/customer/signup';
-                }}
-              >
-                <YummyText>Send A Package Now</YummyText>
-              </Button>
-            </div>
+          {/* LEFT SIDE TEXT */}
+          <div className="space-y-6">
+            <YummyText className="px-4 py-1.5 bg-green-200 text-green-700 rounded-full text-xs font-medium">
+              SMART RIDES Same-day Delivery
+            </YummyText>
 
-            {/* Right Content - Phone Mockup with Testimonials */}
-            <div className="relative flex justify-center items-center min-h-[600px]">
-              {/* Large Green Circle Background */}
-              <div className="absolute w-[500px] h-[500px] bg-[#00B75A] rounded-full"></div>
-              
-              {/* Phone Mockup */}
-              <div className="relative z-10">
-                <div className="w-[280px] h-[560px] bg-gray-900 rounded-[40px] shadow-2xl overflow-hidden border-8 border-gray-800">
-                  <div className="w-full h-full bg-gray-800"></div>
-                </div>
-              </div>
+            <YummyText className="text-4xl md:text-[46px] font-bold leading-tight text-black">
+              Lightning-Fast Delivery on <br /> Two Wheels
+            </YummyText>
 
-              {/* Floating Testimonials */}
-              {/* Top Right Testimonial */}
-              <div className="absolute top-0 right-0 bg-white rounded-2xl shadow-lg p-4 max-w-[240px] z-20">
-                <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex-shrink-0"></div>
-                  <div>
-                    <YummyText className="font-[600] text-sm text-gray-900 mb-1">
-                      Imabong Essien
-                    </YummyText>
-                    <YummyText className="text-xs text-gray-600 leading-relaxed">
-                      My package arrived faster than I expected. Super reliable service!
-                    </YummyText>
-                  </div>
-                </div>
-              </div>
+            <YummyText className="text-gray-600 text-sm md:text-base leading-relaxed">
+              Skip the traffic and beat the clock with our Same-Day Smart Rides.
+              Our motorcycles weave through the city with speed and precision,
+              ensuring your packages arrive today — and on time.
+            </YummyText>
 
-              {/* Bottom Left Testimonial */}
-              <div className="absolute bottom-8 left-0 bg-white rounded-2xl shadow-lg p-4 max-w-[240px] z-20">
-                <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-teal-400 flex-shrink-0"></div>
-                  <div>
-                    <YummyText className="font-[600] text-sm text-gray-900 mb-1">
-                      Suleiman Musa
-                    </YummyText>
-                    <YummyText className="text-xs text-gray-600 leading-relaxed">
-                      Every time I use them, delivery is unbelievably quick.
-                    </YummyText>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Avatar Circles */}
-              <div className="absolute top-32 left-8 w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 border-4 border-white shadow-lg z-20"></div>
-              <div className="absolute top-48 right-12 w-14 h-14 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 border-4 border-white shadow-lg z-20"></div>
-              <div className="absolute bottom-32 right-4 w-16 h-16 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 border-4 border-white shadow-lg z-20"></div>
-            </div>
+            <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-sm px-5 py-3 rounded-full transition-all">
+              Send A Package Now
+            </button>
           </div>
-        </PageWrapper>
-      </div>
+
+          {/* RIGHT SIDE IMAGE CLUSTER */}
+          <div className="relative flex justify-center items-center lg:-mr-10">
+
+            {/* GREEN CARD: contains both images and hides overflow */}
+            <div className="relative w-[300px] h-[300px] sm:w-[320px] sm:h-[320px] lg:w-[420px] lg:h-[420px] rounded-full bg-[#00B75A] flex items-center justify-center overflow-hidden">
+
+              {/* phone-street image - placed behind the bike */}
+              <div className="absolute inset-0 z-10 left-2 top-11 pointer-events-none">
+                <Image
+                  src="/phonestreet-icon.svg"
+                  alt="Street phone background"
+                  width={270}
+                  height={270}
+                  className="object-cover object-center opacity-100"
+                  priority
+                />
+              </div>
+
+              {/* delivery bike image - sits in front */}
+              <div className="relative top-14 left-5 z-20 w-[70%] md:w-[90%] lg:w-[90%] pointer-events-none">
+                <Image
+                  src="/deliverybike.svg"
+                  alt="Delivery bike"
+                  width={600}
+                  height={600}
+                  className="w-full h-auto object-contain"
+                  priority
+                />
+              </div>
+
+            </div>
+
+            {/* Right bubble (Desktop)*/}
+            <div className="absolute hidden lg:block right-0 top-[38%]">
+              <Image
+                src="/avatar4.svg"
+                alt="testimonial"
+                width={65}
+                height={65}
+                className="rounded-full border-[3px] border-white"
+              />
+            </div>
+
+            {/* Bottom left bubble */}
+            <div className="absolute hidden lg:block left-[12%] bottom-[8%]">
+              <Image
+                src="/avatar3.svg"
+                alt="testimonial"
+                width={65}
+                height={65}
+                className="rounded-full border-[3px] border-white"
+              />
+            </div>
+
+            {/* Top bubble */}
+            <div className="absolute hidden lg:block left-[25%] top-[-6%]">
+              <Image
+                src="/avatar1.svg"
+                alt="testimonial"
+                width={65}
+                height={65}
+                className="rounded-full border-[3px] border-white"
+              />
+            </div>
+
+            {/* Mid left bubble */}
+            <div className="absolute hidden lg:block left-[-10%] top-[42%]">
+              <Image
+                src="/avatar2.svg"
+                alt="testimonial"
+                width={65}
+                height={65}
+                className="rounded-full border-[3px] border-white"
+              />
+            </div>
+
+            {/* Bottom right bubble */}
+            <div className="absolute hidden lg:block right-[12%] bottom-[-3%]">
+              <Image
+                src="/avatar5.svg"
+                alt="testimonial"
+                width={65}
+                height={65}
+                className="rounded-full border-[3px] border-white"
+              />
+            </div>
+
+            {/* ⭐ MOBILE VERSION (cluster tight, smaller) */}
+            <div className="flex lg:hidden gap-3 absolute bottom-[-50px]">
+              <Image src="/avatar1.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+              <Image src="/avatar2.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+              <Image src="/avatar3.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+              <Image src="/avatar4.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+              <Image src="/avatar5.svg" alt="testimonial" width={40} height={40} className="rounded-full border-2 border-white" />
+            </div>
+
+          </div>
+        </section>
+      </PageWrapper>
+
 
       {/* Why Smart Rides Section */}
       <PageWrapper>

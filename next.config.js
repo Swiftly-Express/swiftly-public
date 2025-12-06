@@ -10,10 +10,14 @@ const nextConfig = {
   },
   // Simple redirect so `/search` on this app forwards users to the public site search
   async redirects() {
+    // Only add the redirect in production builds. During local development we
+    // want `/search` to remain local so developers can test the app.
+    if (process.env.NODE_ENV !== 'production') return [];
+    const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://swiftlyxpress.com'
     return [
       {
         source: '/search',
-        destination: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://swiftlyxpress.com'}/search`,
+        destination: `${base}/search`,
         permanent: true,
       },
     ];

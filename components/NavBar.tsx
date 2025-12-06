@@ -35,6 +35,9 @@ export default function NavBar({ className = '' }: NavBarProps) {
     if (typeof window !== 'undefined') setOrigin(window.location.origin)
   }, [])
 
+  const isLocalOrigin = (origin || '').includes('localhost') || (origin || '').includes('127.0.0.1') || process.env.NODE_ENV !== 'production'
+  const usePublic = Boolean(origin && PUBLIC_BASE && origin !== PUBLIC_BASE && !isLocalOrigin && process.env.NODE_ENV === 'production')
+
   const isActive = (path: string) => {
     if (path === '/') return pathname === '/'
     return pathname === path || pathname.startsWith(path + '/')
@@ -45,7 +48,7 @@ export default function NavBar({ className = '' }: NavBarProps) {
       <div className="flex items-center gap-4">
         
         <div className="hidden md:flex items-center gap-6">
-          {(origin && PUBLIC_BASE && origin !== PUBLIC_BASE
+          {(usePublic
             ? LINKS_PUBLIC.map((l) => ({ href: `${PUBLIC_BASE}${l.href}`, label: l.label }))
             : LINKS_LOCAL
           ).map((l) => {

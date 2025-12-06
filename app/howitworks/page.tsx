@@ -95,6 +95,10 @@ export default function HowItWorks() {
               variant="primary"
               className="px-4 py-3 !bg-[#00B75A] text-medium rounded-full font-[300] text-[10px]"
               onClick={() => {
+                if (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || process.env.NODE_ENV !== 'production')) {
+                  window.location.href = '/';
+                  return;
+                }
                 window.location.href = 'https://dashboard.swiftlyxpress.com/auth/customer/signup';
               }}
             >
@@ -104,6 +108,10 @@ export default function HowItWorks() {
               variant="dark"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
               onClick={() => {
+                if (typeof window !== 'undefined' && (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || process.env.NODE_ENV !== 'production')) {
+                  window.location.href = '/';
+                  return;
+                }
                 window.location.href = 'https://dashboard.swiftlyxpress.com/auth/role-select';
               }}
             >
