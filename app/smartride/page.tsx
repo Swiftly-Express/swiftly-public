@@ -55,7 +55,7 @@ interface FeatureCardProps {
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) => (
-  <div className="bg-white rounded-lg p-8 border border-gray-200">
+  <div className="bg-white rounded-lg p-4 sm:p-8 border border-gray-200">
     <div className="-mb-4">
       <div className="w-16 h-16 rounded-full mt-1 flex-start items-center justify-center">
         {icon}
@@ -80,7 +80,7 @@ interface StepCardProps {
 }
 
 const StepCard: React.FC<StepCardProps> = ({ number, title, description }) => (
-  <div className="text-center p-6">
+  <div className="text-center p-4 sm:p-6">
     <div className="flex justify-center !mb-4">
       <div className="w-14 h-14 rounded-full bg-[#00D68F] flex items-center justify-center">
         <span className="text-white text-lg font-[200]">{number}</span>
@@ -211,7 +211,7 @@ export default function SmartRide() {
       </div>
 
       <PageWrapper className="relative w-full overflow-hidden">
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0 items-center max-w-6xl mx-auto px-6 md:px-10 py-14">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0 items-center max-w-6xl mx-auto px-6 md:px-6 py-14">
 
           {/* LEFT SIDE TEXT */}
           <div className="space-y-6">
@@ -408,16 +408,16 @@ export default function SmartRide() {
       {/* Why Smart Rides Section */}
       <PageWrapper>
         <section className="py-8 md:py-12 lg:py-8">
-          <div className="text-center mb-8 md:mb-12 lg:mb-8">
-            <YummyText className="text-4xl font-[400] text-[#111827] mb-4">
+          <div className="text-center mb-6 md:mb-12 lg:mb-8 px-2">
+            <YummyText className="text-3xl md:text-4xl font-[400] text-[#111827] mb-4">
               Why Smart Rides?
             </YummyText>
-            <YummyText className="text-[#4B5563] flex !justify-center text-base font-[300] max-w-2xl mx-auto">
+            <YummyText className="text-[#4B5563] flex !justify-center text-base font-[300] max-w-2xl mx-auto px-2">
               Experience the future of urban delivery with our intelligent two-wheel fleet.
             </YummyText>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-14">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 sm:px-10">
             {features.map((feature, index) => (
               <FeatureCard
                 key={index}
@@ -430,9 +430,9 @@ export default function SmartRide() {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-3 md:py-4 lg:py-3 bg-[#F9FAFB] rounded-3xl mx-18">
-          <div className="text-center mb-6 md:mb-10 lg:mb-6">
-            <YummyText className="text-5xl font-[300] text-[#111827]">
+        <section className="py-4 md:py-6 lg:py-6 bg-[#F9FAFB] rounded-3xl px-4 sm:px-14">
+          <div className="text-center mb-6 md:mb-10 lg:mb-6 px-2">
+            <YummyText className="text-3xl md:text-5xl font-[300] text-[#111827]">
               How It Works
             </YummyText>
             <YummyText className="text-[#4B5563] flex items-center mt-2 justify-center text-base font-[300]">
@@ -440,7 +440,7 @@ export default function SmartRide() {
             </YummyText>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 -mt-10 px-14">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-6 md:-mt-10 px-4 sm:px-14">
             {steps.map((step, index) => (
               <StepCard
                 key={index}
@@ -467,11 +467,11 @@ export default function SmartRide() {
           </YummyText>
 
           <div className="flex justify-center gap-4">
-            <button className="bg-[#00D68F] hover:bg-[#149C46] text-white px-6 py-3 rounded-lg transition-all duration-300">
+            <button className="bg-[#00D68F] hover:bg-[#149C46] text-white px-6 py-3 rounded-full transition-all duration-300">
               <YummyText>Download App</YummyText>
             </button>
 
-            <button className="px-4 py-3 border-2 border-[#1E1E1E] bg-white text-gray-900 rounded-lg transition-all duration-300 hover:bg-gray-50">
+            <button className="px-4 py-3 border-2 border-[#1E1E1E] bg-white text-gray-900 rounded-full transition-all duration-300 hover:bg-gray-50">
               <YummyText>Contact Support</YummyText>
             </button>
           </div>
