@@ -244,7 +244,7 @@ export default function SmartRide() {
             <div className="relative w-[300px] h-[300px] sm:w-[320px] sm:h-[320px] lg:w-[420px] lg:h-[420px] rounded-full bg-[#00B75A] flex items-center justify-center overflow-hidden">
 
               {/* phone-street image - placed behind the bike */}
-              <div className="absolute inset-0 z-10 left-2 top-11 pointer-events-none">
+              <div className="absolute inset-0 z-10 left-2 top-11 w-[205px] sm:w-[270px] md:w-[270px] pointer-events-none">
                 <Image
                   src="/phonestreet-icon.svg"
                   alt="Street phone background"
@@ -252,7 +252,7 @@ export default function SmartRide() {
                   height={270}
                   className="object-cover object-center opacity-100"
                   priority
-                />
+                /> 
               </div>
 
               {/* delivery bike image - sits in front */}
@@ -279,16 +279,18 @@ export default function SmartRide() {
                     id: 0,
                     src: '/lockedhair.svg',
                     alt: 'Reviewer 1',
-                    pos: 'absolute hidden lg:block left-[45%] top-[-6%]',
+                    pos: 'absolute left-[45%] top-[-6%]',
                     side: 'left',
-                    popup: 'absolute top-0 left-full ml-3',
+                    // mobile: popup above the avatar; desktop (lg+): popup to the right
+                    popup: 'absolute bottom-full mb-3 left-1/2 -translate-x-1/2 lg:top-0 lg:left-full lg:ml-3',
                     review: '"Incredible speed — my package arrived within 15 minutes. Highly recommend Smart Ride!"'
                   },
                   {
                     id: 1,
                     src: '/afrowig.svg',
                     alt: 'Reviewer 2',
-                    pos: 'absolute hidden lg:block left-[11%] top-[24%]',
+                    // nudge left on mobile, keep original on lg+ screens
+                    pos: 'absolute -left-4 lg:left-[11%] top-[24%]',
                     side: 'left',
                     popup: 'absolute top-0 left-full ml-3',
                     review: '"Fantastic service. The rider was professional and my delivery was flawless."'
@@ -297,7 +299,8 @@ export default function SmartRide() {
                     id: 2,
                     src: '/roundcuthair.svg',
                     alt: 'Reviewer 3',
-                    pos: 'absolute hidden lg:block right-12 top-[48%]',
+                    // nudge right on mobile; keep original on lg+ screens
+                    pos: 'absolute right-[-4%] lg:right-12 top-[48%]',
                     side: 'right',
                     popup: 'absolute top-0 right-full mr-3',
                     review: '"Quick, reliable, and convenient. Smart Ride saved my day."'
@@ -306,18 +309,18 @@ export default function SmartRide() {
                     id: 3,
                     src: '/normalwig.svg',
                     alt: 'Reviewer 4',
-                    pos: 'absolute hidden lg:block right-[12%] bottom-[-3%]',
+                    pos: 'absolute right-[12%] bottom-[-12%] lg:bottom-[-3%]',
                     side: 'right',
-                    popup: 'absolute bottom-0 right-full mr-3',
+                    popup: 'absolute bottom-0 right-full mr-1',
                     review: '"Excellent communication from pickup to delivery — no surprises."'
                   },
                   {
                     id: 4,
                     src: '/blackchic.svg',
                     alt: 'Reviewer 5',
-                    pos: 'absolute hidden lg:block left-[12%] bottom-[-3%]',
+                    pos: 'absolute left-[12%] bottom-[-12%] lg:bottom-[-3%]',
                     side: 'left',
-                    popup: 'absolute bottom-0 left-full ml-3',
+                    popup: 'absolute bottom-0 left-full ml-1',
                     review: '"Affordable and fast. I use Smart Ride for urgent errands."'
                   },
                   {
@@ -325,9 +328,10 @@ export default function SmartRide() {
                     src: '/lightcolorwig.svg',
                     alt: 'Reviewer 6',
                     // position this avatar near the left edge of the delivery bike
-                    pos: 'absolute hidden lg:block left-[34%] z-20 top-[40%] -translate-y-1/2',
+                    pos: 'absolute left-[34%] z-20 top-[49%] lg:top-[40%] -translate-y-1/2',
                     side: 'left',
-                    popup: 'absolute top-0 left-full ml-3',
+                    // mobile: popup above the avatar; desktop (lg+): popup to the right
+                    popup: 'absolute bottom-full mb-3 left-1/2 -translate-x-1/2 lg:top-0 lg:left-full lg:ml-3',
                     review: '"Seamless experience from booking to delivery — great app!"'
                   }
                 ];
@@ -375,7 +379,7 @@ export default function SmartRide() {
             )}
 
             {/* ⭐ MOBILE VERSION (cluster tight, smaller) */}
-            <div className="flex lg:hidden gap-3 absolute bottom-[-50px]">
+            <div className="hidden">
               <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
                 <Image src="/roundcuthair.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
               </div>
@@ -385,7 +389,7 @@ export default function SmartRide() {
               <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
                 <Image src="/lockedhair.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
               </div>
-              <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
+              <div className="w-10 h-10 right-[26%] sm:right-[10%] md:right-[10%] rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
                 <Image src="/afrowig.svg" alt="testimonial" width={40} height={40} className="rounded-full" />
               </div>
               <div className="w-10 h-10 rounded-full bg-sky-200 border-2 border-[#00B75A] overflow-hidden">
