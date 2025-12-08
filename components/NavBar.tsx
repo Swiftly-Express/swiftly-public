@@ -24,7 +24,7 @@ const LINKS_PUBLIC: { href: string; label: string }[] = [
   { href: '/howitworks', label: 'How It Works' },
   { href: '/smartride', label: 'Smart Ride' },
   { href: '/contact', label: 'Contact' },
-  { href: '/search', label: 'Search' },
+  
 ]
 
 export default function NavBar({ className = '' }: NavBarProps) {
