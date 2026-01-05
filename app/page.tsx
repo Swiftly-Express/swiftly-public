@@ -201,19 +201,19 @@ export default function SwiftlyLanding() {
   const [notifications, setNotifications] = React.useState([
     {
       id: 1,
-      title: "Swiftly Express",
+      title: "Swiftly Xpress",
       subtitle: "Package secured!",
       message: "You've successfully picked up the package. Update the delivery status when you're on the move."
     },
     {
       id: 2,
-      title: "Swiftly Express",
+      title: "Swiftly Xpress",
       subtitle: "Delivery Reminder",
       message: "Don't forget to update your delivery progress to keep customers informed."
     },
     {
       id: 3,
-      title: "Swiftly Express",
+      title: "Swiftly Xpress",
       subtitle: "New Assignment",
       message: "A new package has been assigned to you. Check your route to get started."
     }
@@ -245,22 +245,22 @@ export default function SwiftlyLanding() {
   // Sample notification templates for dynamic addition
   // const notificationTemplates = [
   //   {
-  //     title: "Swiftly Express",
+  //     title: "Swiftly Xpress",
   //     subtitle: "Package Delivered!",
   //     message: "Your package has been successfully delivered to the recipient."
   //   },
   //   {
-  //     title: "Swiftly Express",
+  //     title: "Swiftly Xpress",
   //     subtitle: "Pickup Request",
   //     message: "New pickup request from Lagos. Tap to view details."
   //   },
   //   {
-  //     title: "Swiftly Express",
+  //     title: "Swiftly Xpress",
   //     subtitle: "Payment Received",
   //     message: "Payment of ₦5,000 has been credited to your account."
   //   },
   //   {
-  //     title: "Swiftly Express",
+  //     title: "Swiftly Xpress",
   //     subtitle: "Route Update",
   //     message: "Traffic detected on your route. Consider alternative path."
   //   }
@@ -680,8 +680,8 @@ export default function SwiftlyLanding() {
                 <button
                   onClick={() => setActiveIndex(0)}
                   className={`w-14 h-14 sm:w-11 sm:h-11 mr-2 -mb-3 rounded-full mt-8 overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 ${activeIndex === 0
-                      ? 'border-2 border-[#10b981] opacity-100'
-                      : 'border-2 border-white opacity-30 hover:opacity-60'
+                    ? 'border-2 border-[#10b981] opacity-100'
+                    : 'border-2 border-white opacity-30 hover:opacity-60'
                     }`}
                   aria-label={`View ${testimonials[0].name}'s testimonial`}
                 >
@@ -692,8 +692,8 @@ export default function SwiftlyLanding() {
                 <button
                   onClick={() => setActiveIndex(1)}
                   className={`w-14 h-14 sm:w-11 sm:h-11 mt-40 sm:mt-6 md:mt-32 mb-5 -mr-3 rounded-full overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 ${activeIndex === 1
-                      ? 'border-2 border-[#10b981] opacity-100'
-                      : 'border-2 border-white opacity-30 hover:opacity-60'
+                    ? 'border-2 border-[#10b981] opacity-100'
+                    : 'border-2 border-white opacity-30 hover:opacity-60'
                     }`}
                   aria-label={`View ${testimonials[1].name}'s testimonial`}
                 >
@@ -715,8 +715,8 @@ export default function SwiftlyLanding() {
                 <button
                   onClick={() => setActiveIndex(2)}
                   className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full mt-[52%] -ml-8 overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 -ml-1 ${activeIndex === 2
-                      ? 'border-2 border-[#10b981] opacity-100'
-                      : 'border-2 border-white opacity-30 hover:opacity-60'
+                    ? 'border-2 border-[#10b981] opacity-100'
+                    : 'border-2 border-white opacity-30 hover:opacity-60'
                     }`}
                   aria-label={`View ${testimonials[2].name}'s testimonial`}
                 >
@@ -727,8 +727,8 @@ export default function SwiftlyLanding() {
                 <button
                   onClick={() => setActiveIndex(3)}
                   className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full overflow-hidden ml-1.5 mt-9 transition-all duration-500 cursor-pointer hover:scale-110 ${activeIndex === 3
-                      ? 'border-2 border-[#10b981] opacity-100'
-                      : 'border-2 border-white opacity-30 hover:opacity-60'
+                    ? 'border-2 border-[#10b981] opacity-100'
+                    : 'border-2 border-white opacity-30 hover:opacity-60'
                     }`}
                   aria-label={`View ${testimonials[3].name}'s testimonial`}
                 >
@@ -740,8 +740,8 @@ export default function SwiftlyLanding() {
                   <button
                     onClick={() => setActiveIndex(4)}
                     className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full overflow-hidden ml-1.5 mt-9 transition-all duration-500 cursor-pointer hover:scale-110 ${activeIndex === 4
-                        ? 'border-2 border-[#10b981] opacity-100'
-                        : 'border-2 border-white opacity-30 hover:opacity-60'
+                      ? 'border-2 border-[#10b981] opacity-100'
+                      : 'border-2 border-white opacity-30 hover:opacity-60'
                       }`}
                     aria-label={`View ${testimonials[4].name}'s testimonial`}
                   >

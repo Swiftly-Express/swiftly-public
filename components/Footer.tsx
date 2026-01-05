@@ -11,7 +11,7 @@ const Footer = () => {
           {/* Company Info */}
           <div>
             <Link href="/" className="inline-block mb-4">
-              <img src="/swiftly-logo.svg" alt="Swiftly Express" className="h-8" />
+              <img src="/swiftly-logo.svg" alt="Swiftly Xpress" className="h-8" />
             </Link>
             <YummyText className="flex text-gray-400 text-sm font-[300] leading-relaxed mb-6">
               Your trusted logistics partner delivering excellence across the nation with speed, security, and reliability.
@@ -82,7 +82,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <YummyText className="text-gray-500 text-sm font-[300]">
-            © 2025 Swiftly Express. All rights reserved.
+            © 2025 Swiftly Xpress. All rights reserved.
           </YummyText>
           <div className="flex gap-6">
             <a href="#" className="text-gray-500 hover:text-[#10b981] text-sm font-[300] transition-colors">Privacy Policy</a>

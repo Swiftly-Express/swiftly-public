@@ -1,6 +1,6 @@
 # swiftly-express-web
 
-Public Next.js (TypeScript) site for Swiftly Express.
+Public Next.js (TypeScript) site for Swiftly Xpress.
 
 Quick start (PowerShell):
 

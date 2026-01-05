@@ -5,7 +5,7 @@ import Layout from '../components/Layout'
 export const metadata = {
   metadataBase: new URL('https://swiftlyxpress.com'),
   title: {
-    default: 'Swiftly Express - Fast, Reliable Delivery Services',
+    default: 'Swiftly Xpress - Fast, Reliable Delivery Services',
     template: '%s | Swiftly Xpress'
   },
   description: 'Swiftly Xpress offers same-day delivery, next-day shipping, and international courier services. Track your packages in real-time with our reliable delivery solutions.',

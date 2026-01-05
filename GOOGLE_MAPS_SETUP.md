@@ -1,4 +1,4 @@
-# Google Maps Setup for Swiftly Express
+# Google Maps Setup for Swiftly Xpress
 
 ## Quick Start
 
