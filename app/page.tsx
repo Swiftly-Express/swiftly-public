@@ -25,9 +25,9 @@ const Button: React.FC<{
     dark: 'bg-black text-white hover:bg-gray-800',
     light: 'bg-white text-black hover:bg-gray-100'
   };
-  
+
   return (
-    <button 
+    <button
       className={`${baseStyles} ${variantStyles[variant]} ${className}`}
       onClick={onClick}
     >
@@ -36,9 +36,9 @@ const Button: React.FC<{
   );
 };
 
-const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
-  children, 
-  className = '' 
+const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className = ''
 }) => (
   <div className={`container mx-auto px-4 ${className}`}>{children}</div>
 );
@@ -199,130 +199,130 @@ export default function SwiftlyLanding() {
   ];
 
   const [notifications, setNotifications] = React.useState([
-  {
-    id: 1,
-    title: "Swiftly Express",
-    subtitle: "Package secured!",
-    message: "You've successfully picked up the package. Update the delivery status when you're on the move."
-  },
-  {
-    id: 2,
-    title: "Swiftly Express",
-    subtitle: "Delivery Reminder",
-    message: "Don't forget to update your delivery progress to keep customers informed."
-  },
-  {
-    id: 3,
-    title: "Swiftly Express",
-    subtitle: "New Assignment",
-    message: "A new package has been assigned to you. Check your route to get started."
-  }
-]);
+    {
+      id: 1,
+      title: "Swiftly Express",
+      subtitle: "Package secured!",
+      message: "You've successfully picked up the package. Update the delivery status when you're on the move."
+    },
+    {
+      id: 2,
+      title: "Swiftly Express",
+      subtitle: "Delivery Reminder",
+      message: "Don't forget to update your delivery progress to keep customers informed."
+    },
+    {
+      id: 3,
+      title: "Swiftly Express",
+      subtitle: "New Assignment",
+      message: "A new package has been assigned to you. Check your route to get started."
+    }
+  ]);
 
-const [initialLoad, setInitialLoad] = React.useState(true);
-const prevNotificationCountRef = React.useRef(3); // Track initial count
+  const [initialLoad, setInitialLoad] = React.useState(true);
+  const prevNotificationCountRef = React.useRef(3); // Track initial count
 
-// Function to play notification sound
-const playSound = React.useCallback(() => {
-  try {
-    const audio = new Audio("/notify.mp3");
-    audio.volume = 0.95;
-    audio.play().catch(err => {
-      console.log("Audio playback failed:", err);
-    });
-  } catch (error) {
-    console.log("Audio error:", error);
-  }
-}, []);
+  // Function to play notification sound
+  const playSound = React.useCallback(() => {
+    try {
+      const audio = new Audio("/notify.mp3");
+      audio.volume = 0.95;
+      audio.play().catch(err => {
+        console.log("Audio playback failed:", err);
+      });
+    } catch (error) {
+      console.log("Audio error:", error);
+    }
+  }, []);
 
-// Function to vibrate device
-const vibrate = React.useCallback(() => {
-  if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-    navigator.vibrate(50);
-  }
-}, []);
+  // Function to vibrate device
+  const vibrate = React.useCallback(() => {
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate(50);
+    }
+  }, []);
 
-// Sample notification templates for dynamic addition
-// const notificationTemplates = [
-//   {
-//     title: "Swiftly Express",
-//     subtitle: "Package Delivered!",
-//     message: "Your package has been successfully delivered to the recipient."
-//   },
-//   {
-//     title: "Swiftly Express",
-//     subtitle: "Pickup Request",
-//     message: "New pickup request from Lagos. Tap to view details."
-//   },
-//   {
-//     title: "Swiftly Express",
-//     subtitle: "Payment Received",
-//     message: "Payment of ₦5,000 has been credited to your account."
-//   },
-//   {
-//     title: "Swiftly Express",
-//     subtitle: "Route Update",
-//     message: "Traffic detected on your route. Consider alternative path."
-//   }
-// ];
+  // Sample notification templates for dynamic addition
+  // const notificationTemplates = [
+  //   {
+  //     title: "Swiftly Express",
+  //     subtitle: "Package Delivered!",
+  //     message: "Your package has been successfully delivered to the recipient."
+  //   },
+  //   {
+  //     title: "Swiftly Express",
+  //     subtitle: "Pickup Request",
+  //     message: "New pickup request from Lagos. Tap to view details."
+  //   },
+  //   {
+  //     title: "Swiftly Express",
+  //     subtitle: "Payment Received",
+  //     message: "Payment of ₦5,000 has been credited to your account."
+  //   },
+  //   {
+  //     title: "Swiftly Express",
+  //     subtitle: "Route Update",
+  //     message: "Traffic detected on your route. Consider alternative path."
+  //   }
+  // ];
 
-// // Function to add new notification dynamically
-// const addNewNotification = React.useCallback(() => {
-//   const randomTemplate = notificationTemplates[Math.floor(Math.random() * notificationTemplates.length)];
-//   const newNotification = {
-//     id: Date.now(),
-//     ...randomTemplate
-//   };
-//   setNotifications(prev => [...prev, newNotification]);
-//   if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-//     navigator.vibrate(50);
-//   }
-// }, []);
+  // // Function to add new notification dynamically
+  // const addNewNotification = React.useCallback(() => {
+  //   const randomTemplate = notificationTemplates[Math.floor(Math.random() * notificationTemplates.length)];
+  //   const newNotification = {
+  //     id: Date.now(),
+  //     ...randomTemplate
+  //   };
+  //   setNotifications(prev => [...prev, newNotification]);
+  //   if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+  //     navigator.vibrate(50);
+  //   }
+  // }, []);
 
-// Auto-rotate every 5 seconds
-useEffect(() => {
-  const interval = setInterval(() => {
-    setNotifications(prev => {
-      const updated = [...prev];
-      const first = updated.shift(); // Remove first card
-      if (first) {
-        updated.push(first); // Move it to the bottom
-      }
-      return updated;
-    });
-  }, 5000);
+  // Auto-rotate every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNotifications(prev => {
+        const updated = [...prev];
+        const first = updated.shift(); // Remove first card
+        if (first) {
+          updated.push(first); // Move it to the bottom
+        }
+        return updated;
+      });
+    }, 5000);
 
-  return () => clearInterval(interval);
-}, []);
+    return () => clearInterval(interval);
+  }, []);
 
-// Play sound only when new notifications are added (not on rotation or page load)
-useEffect(() => {
-  // Skip on initial load
-  if (initialLoad) {
-    setInitialLoad(false);
+  // Play sound only when new notifications are added (not on rotation or page load)
+  useEffect(() => {
+    // Skip on initial load
+    if (initialLoad) {
+      setInitialLoad(false);
+      prevNotificationCountRef.current = notifications.length;
+      return;
+    }
+
+    // Only play sound if count actually increased (new notification added)
+    if (notifications.length > prevNotificationCountRef.current) {
+      playSound();
+    }
+
+    // Update the ref with current count
     prevNotificationCountRef.current = notifications.length;
-    return;
-  }
-  
-  // Only play sound if count actually increased (new notification added)
-  if (notifications.length > prevNotificationCountRef.current) {
-    playSound();
-  }
-  
-  // Update the ref with current count
-  prevNotificationCountRef.current = notifications.length;
-}, [notifications.length, playSound, initialLoad]);
+  }, [notifications.length, playSound, initialLoad]);
 
   return (
     <div className="bg-[#f5f5f5] min-h-screen fullscreen">
-    
+
       {/* Navbar */}
       <div className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <PageWrapper className="py-0 flex items-center justify-between">
           {/* <YummyText className="text-3xl px-3 font-sm text-black">
             Swiftly
           </YummyText> */}
-          
+
           <NavBar />
           <div className="flex items-center px-4 gap-3">
             <Button
@@ -356,7 +356,7 @@ useEffect(() => {
       </div>
 
       <SmartRideModal isOpen={showSmartRideModal} onClose={() => setShowSmartRideModal(false)} />
-      <div className="relative flex flex-col items-center justify-center min-h-screen px-4 text-center bg-white overflow-hidden">  
+      <div className="relative flex flex-col items-center justify-center min-h-screen px-4 text-center bg-white overflow-hidden">
         {/* Background Image with Gradient Overlay */}
         <div className="absolute inset-0 w-full h-full z-10">
           <div className="relative w-full h-full">
@@ -376,7 +376,7 @@ useEffect(() => {
             </div>
             {/* White gradient overlay on top of image */}
             <div className="absolute inset-0 bg-gradient-to-b from-white via-white/100 to-transparent" style={{ height: "70%" }} />
-            
+
           </div>
         </div>
 
@@ -442,14 +442,14 @@ useEffect(() => {
                     {/* App Store Icon */}
                     <div className="w-7 h-7 flex-shrink-0">
                       <svg className="w-full h-full" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
                       </svg>
                     </div>
 
                     {/* Google Play Icon */}
                     <div className="w-7 h-7 flex-shrink-0">
                       <svg className="w-full h-full" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                        <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
                       </svg>
                     </div>
                   </div>
@@ -679,11 +679,10 @@ useEffect(() => {
                 {/* Small Avatar 1 - Top Left */}
                 <button
                   onClick={() => setActiveIndex(0)}
-                  className={`w-14 h-14 sm:w-11 sm:h-11 mr-2 -mb-3 rounded-full mt-8 overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 ${
-                    activeIndex === 0 
-                      ? 'border-2 border-[#10b981] opacity-100' 
+                  className={`w-14 h-14 sm:w-11 sm:h-11 mr-2 -mb-3 rounded-full mt-8 overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 ${activeIndex === 0
+                      ? 'border-2 border-[#10b981] opacity-100'
                       : 'border-2 border-white opacity-30 hover:opacity-60'
-                  }`}
+                    }`}
                   aria-label={`View ${testimonials[0].name}'s testimonial`}
                 >
                   <Image src={testimonials[0].avatar} alt={testimonials[0].name} width={56} height={56} className="w-full h-full object-cover" />
@@ -692,11 +691,10 @@ useEffect(() => {
                 {/* Small Avatar 2 - Top Right */}
                 <button
                   onClick={() => setActiveIndex(1)}
-                  className={`w-14 h-14 sm:w-11 sm:h-11 mt-40 sm:mt-6 md:mt-32 mb-5 -mr-3 rounded-full overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 ${
-                    activeIndex === 1 
-                      ? 'border-2 border-[#10b981] opacity-100' 
+                  className={`w-14 h-14 sm:w-11 sm:h-11 mt-40 sm:mt-6 md:mt-32 mb-5 -mr-3 rounded-full overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 ${activeIndex === 1
+                      ? 'border-2 border-[#10b981] opacity-100'
                       : 'border-2 border-white opacity-30 hover:opacity-60'
-                  }`}
+                    }`}
                   aria-label={`View ${testimonials[1].name}'s testimonial`}
                 >
                   <Image src={testimonials[1].avatar} alt={testimonials[1].name} width={56} height={56} className="w-full h-full object-cover" />
@@ -704,23 +702,22 @@ useEffect(() => {
 
                 {/* Big Avatar Display - Center (active testimonial) */}
                 <div className="w-[95px] h-[95px] sm:w-[75px] sm:h-[75px] rounded-full bg-purple-200 border-2 border-[#10b981] overflow-hidden relative -ml-5 -mt-12 -mb-5 z-10 transition-all duration-500">
-                  <Image 
-                    src={active.avatar} 
-                    alt={active.name} 
-                    width={95} 
-                    height={95} 
-                    className="w-full h-full object-cover transition-opacity duration-500" 
+                  <Image
+                    src={active.avatar}
+                    alt={active.name}
+                    width={95}
+                    height={95}
+                    className="w-full h-full object-cover transition-opacity duration-500"
                   />
                 </div>
 
                 {/* Small Avatar 3 - Bottom Left */}
                 <button
                   onClick={() => setActiveIndex(2)}
-                  className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full mt-[52%] -ml-8 overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 -ml-1 ${
-                    activeIndex === 2 
-                      ? 'border-2 border-[#10b981] opacity-100' 
+                  className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full mt-[52%] -ml-8 overflow-hidden transition-all duration-500 cursor-pointer hover:scale-110 -ml-1 ${activeIndex === 2
+                      ? 'border-2 border-[#10b981] opacity-100'
                       : 'border-2 border-white opacity-30 hover:opacity-60'
-                  }`}
+                    }`}
                   aria-label={`View ${testimonials[2].name}'s testimonial`}
                 >
                   <Image src={testimonials[2].avatar} alt={testimonials[2].name} width={56} height={56} className="w-full h-full object-cover" />
@@ -729,11 +726,10 @@ useEffect(() => {
                 {/* Small Avatar 4 - last Right */}
                 <button
                   onClick={() => setActiveIndex(3)}
-                  className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full overflow-hidden ml-1.5 mt-9 transition-all duration-500 cursor-pointer hover:scale-110 ${
-                    activeIndex === 3 
-                      ? 'border-2 border-[#10b981] opacity-100' 
+                  className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full overflow-hidden ml-1.5 mt-9 transition-all duration-500 cursor-pointer hover:scale-110 ${activeIndex === 3
+                      ? 'border-2 border-[#10b981] opacity-100'
                       : 'border-2 border-white opacity-30 hover:opacity-60'
-                  }`}
+                    }`}
                   aria-label={`View ${testimonials[3].name}'s testimonial`}
                 >
                   <Image src={testimonials[3].avatar} alt={testimonials[3].name} width={56} height={56} className="w-full h-full object-cover" />
@@ -743,11 +739,10 @@ useEffect(() => {
                 {testimonials[4] && (
                   <button
                     onClick={() => setActiveIndex(4)}
-                    className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full overflow-hidden ml-1.5 mt-9 transition-all duration-500 cursor-pointer hover:scale-110 ${
-                      activeIndex === 4 
-                        ? 'border-2 border-[#10b981] opacity-100' 
+                    className={`w-14 h-14 sm:w-11 sm:h-11 rounded-full overflow-hidden ml-1.5 mt-9 transition-all duration-500 cursor-pointer hover:scale-110 ${activeIndex === 4
+                        ? 'border-2 border-[#10b981] opacity-100'
                         : 'border-2 border-white opacity-30 hover:opacity-60'
-                    }`}
+                      }`}
                     aria-label={`View ${testimonials[4].name}'s testimonial`}
                   >
                     <Image src={testimonials[4].avatar} alt={testimonials[4].name} width={56} height={56} className="w-full h-full object-cover" />
