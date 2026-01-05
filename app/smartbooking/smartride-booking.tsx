@@ -7,6 +7,7 @@ import Button from '../../components/Button';
 import YummyText from '../../components/YummyText';
 import Breadcrumb from '../../components/Breadcrumb';
 import GoogleMap from '../../components/GoogleMap';
+import Link from 'next/link';
 
 
 const sideBottomShadow = {
@@ -127,8 +128,10 @@ export default function SmartRideBooking() {
       <div className="min-h-screen bg-[#FFFFFF]">
         {/* Header */}
         <div className="bg-white ">
-          <div className="max-w-6xl mx-auto px-4 py-10 flex items-center justify-between">
-            <YummyText className="text-3xl font-medium text-black">Swiftly</YummyText>
+          <div className="max-w-6xl mx-auto px-4 py-0 h-20 md:h-32 flex items-center justify-between">
+            <Link href="/" className="inline-block mr-48">
+              <img src="/swiftly-logo.svg" alt="Swiftly" className="h-12 md:h-16 lg:h-40 object-contain" />
+            </Link>
             <Button
               variant="primary"
               className="!bg-[#00B75A] text-sm hover:!bg-[#00B876] rounded-full px-6 py-2"

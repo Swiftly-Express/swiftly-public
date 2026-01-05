@@ -10,7 +10,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           {/* Company Info */}
           <div>
-            <YummyText className="text-2xl font-medium mb-4">Swiftly Express</YummyText>
+            <Link href="/" className="inline-block mb-4">
+              <img src="/swiftly-logo.svg" alt="Swiftly Express" className="h-8" />
+            </Link>
             <YummyText className="flex text-gray-400 text-sm font-[300] leading-relaxed mb-6">
               Your trusted logistics partner delivering excellence across the nation with speed, security, and reliability.
             </YummyText>

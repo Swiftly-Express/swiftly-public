@@ -24,7 +24,7 @@ const LINKS_PUBLIC: { href: string; label: string }[] = [
   { href: '/howitworks', label: 'How It Works' },
   { href: '/smartride', label: 'Smart Ride' },
   { href: '/contact', label: 'Contact' },
-  
+
 ]
 
 export default function NavBar({ className = '' }: NavBarProps) {
@@ -44,9 +44,12 @@ export default function NavBar({ className = '' }: NavBarProps) {
   }
 
   return (
-    <nav className={`flex gap-10 items-center justify-between px-6 py-2 bg-white ${className}`}>
+    <nav className={`flex gap-6 items-center justify-between px-0 py-0 h-14 md:h-16 bg-white ${className}`}>
       <div className="flex items-center gap-4">
-        
+        <Link href="/" className="inline-block mr-48">
+          <img src="/swiftly-logo.svg" alt="Swiftly" className="h-12 md:h-16 lg:h-40 object-contain" />
+        </Link>
+
         <div className="hidden md:flex items-center gap-6">
           {(usePublic
             ? LINKS_PUBLIC.map((l) => ({ href: `${PUBLIC_BASE}${l.href}`, label: l.label }))
@@ -61,7 +64,7 @@ export default function NavBar({ className = '' }: NavBarProps) {
                 <a
                   key={key}
                   href={rawHref}
-                  className={`${isActive(rawHref.replace(PUBLIC_BASE, '') ) ? 'text-[#00B75A]' : 'text-gray-700'} font-sm text-sm hover:text-[#059669] transition-colors`}
+                  className={`${isActive(rawHref.replace(PUBLIC_BASE, '')) ? 'text-[#00B75A]' : 'text-gray-700'} font-sm text-sm hover:text-[#059669] transition-colors`}
                 >
                   {l.label}
                 </a>

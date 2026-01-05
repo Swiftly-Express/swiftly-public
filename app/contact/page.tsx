@@ -167,9 +167,9 @@ export default function Contact() {
       {/* Navbar */}
       <div className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <PageWrapper className="py-3 flex items-center justify-between">
-          <YummyText className="text-3xl px-3 font-sm text-black">
+          {/* <YummyText className="text-3xl px-3 font-sm text-black">
             Swiftly
-          </YummyText>
+          </YummyText> */}
           <NavBar />
           <div className="flex items-center px-4 gap-3">
             <Button
