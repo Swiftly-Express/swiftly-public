@@ -38,7 +38,7 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
-          className="w-full max-w-2xl h-screen max-h-screen bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl relative animate-in fade-in zoom-in duration-300 border border-white/20 flex flex-col"
+          className="w-full max-w-2xl max-h-screen bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl relative animate-in fade-in zoom-in duration-300 border border-white/20 flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close Button */}
@@ -52,7 +52,7 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
           {/* Content */}
           <div className="flex-1 flex flex-col justify-between p-4 sm:p-6 md:p-8">
             {/* Title */}
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-center text-gray-900 mb-2 sm:mb-3">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-left text-gray-900 mb-2 sm:mb-3">
               Send a Package using Smart Ride
             </h2>
 
@@ -130,13 +130,13 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
                   onClose();
                   router.push('/smartride-booking');
                 }}
-                className="flex-1 bg-[#00D68F] hover:bg-[#00B876] text-white font-semibold py-3 px-4 rounded-lg transition-colors text-sm"
+                className="flex-1 bg-[#00D68F] hover:bg-[#00B876] text-white whitespace-nowrap font-semibold py-3 px-4 rounded-full transition-colors text-sm"
               >
-                Send a Package Now
+                Send Package Now
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-lg border border-gray-300 transition-colors text-sm"
+                className="flex-1 bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-full border border-gray-300 transition-colors text-sm"
               >
                 Maybe Later
               </button>
