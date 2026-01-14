@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 
 import React, { useState } from 'react';
 import Image from 'next/image';
@@ -6,9 +6,9 @@ import Footer from '../../components/Footer';
 import NavBar from '../../components/NavBar';
 
 // Component imports - replace with your actual components
-const YummyText: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
-  children, 
-  className = '' 
+const YummyText: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className = ''
 }) => (
   <div className={className}>{children}</div>
 );
@@ -26,9 +26,9 @@ const Button: React.FC<{
     light: 'bg-white text-black hover:bg-gray-100',
     outline: 'border border-white text-white hover:bg-white hover:text-black'
   };
-  
+
   return (
-    <button 
+    <button
       className={`${baseStyles} ${variantStyles[variant]} ${className}`}
       onClick={onClick}
     >
@@ -38,9 +38,9 @@ const Button: React.FC<{
 
 }
 
-const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
-  children, 
-  className = '' 
+const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className = ''
 }) => (
   <div className={`container mx-auto px-4 ${className}`}>{children}</div>
 );
@@ -177,7 +177,7 @@ export default function SmartRide() {
             Swiftly
           </YummyText> */}
           <NavBar />
-          <div className="flex items-center px-4 gap-3">
+          <div className="hidden md:flex items-center px-4 gap-3">
             <Button
               variant="primary"
               className="px-4 py-3 !bg-[#00B75A] text-medium rounded-full font-[300] text-[10px]"
@@ -191,7 +191,7 @@ export default function SmartRide() {
             >
               <YummyText>Book a delivery</YummyText>
             </Button>
-            
+
             <Button
               variant="dark"
               className="px-4 py-3 text-medium rounded-full font-[300] text-[10px]"
@@ -206,7 +206,7 @@ export default function SmartRide() {
               <YummyText>Get Started</YummyText>
             </Button>
           </div>
-          
+
         </PageWrapper>
       </div>
 
@@ -252,7 +252,7 @@ export default function SmartRide() {
                   height={270}
                   className="object-cover object-center opacity-100"
                   priority
-                /> 
+                />
               </div>
 
               {/* delivery bike image - sits in front */}
@@ -479,7 +479,7 @@ export default function SmartRide() {
       </section>
 
       <div className="-mt-6"></div>
-      
+
       {/* Footer */}
       <Footer />
     </div>

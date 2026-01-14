@@ -64,7 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/svg+xml" href="/swiftly-logo.svg" />
       </head>
       <body className="bricolage-font overflow-x-hidden">
         <Layout>{children}</Layout>
