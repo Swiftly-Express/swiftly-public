@@ -174,7 +174,7 @@ export default function NavBar({ className = '' }: NavBarProps) {
               )
 
               return (
-                <div key={key} className={`px-0 ${idx < arr.length - 1 ? 'border-b border-[#E5E7EB]' : ''}`}>
+                <div key={key} className={`px-0 ${idx < arr.length - 1 ? 'border-b border-[#E5E7EB]' : ''} ${isMenuOpen ? `menu-item-slide menu-item-delay-${idx + 1}` : ''}`}>
                   {content}
                 </div>
               )
@@ -182,7 +182,7 @@ export default function NavBar({ className = '' }: NavBarProps) {
           </div>
 
           {/* Buttons at Bottom */}
-          <div className="flex flex-col gap-3 pb-6">
+          <div className={`flex flex-col gap-3 pb-6 ${isMenuOpen ? 'menu-buttons-slide' : ''}`}>
             <button
               onClick={() => {
                 setIsMenuOpen(false)
@@ -212,7 +212,7 @@ export default function NavBar({ className = '' }: NavBarProps) {
           </div>
 
           {/* Social links */}
-          <div className="mt-6 mb-6 text-center">
+          <div className={`mt-6 mb-6 text-center ${isMenuOpen ? 'menu-social-slide' : ''}`}>
             <div className="text-sm text-gray-500 mb-3">Connect with us on</div>
             <div className="flex items-center justify-center gap-2">
               <a href="#" aria-label="Instagram" className="w-10 h-10 rounded-full flex items-center justify-center">

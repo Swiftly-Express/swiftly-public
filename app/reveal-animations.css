@@ -171,3 +171,49 @@
 .reveal-hidden {
     opacity: 0;
 }
+
+/* Mobile menu slide-in animations */
+@keyframes slideInFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.menu-item-slide {
+    animation: slideInFromLeft 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.menu-item-delay-1 {
+    animation-delay: 100ms;
+}
+
+.menu-item-delay-2 {
+    animation-delay: 200ms;
+}
+
+.menu-item-delay-3 {
+    animation-delay: 300ms;
+}
+
+.menu-item-delay-4 {
+    animation-delay: 400ms;
+}
+
+.menu-item-delay-5 {
+    animation-delay: 500ms;
+}
+
+.menu-buttons-slide {
+    animation: slideInFromLeft 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 600ms;
+}
+
+.menu-social-slide {
+    animation: slideInFromLeft 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 700ms;
+}
