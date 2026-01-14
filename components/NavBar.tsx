@@ -70,7 +70,7 @@ export default function NavBar({ className = '' }: NavBarProps) {
         </div>
 
         {/* Center: Desktop Links */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center ml-52 gap-6">
           {(usePublic
             ? LINKS_PUBLIC.map((l) => ({ href: `${PUBLIC_BASE}${l.href}`, label: l.label }))
             : LINKS_LOCAL

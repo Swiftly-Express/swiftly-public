@@ -7,9 +7,9 @@ import Footer from '../../components/Footer';
 import NavBar from '../../components/NavBar';
 
 // Component imports - replace with your actual components
-const YummyText: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
-  children, 
-  className = '' 
+const YummyText: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className = ''
 }) => (
   <div className={className}>{children}</div>
 );
@@ -27,9 +27,9 @@ const Button: React.FC<{
     light: 'bg-white text-black hover:bg-gray-100',
     outline: 'border border-white text-white hover:bg-white hover:text-black'
   };
-  
+
   return (
-    <button 
+    <button
       className={`${baseStyles} ${variantStyles[variant]} ${className}`}
       onClick={onClick}
     >
@@ -38,9 +38,9 @@ const Button: React.FC<{
   );
 };
 
-const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
-  children, 
-  className = '' 
+const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className = ''
 }) => (
   <div className={`container mx-auto px-4 ${className}`}>{children}</div>
 );
@@ -222,12 +222,12 @@ export default function Services() {
           {/* Left Content */}
           <div className="flex flex-col justify-center items-center md:items-start text-center md:text-left w-full max-w-md space-y-3">
             <YummyText className="text-4xl md:text-4xl leading-tight md:leading-snug font-medium text-[#1E1E1E]">
-            Delivery Services for <br className="hidden md:block"/> Every Need
+              Delivery Services for <br className="hidden md:block" /> Every Need
             </YummyText>
 
             <YummyText className="text-[#4B5563] font-[500] text-sm md:text-base leading-6 !mt-3">
               From same-day xpress to international shipping, we have got
-             you covered with reliable, <br className="sm:hidden"/> affordable delivery solutions.
+              you covered with reliable, <br className="sm:hidden" /> affordable delivery solutions.
             </YummyText>
 
             <div className="pt-2">
@@ -245,7 +245,7 @@ export default function Services() {
                 <YummyText className="font-[300] text-sm">Get Started</YummyText>
               </Button>
             </div>
-            
+
             <div className="block md:hidden !mt-10 sm:mt-6 md:mt-8 w-full flex justify-center">
               <Image
                 src="/drone.svg"
@@ -376,7 +376,7 @@ export default function Services() {
         {/* Centered Content */}
         <div className="relative text-center text-white !py-12 md:!py-20 px-4 md:px-6 max-w-5xl mx-auto">
           <YummyText className="text-3xl md:text-3xl font-[500] mb-4 md:mb-5">
-            Ready to Get <br className="sm:hidden"/> Started?
+            Ready to Get <br className="sm:hidden" /> Started?
           </YummyText>
 
           <YummyText className="mb-2 text-base md:text-lg font-[200] leading-tight md:leading-tight px-4">

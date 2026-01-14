@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import Footer from '../components/Footer';
@@ -256,6 +256,46 @@ export default function SwiftlyLanding() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [heroAnimation]);
+
+  // Reveal animations for sections
+  const [sectionVisibility, setSectionVisibility] = React.useState<{ [key: string]: boolean }>({});
+  const sectionRefs = React.useRef<{ [key: string]: HTMLElement | null }>({});
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const sectionId = entry.target.getAttribute('data-section');
+          if (sectionId) {
+            setSectionVisibility((prev) => ({
+              ...prev,
+              [sectionId]: entry.isIntersecting,
+            }));
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+        rootMargin: '0px 0px -10% 0px',
+      }
+    );
+
+    Object.values(sectionRefs.current).forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const getRevealClass = (sectionId: string) => {
+    const isVisible = sectionVisibility[sectionId];
+    if (isVisible) {
+      return isDesktopAnim ? 'reveal-up' : 'reveal-up-mobile';
+    }
+    return 'reveal-hidden';
+  };
 
   const [initialLoad, setInitialLoad] = React.useState(true);
   const prevNotificationCountRef = React.useRef(3); // Track initial count
@@ -545,9 +585,14 @@ export default function SwiftlyLanding() {
       </div>
 
       {/* Services Section */}
-      <section id="services" className="bg-white py-0 sm:py-0 md:py-0 lg:py-0">
+      <section
+        id="services"
+        className="bg-white py-0 sm:py-0 md:py-0 lg:py-0"
+        data-section="services"
+        ref={(el) => { if (el) sectionRefs.current['services'] = el; }}
+      >
         <PageWrapper className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center text-center mb-6 sm:mb-8 space-y-1 px-4">
+          <div className={`flex flex-col items-center text-center mb-6 sm:mb-8 space-y-1 px-4 ${getRevealClass('services')}`}>
             <YummyText className="text-[#10b981] text-xs font-xs -mb-1">
               What we do best.
             </YummyText>
@@ -564,7 +609,7 @@ export default function SwiftlyLanding() {
             {services.map((service, index) => (
               <div
                 key={index}
-                className="bg-[#1E1E1E] rounded-3xl p-5 text-left flex flex-col items-start h-[350px] sm:h-[420px] relative overflow-hidden"
+                className={`bg-[#1E1E1E] rounded-3xl p-5 text-left flex flex-col items-start h-[350px] sm:h-[420px] relative overflow-hidden ${getRevealClass('services')} reveal-stagger-${index + 1}`}
                 style={{
                   background:
                     "radial-gradient(circle at center, #1a1a1a, #0d0d0d)",
@@ -594,9 +639,13 @@ export default function SwiftlyLanding() {
       </section>
 
       {/* No Hassle Section */}
-      <section className="hidden bg-[#ffffff] md:block px-4 mt-4 md:mt-6 lg:mt-4 mb-6 md:mb-8 lg:mb-6">
+      <section
+        className="hidden bg-[#ffffff] md:block px-4 mt-4 md:mt-6 lg:mt-4 mb-6 md:mb-8 lg:mb-6"
+        data-section="nohassle"
+        ref={(el) => { if (el) sectionRefs.current['nohassle'] = el; }}
+      >
         <PageWrapper className="max-w-7xl">
-          <div className="relative rounded-3xl overflow-hidden h-[430px] flex items-center">
+          <div className={`relative rounded-3xl overflow-hidden h-[430px] flex items-center ${getRevealClass('nohassle')}`}>
             <div
               className="absolute inset-0 bg-cover opacity-100 bg-center"
               style={{
@@ -625,9 +674,14 @@ export default function SwiftlyLanding() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-8 bg-[#ffffff] sm:py-12 md:-mt-4 md:md:-mt-6 lg:-mt-4">
+      <section
+        id="how-it-works"
+        className="py-8 bg-[#ffffff] sm:py-12 md:-mt-4 md:md:-mt-6 lg:-mt-4"
+        data-section="howitworks"
+        ref={(el) => { if (el) sectionRefs.current['howitworks'] = el; }}
+      >
         <PageWrapper className="max-w-6xl mx-auto text-center">
-          <div className="flex flex-col items-center mb-6 md:mb-8 lg:mb-6 px-4">
+          <div className={`flex flex-col items-center mb-6 md:mb-8 lg:mb-6 px-4 ${getRevealClass('howitworks')}`}>
             <div className="flex justify-center mt-4 md:mt-6 lg:mt-4">
               <YummyText className="px-4 sm:px-6 py-1.5 bg-[#A7F3D0] text-[#00B75A] rounded-full text-xs font-[400]">
                 How It Works
@@ -642,7 +696,7 @@ export default function SwiftlyLanding() {
             {steps.map((step, index) => (
               <div
                 key={index}
-                className="bg-[#1E1E1E] rounded-3xl p-6 sm:p-8 md:p-14 md:px-12 !h-[460px] !sm:h-[400px] !md:h-[460px] text-left flex flex-col items-start relative overflow-hidden"
+                className={`bg-[#1E1E1E] rounded-3xl p-6 sm:p-8 md:p-14 md:px-12 !h-[460px] !sm:h-[400px] !md:h-[460px] text-left flex flex-col items-start relative overflow-hidden ${getRevealClass('howitworks')} reveal-stagger-${index + 1}`}
               >
                 <div className="flex flex-col">
                   <YummyText className="text-[#F9FAFB] text-3xl sm:text-2xl md:text-3xl font-sm">
@@ -671,7 +725,12 @@ export default function SwiftlyLanding() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="relative bg-[#ffffff] py-8 md:py-12 lg:py-8 overflow-hidden">
+      <section
+        id="testimonials"
+        className="relative bg-[#ffffff] py-8 md:py-12 lg:py-8 overflow-hidden"
+        data-section="testimonials"
+        ref={(el) => { if (el) sectionRefs.current['testimonials'] = el; }}
+      >
         <div className="absolute right-2 md:right-14 top-10 md:top-16 z-20 -translate-y-1/2 w-32 md:w-60 h-32 md:h-60 pointer-events-none">
           <Image
             src="/carton.svg"
@@ -687,7 +746,7 @@ export default function SwiftlyLanding() {
         </div>
 
         <PageWrapper className="max-w-5xl mx-auto relative -mb-8 z-10 px-4">
-          <div className="flex flex-col items-center text-center mb-8 sm:mb-12 md:-mt-6">
+          <div className={`flex flex-col items-center text-center mb-8 sm:mb-12 md:-mt-6 ${getRevealClass('testimonials')}`}>
             <YummyText className="px-4 sm:px-6 py-1.5 bg-green-200 text-green-700 rounded-full text-xs font-[400] mb-2 sm:mb-1">
               Testimonials
             </YummyText>
@@ -810,11 +869,16 @@ export default function SwiftlyLanding() {
       </div>
 
       {/* FAQ Section */}
-      <section id="faq" className="bg-[#1a1a1a] h-auto relative overflow-hidden">
+      <section
+        id="faq"
+        className="bg-[#1a1a1a] h-auto relative overflow-hidden"
+        data-section="faq"
+        ref={(el) => { if (el) sectionRefs.current['faq'] = el; }}
+      >
 
         <PageWrapper className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 px-2 md:px-6">
-            <div className="space-y-4 md:space-y-6">
+            <div className={`space-y-4 md:space-y-6 ${getRevealClass('faq')}`}>
               <div className="flex flex-col">
                 <YummyText className="text-[#10b981] font-[400] text-xs md:text-sm mb-3 md:mb-4 mt-8 md:mt-12 md:py-10">
                   FAQs - Frequently asked questions
@@ -876,9 +940,13 @@ export default function SwiftlyLanding() {
       </section>
 
       {/* Download App & Quote Section */}
-      <section className="bg-white py-6 sm:py-10">
+      <section
+        className="bg-white py-6 sm:py-10"
+        data-section="download"
+        ref={(el) => { if (el) sectionRefs.current['download'] = el; }}
+      >
         <PageWrapper className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:w-[106%] lg:-ml-7">
+          <div className={`grid grid-cols-1 lg:grid-cols-2 gap-4 lg:w-[106%] lg:-ml-7 ${getRevealClass('download')}`}>
             {/* Download App Card */}
             <div className="bg-[#1a1a1a] rounded-3xl p-8 sm:p-10 lg:p-14 relative overflow-hidden min-h-[450px] sm:min-h-[500px] lg:h-[668px]">
               <div className="relative z-10 lg:-mt-5">

@@ -1,0 +1,123 @@
+/* Section reveal animations - Desktop & Mobile */
+@keyframes revealUp {
+    0% {
+        opacity: 0;
+        transform: translateY(60px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes revealDown {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-60px);
+    }
+}
+
+@keyframes revealUpMobile {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes revealDownMobile {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+}
+
+@keyframes revealScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes revealScaleOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+/* Reveal animation classes */
+.reveal-up {
+    animation: revealUp 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-down {
+    animation: revealDown 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-up-mobile {
+    animation: revealUpMobile 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-down-mobile {
+    animation: revealDownMobile 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-scale {
+    animation: revealScale 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-scale-out {
+    animation: revealScaleOut 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Stagger delays for child elements */
+.reveal-stagger-1 {
+    animation-delay: 100ms;
+}
+
+.reveal-stagger-2 {
+    animation-delay: 200ms;
+}
+
+.reveal-stagger-3 {
+    animation-delay: 300ms;
+}
+
+.reveal-stagger-4 {
+    animation-delay: 400ms;
+}
+
+.reveal-stagger-5 {
+    animation-delay: 500ms;
+}
+
+/* Initial hidden state */
+.reveal-hidden {
+    opacity: 0;
+}

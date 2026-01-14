@@ -6,9 +6,9 @@ import Footer from '../../components/Footer';
 import NavBar from '../../components/NavBar';
 
 // Component imports - replace with your actual components
-const YummyText: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
-  children, 
-  className = '' 
+const YummyText: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className = ''
 }) => (
   <div className={className}>{children}</div>
 );
@@ -26,9 +26,9 @@ const Button: React.FC<{
     light: 'bg-white text-black hover:bg-gray-100',
     outline: 'border border-white text-white hover:bg-white hover:text-black'
   };
-  
+
   return (
-    <button 
+    <button
       className={`${baseStyles} ${variantStyles[variant]} ${className}`}
       onClick={onClick}
     >
@@ -37,9 +37,9 @@ const Button: React.FC<{
   );
 };
 
-const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
-  children, 
-  className = '' 
+const PageWrapper: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className = ''
 }) => (
   <div className={`container mx-auto px-4 ${className}`}>{children}</div>
 );
@@ -55,14 +55,13 @@ interface ProcessStepProps {
 
 const ProcessStep: React.FC<ProcessStepProps> = ({ icon, title }) => (
   <div className="flex flex-col items-center text-center">
-    <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
-      title === 'Enter Package Details' ? 'bg-violet-500' :
-      title === 'Secure payment' ? 'bg-[#FF4D00]' :
-      title === 'Choose Pickup/Delivery' ? 'bg-blue-500' :
-      title === 'Create Your Account' ? 'bg-[#00D68F]' :
-      title === 'Delivery Confirmation' ? 'bg-[#00D68F]' :
-      'bg-red-500' // Real-Time Tracking
-    }`}>
+    <div className={`w-16 h-16 rounded-full flex items-center justify-center ${title === 'Enter Package Details' ? 'bg-violet-500' :
+        title === 'Secure payment' ? 'bg-[#FF4D00]' :
+          title === 'Choose Pickup/Delivery' ? 'bg-blue-500' :
+            title === 'Create Your Account' ? 'bg-[#00D68F]' :
+              title === 'Delivery Confirmation' ? 'bg-[#00D68F]' :
+                'bg-red-500' // Real-Time Tracking
+      }`}>
       <Image src={icon} alt={title} width={32} height={32} />
     </div>
     <YummyText className="mt-2 text-[#111827] text-sm">{title}</YummyText>
@@ -118,7 +117,7 @@ export default function HowItWorks() {
               <YummyText>Get Started</YummyText>
             </Button>
           </div>
-          
+
         </PageWrapper>
       </div>
 
@@ -165,15 +164,15 @@ export default function HowItWorks() {
           {/* Mobile Layout - Vertical Spiral */}
           <div className="block md:hidden  relative min-h-[600px] mt-6">
             <div className="absolute inset-0 left-1/2 -translate-x-1/2 w-[390px] h-[600px]">
-              <Image 
-                src="/mobilespiral.svg" 
+              <Image
+                src="/mobilespiral.svg"
                 alt="Process Flow"
                 fill
                 className="object-contain"
                 unoptimized
               />
             </div>
-            
+
             <div className="relative z-10 px-4">
               {/* step 0: keep default (title below icon) */}
               <div className="absolute top-0 left-[10%]">
@@ -230,15 +229,15 @@ export default function HowItWorks() {
           {/* Desktop Layout - Horizontal Spiral */}
           <div className="hidden md:block relative min-h-[500px]">
             <div className="absolute inset-0 h-[430px] -left-36 -right-36">
-              <Image 
-                src="/spiralicon.svg" 
+              <Image
+                src="/spiralicon.svg"
                 alt="Process Flow"
                 fill
                 className="object-fill"
                 unoptimized
               />
             </div>
-            
+
             <div className="relative z-10">
               <div className="absolute top-20 mt-20 left-[2%]">
                 <ProcessStep {...steps[0]} />

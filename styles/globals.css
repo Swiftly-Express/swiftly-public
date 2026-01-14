@@ -97,10 +97,10 @@
 }
 
 /* Utility: hide scrollbar but keep scrolling enabled */
-.no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
+/* .no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none; 
+} */
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
