@@ -219,6 +219,44 @@ export default function SwiftlyLanding() {
     }
   ]);
 
+  // Hero animation state: 'enter' | 'exit'
+  const [heroAnimation, setHeroAnimation] = React.useState<'enter' | 'exit'>('enter');
+  const [isDesktopAnim, setIsDesktopAnim] = React.useState<boolean>(true);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const onResize = () => setIsDesktopAnim(window.innerWidth >= 768);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // Trigger enter animation on mount
+  React.useEffect(() => {
+    const t = setTimeout(() => setHeroAnimation('enter'), 80);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Toggle exit/enter on scroll (exit when scrolling down past threshold, enter when back near top)
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    let ticking = false;
+    const threshold = 120;
+    const onScroll = () => {
+      const y = window.scrollY || window.pageYOffset;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (y > threshold && heroAnimation !== 'exit') setHeroAnimation('exit');
+          if (y <= threshold && heroAnimation !== 'enter') setHeroAnimation('enter');
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [heroAnimation]);
+
   const [initialLoad, setInitialLoad] = React.useState(true);
   const prevNotificationCountRef = React.useRef(3); // Track initial count
 
@@ -381,7 +419,7 @@ export default function SwiftlyLanding() {
         </div>
 
         {/* Content positioned at top */}
-        <div className="min-h-screen z-10 w-full max-w-5xl">
+        <div className={`min-h-screen z-10 w-full max-w-5xl ${heroAnimation === 'enter' ? (isDesktopAnim ? 'hero-enter-desktop' : 'hero-enter-mobile') : (isDesktopAnim ? 'hero-exit-desktop' : 'hero-exit-mobile')}`}>
           {/* Trust Badge */}
           <div className="inline-flex items-center gap-2 bg-[#d1fae5] border border-[#008C45] rounded-full px-3 py-1.5 z-10 mt-16 md:mt-8 lg:mt-8 mb-1">
             <div className="flex -space-x-2 mr-2">

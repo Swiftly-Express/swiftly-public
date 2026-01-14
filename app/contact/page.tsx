@@ -204,15 +204,15 @@ export default function Contact() {
 
       <PageWrapper>
         {/* Main Contact Section */}
-        <section className="py-0 px-6">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 items-stretch">
+        <section className="py-0 md:px-6">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 items-stretch">
             {/* Left - Contact Form */}
-            <div className="p-10 h-[92%] rounded-2xl">
+            <div className="p-6 md:p-10 h-auto md:h-[92%] rounded-2xl">
               <YummyText className="text-4xl font-[400] text-[#111827] mb-3">
                 Get in Touch
               </YummyText>
-              <YummyText className="text-sm flex text-[#4B5563] mb-4">
-                Have questions? We're here to help. Reach out to us and <br /> we'll respond as soon as possible.
+              <YummyText className="text-base md:text-sm flex text-[#4B5563] mb-4">
+                Have questions? We're here to help. Reach out to us and we'll respond as soon as possible.
               </YummyText>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -322,9 +322,9 @@ export default function Contact() {
               </form>
             </div>
 
-            {/* Right - Contact Image */}
-            <div className="bg-[#1E1E1E] rounded-2xl overflow-hidden mt-10 md:mt-8 lg:mt-10 h-[91%] flex items-center justify-center">
-              <div className="max-w-[520px] w-full px-6 py-8 flex items-center justify-center">
+            {/* Right - Contact Image (hidden on mobile) */}
+            <div className="hidden md:flex bg-[#1E1E1E] rounded-2xl overflow-hidden mt-6 md:mt-8 lg:mt-10 h-auto md:h-[91%] items-center justify-center">
+              <div className="max-w-[520px] w-full px-4 md:px-6 py-8 flex items-center justify-center">
                 <Image
                   src="/contact-image.svg"
                   alt="Contact"
@@ -338,7 +338,7 @@ export default function Contact() {
         </section>
 
         {/* Contact Info Cards */}
-        <section className="py-4 md:py-6 lg:py-4 px-6 mb-6">
+        <section className="py-4 md:py-6 lg:py-4 px-4 md:px-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {contactInfo.map((info, index) => (
               <ContactInfoCard
@@ -353,7 +353,7 @@ export default function Contact() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-12 md:py-10 lg:py-10 mb-8 px-32 bg-[#F9FAFB]">
+        <section className="py-12 md:py-10 lg:py-10 mb-8 px-4 md:px-32 bg-[#F9FAFB]">
           <div className="text-center mb-8">
             <YummyText className="text-4xl font-[300] text-[#111827] mb-1">
               Frequently Asked Questions

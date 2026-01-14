@@ -2,6 +2,9 @@ import React from 'react';
 import Link from 'next/link';
 import YummyText from '../components/YummyText';
 import PageWrapper from './PageWrapper';
+import InstagramIcon from './icons/InstagramIcon';
+import FacebookIcon from './icons/FacebookIcon';
+import WhatsAppIcon from './icons/WhatsAppIcon';
 
 const Footer = () => {
   return (
@@ -19,17 +22,14 @@ const Footer = () => {
 
             {/* Social Icons */}
             <div className="flex gap-3">
-              <a href="#" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors">
-                <span className="text-lg">f</span>
+              <a href="#" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors text-gray-400 hover:text-white">
+                <FacebookIcon width="18" height="18" className="text-current" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors">
-                <span className="text-lg">𝕏</span>
+              <a href="#" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors text-gray-400 hover:text-white">
+                <InstagramIcon width="18" height="18" className="text-current" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors">
-                <span className="text-lg">in</span>
-              </a>
-              <a href="#" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors">
-                <span className="text-lg">📷</span>
+              <a href="#" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors text-gray-400 hover:text-white">
+                <WhatsAppIcon width="18" height="18" className="text-current" />
               </a>
             </div>
           </div>
