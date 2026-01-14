@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
@@ -162,6 +162,42 @@ export default function Contact() {
     }
   ];
 
+  const [sectionVisibility, setSectionVisibility] = useState<{ [key: string]: boolean }>({});
+  const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const section = entry.target.getAttribute('data-section');
+          if (section && entry.isIntersecting) {
+            setSectionVisibility(prev => ({ ...prev, [section]: true }));
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    Object.values(sectionRefs.current).forEach(ref => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const getRevealClass = (section: string) => {
+    if (!sectionVisibility[section]) return 'reveal-hidden';
+    return isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
+  };
+
   return (
     <div className="bg-[#ffffff] min-h-screen">
       {/* Navbar */}
@@ -204,10 +240,13 @@ export default function Contact() {
 
       <PageWrapper>
         {/* Main Contact Section */}
-        <section className="py-0 md:px-6">
+        <section
+          data-section="contact-form"
+          ref={el => sectionRefs.current['contact-form'] = el}
+          className="py-0 md:px-6">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 items-stretch">
             {/* Left - Contact Form */}
-            <div className="p-6 md:p-10 h-auto md:h-[92%] rounded-2xl">
+            <div className={`p-6 md:p-10 h-auto md:h-[92%] rounded-2xl ${getRevealClass('contact-form')}`}>
               <YummyText className="text-4xl font-[400] text-[#111827] mb-3">
                 Get in Touch
               </YummyText>
@@ -338,23 +377,30 @@ export default function Contact() {
         </section>
 
         {/* Contact Info Cards */}
-        <section className="py-4 md:py-6 lg:py-4 px-4 md:px-6 mb-6">
+        <section
+          data-section="contact-info"
+          ref={el => sectionRefs.current['contact-info'] = el}
+          className="py-4 md:py-6 lg:py-4 px-4 md:px-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {contactInfo.map((info, index) => (
-              <ContactInfoCard
-                key={index}
-                icon={info.icon}
-                title={info.title}
-                lines={info.lines}
-                subtext={info.subtext}
-              />
+              <div key={index} className={`${getRevealClass('contact-info')} reveal-stagger-${index + 1}`}>
+                <ContactInfoCard
+                  icon={info.icon}
+                  title={info.title}
+                  lines={info.lines}
+                  subtext={info.subtext}
+                />
+              </div>
             ))}
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section className="py-12 md:py-10 lg:py-10 mb-8 px-4 md:px-32 bg-[#F9FAFB]">
-          <div className="text-center mb-8">
+        <section
+          data-section="faq"
+          ref={el => sectionRefs.current['faq'] = el}
+          className="py-12 md:py-10 lg:py-10 mb-8 px-4 md:px-32 bg-[#F9FAFB]">
+          <div className={`text-center mb-8 ${getRevealClass('faq')}`}>
             <YummyText className="text-4xl font-[300] text-[#111827] mb-1">
               Frequently Asked Questions
             </YummyText>
@@ -365,12 +411,11 @@ export default function Contact() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
             {faqs.map((faq, index) => (
-              <FAQCard
-                key={index}
-                question={faq.question}
-                answer={faq.answer}
-              />
-            ))}
+              <div key={index} className={`${getRevealClass('faq')} reveal-stagger-${index + 1}`}>
+                <FAQCard
+                  question={faq.question}
+                  answer={faq.answer}
+                />              </div>))}
           </div>
         </section>
       </PageWrapper>

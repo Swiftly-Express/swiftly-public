@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Footer from '../../components/Footer';
 import NavBar from '../../components/NavBar';
@@ -56,11 +56,11 @@ interface ProcessStepProps {
 const ProcessStep: React.FC<ProcessStepProps> = ({ icon, title }) => (
   <div className="flex flex-col items-center text-center">
     <div className={`w-16 h-16 rounded-full flex items-center justify-center ${title === 'Enter Package Details' ? 'bg-violet-500' :
-        title === 'Secure payment' ? 'bg-[#FF4D00]' :
-          title === 'Choose Pickup/Delivery' ? 'bg-blue-500' :
-            title === 'Create Your Account' ? 'bg-[#00D68F]' :
-              title === 'Delivery Confirmation' ? 'bg-[#00D68F]' :
-                'bg-red-500' // Real-Time Tracking
+      title === 'Secure payment' ? 'bg-[#FF4D00]' :
+        title === 'Choose Pickup/Delivery' ? 'bg-blue-500' :
+          title === 'Create Your Account' ? 'bg-[#00D68F]' :
+            title === 'Delivery Confirmation' ? 'bg-[#00D68F]' :
+              'bg-red-500' // Real-Time Tracking
       }`}>
       <Image src={icon} alt={title} width={32} height={32} />
     </div>
@@ -70,6 +70,41 @@ const ProcessStep: React.FC<ProcessStepProps> = ({ icon, title }) => (
 
 // Main HowItWorks Component
 export default function HowItWorks() {
+  const [sectionVisibility, setSectionVisibility] = useState<{ [key: string]: boolean }>({});
+  const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const section = entry.target.getAttribute('data-section');
+          if (section && entry.isIntersecting) {
+            setSectionVisibility(prev => ({ ...prev, [section]: true }));
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    Object.values(sectionRefs.current).forEach(ref => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const getRevealClass = (section: string) => {
+    if (!sectionVisibility[section]) return 'reveal-hidden';
+    return isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
+  };
 
   const steps = [
     { icon: '/phoneicon.svg', title: 'Create Your Account' },
@@ -122,7 +157,10 @@ export default function HowItWorks() {
       </div>
 
       {/* Hero Section */}
-      <div className="relative w-full min-h-[300px] md:min-h-[400px] bg-[#00B75A] py-6 md:py-10 lg:py-6 overflow-hidden">
+      <div
+        data-section="hero"
+        ref={el => sectionRefs.current['hero'] = el}
+        className="relative w-full min-h-[300px] md:min-h-[400px] bg-[#00B75A] py-6 md:py-10 lg:py-6 overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/riderman.svg"
@@ -137,7 +175,7 @@ export default function HowItWorks() {
         <div className="absolute inset-0 bg-green-800/95 mix-blend-multiply"></div>
 
         <PageWrapper>
-          <div className="relative py-8 md:py-12 lg:py-8 text-center mt-12 md:mt-20 text-white flex flex-col items-center justify-center px-4">
+          <div className={`relative py-8 md:py-12 lg:py-8 text-center mt-12 md:mt-20 text-white flex flex-col items-center justify-center px-4 ${getRevealClass('hero')}`}>
             <YummyText className="text-3xl md:text-5xl font-medium mb-3 md:mb-4">
               How Swiftly Works
             </YummyText>
@@ -150,8 +188,11 @@ export default function HowItWorks() {
 
       <PageWrapper>
         {/* Process Section */}
-        <section className="py-0">
-          <div className="text-center -mb-1 mt-3 md:mt-4 lg:mt-3 space-y-1 px-4">
+        <section
+          data-section="process"
+          ref={el => sectionRefs.current['process'] = el}
+          className="py-0">
+          <div className={`text-center -mb-1 mt-3 md:mt-4 lg:mt-3 space-y-1 px-4 ${getRevealClass('process')}`}>
             <YummyText className="text-2xl md:text-4xl font-[300] text-[#111827]">
               The Complete Process
             </YummyText>
@@ -266,9 +307,12 @@ export default function HowItWorks() {
 
       <PageWrapper>
         {/* Detailed Steps Section */}
-        <section className="py-4 md:py-6 lg:py-4 grid grid-cols-1 md:grid-cols-3 gap-4 px-0 mt-10 sm:mt-10 md:mt-16 md:px-3">
+        <section
+          data-section="detailed-steps"
+          ref={el => sectionRefs.current['detailed-steps'] = el}
+          className="py-4 md:py-6 lg:py-4 grid grid-cols-1 md:grid-cols-3 gap-4 px-0 mt-10 sm:mt-10 md:mt-16 md:px-3">
           {/* Step 01 */}
-          <div className="bg-[#00D68F] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white">
+          <div className={`bg-[#00D68F] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-1`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">01</YummyText>
@@ -292,7 +336,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Step 02 */}
-          <div className="bg-violet-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white">
+          <div className={`bg-violet-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-2`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">02</YummyText>
@@ -316,7 +360,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Step 03 */}
-          <div className="bg-blue-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white">
+          <div className={`bg-blue-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-3`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">03</YummyText>
@@ -340,7 +384,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Step 04 */}
-          <div className="bg-[#FF4D00] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white">
+          <div className={`bg-[#FF4D00] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-1`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">04</YummyText>
@@ -364,7 +408,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Step 05 */}
-          <div className="bg-red-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white">
+          <div className={`bg-red-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-2`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">05</YummyText>
@@ -388,7 +432,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Step 06 */}
-          <div className="bg-[#00D68F] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white">
+          <div className={`bg-[#00D68F] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-3`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">06</YummyText>

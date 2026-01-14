@@ -71,29 +71,79 @@
     }
 }
 
+/* Slide Right Animation for Hero */
+@keyframes slideRight {
+    0% {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideRightMobile {
+    0% {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Fall Animation for Hero */
+@keyframes fall {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fallMobile {
+    0% {
+        opacity: 0;
+        transform: translateY(-60px) scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 /* Reveal animation classes */
-.reveal-up {
+.animate-revealUp {
     animation: revealUp 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.reveal-down {
-    animation: revealDown 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.reveal-up-mobile {
+.animate-revealUpMobile {
     animation: revealUpMobile 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.reveal-down-mobile {
-    animation: revealDownMobile 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.animate-slideRight {
+    animation: slideRight 1000ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.reveal-scale {
-    animation: revealScale 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.animate-slideRightMobile {
+    animation: slideRightMobile 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.reveal-scale-out {
-    animation: revealScaleOut 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.animate-fall {
+    animation: fall 1000ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-fallMobile {
+    animation: fallMobile 800ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 /* Stagger delays for child elements */

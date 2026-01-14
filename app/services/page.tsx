@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Footer from '../../components/Footer';
@@ -83,6 +83,44 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ imageSrc, title, desc, bullet
 // Main Services Component
 export default function Services() {
   const router = useRouter();
+  const [sectionVisibility, setSectionVisibility] = useState<{ [key: string]: boolean }>({});
+  const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const section = entry.target.getAttribute('data-section');
+          if (section && entry.isIntersecting) {
+            setSectionVisibility(prev => ({ ...prev, [section]: true }));
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    Object.values(sectionRefs.current).forEach(ref => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const getRevealClass = (section: string) => {
+    if (!sectionVisibility[section]) return 'reveal-hidden';
+    if (section === 'hero') {
+      return isDesktop ? 'animate-fall' : 'animate-fallMobile';
+    }
+    return isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
+  };
 
   const services = [
     {
@@ -218,9 +256,12 @@ export default function Services() {
 
       <PageWrapper>
         {/* Hero Section */}
-        <section className="relative min-h-[50vh] md:min-h-[calc(75vh-55px)] flex items-center justify-center md:left-16 md:gap-14 px-4 md:px-6 lg:px-20 py-8 md:py-0">
+        <section
+          data-section="hero"
+          ref={el => sectionRefs.current['hero'] = el}
+          className="relative min-h-[50vh] md:min-h-[calc(75vh-55px)] flex items-center justify-center md:left-16 md:gap-14 px-4 md:px-6 lg:px-20 py-8 md:py-0">
           {/* Left Content */}
-          <div className="flex flex-col justify-center items-center md:items-start text-center md:text-left w-full max-w-md space-y-3">
+          <div className={`flex flex-col justify-center items-center md:items-start text-center md:text-left w-full max-w-md space-y-3 ${getRevealClass('hero')}`}>
             <YummyText className="text-4xl md:text-4xl leading-tight md:leading-snug font-medium text-[#1E1E1E]">
               Delivery Services for <br className="hidden md:block" /> Every Need
             </YummyText>
@@ -286,8 +327,11 @@ export default function Services() {
         </div>
 
         {/* Services Section */}
-        <section className="py-6 md:py-8 lg:py-8 px-2 md:px-16 bg-[#FFFFFF] rounded-3xl">
-          <div className="text-center mb-6">
+        <section
+          data-section="services"
+          ref={el => sectionRefs.current['services'] = el}
+          className="py-6 md:py-8 lg:py-8 px-2 md:px-16 bg-[#FFFFFF] rounded-3xl">
+          <div className={`text-center mb-6 ${getRevealClass('services')}`}>
             <YummyText className="text-2xl md:text-3xl font-sm text-[#111827] mb-3 md:mb-4">
               Our Services
             </YummyText>
@@ -299,13 +343,14 @@ export default function Services() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 sm:px-0 md:px-0">
             {services.map((service, index) => (
-              <ServiceCard
-                key={index}
-                imageSrc={service.imageSrc}
-                title={service.title}
-                desc={service.desc}
-                bullets={service.bullets}
-              />
+              <div key={index} className={`${getRevealClass('services')} reveal-stagger-${index + 1}`}>
+                <ServiceCard
+                  imageSrc={service.imageSrc}
+                  title={service.title}
+                  desc={service.desc}
+                  bullets={service.bullets}
+                />
+              </div>
             ))}
           </div>
         </section>
@@ -326,8 +371,11 @@ export default function Services() {
         </div>
 
         {/* Why Choose Swiftly */}
-        <section className="bg-[#1E1E1E] text-white rounded-2xl mt-4 md:mt-6 lg:mt-4 mx-3 py-6 md:py-8 lg:py-6 px-2 md:px-6 lg:px-8">
-          <div className="flex justify-center items-center">
+        <section
+          data-section="why-choose"
+          ref={el => sectionRefs.current['why-choose'] = el}
+          className="bg-[#1E1E1E] text-white rounded-2xl mt-4 md:mt-6 lg:mt-4 mx-3 py-6 md:py-8 lg:py-6 px-2 md:px-6 lg:px-8">
+          <div className={`flex justify-center items-center ${getRevealClass('why-choose')}`}>
             <YummyText className="text-4xl md:text-[45px] font-[500] tracking-tight text-center">
               Why Choose <br className="sm:hidden" /> Swiftly?
             </YummyText>
@@ -337,7 +385,7 @@ export default function Services() {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center justify-center text-center transition-all duration-300"
+                className={`flex flex-col items-center justify-center text-center transition-all duration-300 ${getRevealClass('why-choose')} reveal-stagger-${index + 1}`}
               >
                 <div className="w-14 h-14 rounded-full flex items-center justify-center bg-[#00D68F1A] mb-4">
                   <Image
@@ -361,7 +409,10 @@ export default function Services() {
       </PageWrapper>
 
       {/* CTA Section - Full width */}
-      <section className="relative w-full overflow-hidden mt-10">
+      <section
+        data-section="cta"
+        ref={el => sectionRefs.current['cta'] = el}
+        className="relative w-full overflow-hidden mt-10">
         <div className="absolute inset-0">
           <Image
             src="/happylady.svg"
@@ -374,7 +425,7 @@ export default function Services() {
         </div>
 
         {/* Centered Content */}
-        <div className="relative text-center text-white !py-12 md:!py-20 px-4 md:px-6 max-w-5xl mx-auto">
+        <div className={`relative text-center text-white !py-12 md:!py-20 px-4 md:px-6 max-w-5xl mx-auto ${getRevealClass('cta')}`}>
           <YummyText className="text-3xl md:text-3xl font-[500] mb-4 md:mb-5">
             Ready to Get <br className="sm:hidden" /> Started?
           </YummyText>

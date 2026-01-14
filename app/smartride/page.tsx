@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Footer from '../../components/Footer';
 import NavBar from '../../components/NavBar';
@@ -97,6 +97,41 @@ const StepCard: React.FC<StepCardProps> = ({ number, title, description }) => (
 
 // Main SmartRide Component
 export default function SmartRide() {
+  const [sectionVisibility, setSectionVisibility] = useState<{ [key: string]: boolean }>({});
+  const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const section = entry.target.getAttribute('data-section');
+          if (section && entry.isIntersecting) {
+            setSectionVisibility(prev => ({ ...prev, [section]: true }));
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    Object.values(sectionRefs.current).forEach(ref => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const getRevealClass = (section: string) => {
+    if (!sectionVisibility[section]) return 'reveal-hidden';
+    return isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
+  };
 
   const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
 
@@ -211,10 +246,13 @@ export default function SmartRide() {
       </div>
 
       <PageWrapper className="relative w-full overflow-hidden">
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0 items-center max-w-6xl mx-auto px-6 md:px-6 py-14">
+        <section
+          data-section="hero"
+          ref={el => sectionRefs.current['hero'] = el}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0 items-center max-w-6xl mx-auto px-6 md:px-6 py-14">
 
           {/* LEFT SIDE TEXT */}
-          <div className="space-y-6">
+          <div className={`space-y-6 ${getRevealClass('hero')}`}>
             {/* text badge */}
             <div className="inline-flex items-center gap-2 bg-[#D8FFEB] border border-dashed border-[#00B75A] rounded-full px-3 py-1.5 z-10 mt-0 mb-0">
               <YummyText className="text-[#059669] text-[9px] font-medium whitespace-nowrap">
@@ -407,8 +445,11 @@ export default function SmartRide() {
 
       {/* Why Smart Rides Section */}
       <PageWrapper>
-        <section className="py-8 md:py-12 lg:py-8">
-          <div className="text-center mb-6 md:mb-12 lg:mb-8 px-2">
+        <section
+          data-section="why-smartrides"
+          ref={el => sectionRefs.current['why-smartrides'] = el}
+          className="py-8 md:py-12 lg:py-8">
+          <div className={`text-center mb-6 md:mb-12 lg:mb-8 px-2 ${getRevealClass('why-smartrides')}`}>
             <YummyText className="text-3xl md:text-4xl font-[400] text-[#111827] mb-4">
               Why Smart Rides?
             </YummyText>
@@ -419,19 +460,21 @@ export default function SmartRide() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 sm:px-10">
             {features.map((feature, index) => (
-              <FeatureCard
-                key={index}
-                icon={feature.icon}
-                title={feature.title}
-                description={feature.description}
-              />
-            ))}
+              <div key={index} className={`${getRevealClass('why-smartrides')} reveal-stagger-${index + 1}`}>
+                <FeatureCard
+                  icon={feature.icon}
+                  title={feature.title}
+                  description={feature.description}
+                />              </div>))}
           </div>
         </section>
 
         {/* How It Works Section */}
-        <section className="py-4 md:py-6 lg:py-6 bg-[#F9FAFB] rounded-3xl px-4 sm:px-14">
-          <div className="text-center mb-6 md:mb-10 lg:mb-6 px-2">
+        <section
+          data-section="how-it-works"
+          ref={el => sectionRefs.current['how-it-works'] = el}
+          className="py-4 md:py-6 lg:py-6 bg-[#F9FAFB] rounded-3xl px-4 sm:px-14">
+          <div className={`text-center mb-6 md:mb-10 lg:mb-6 px-2 ${getRevealClass('how-it-works')}`}>
             <YummyText className="text-3xl md:text-5xl font-[300] text-[#111827]">
               How It Works
             </YummyText>
@@ -442,22 +485,24 @@ export default function SmartRide() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-6 md:-mt-10 px-4 sm:px-14">
             {steps.map((step, index) => (
-              <StepCard
-                key={index}
-                number={step.number}
-                title={step.title}
-                description={step.description}
-              />
-            ))}
+              <div key={index} className={`${getRevealClass('how-it-works')} reveal-stagger-${index + 1}`}>
+                <StepCard
+                  number={step.number}
+                  title={step.title}
+                  description={step.description}
+                />              </div>))}
           </div>
         </section>
       </PageWrapper>
 
       {/* CTA Section */}
-      <section className="relative w-full overflow-hidden">
+      <section
+        data-section="cta"
+        ref={el => sectionRefs.current['cta'] = el}
+        className="relative w-full overflow-hidden">
         <div className="absolute inset-0"></div>
 
-        <div className="relative text-center text-[#1E1E1E] py-24 px-6 max-w-5xl mx-auto">
+        <div className={`relative text-center text-[#1E1E1E] py-24 px-6 max-w-5xl mx-auto ${getRevealClass('cta')}`}>
           <YummyText className="text-4xl font-[400] mb-6">
             Ready to Experience Fast Delivery?
           </YummyText>
