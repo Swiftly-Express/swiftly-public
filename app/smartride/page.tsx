@@ -128,6 +128,31 @@ export default function SmartRide() {
     return () => observer.disconnect();
   }, []);
 
+  // Per-card reveal for elements with `data-reveal` attribute
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const revealObserver = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            const animateClass = isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
+            el.classList.remove('reveal-hidden');
+            el.classList.add(animateClass);
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.05, rootMargin: '0px 0px -15% 0px' }
+    );
+
+    const els = Array.from(document.querySelectorAll('[data-reveal]')) as HTMLElement[];
+    els.forEach((el) => revealObserver.observe(el));
+
+    return () => revealObserver.disconnect();
+  }, [isDesktop]);
+
   const getRevealClass = (section: string) => {
     if (!sectionVisibility[section]) return 'reveal-hidden';
     return isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
@@ -460,7 +485,7 @@ export default function SmartRide() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 sm:px-10">
             {features.map((feature, index) => (
-              <div key={index} className={`${getRevealClass('why-smartrides')} reveal-stagger-${index + 1}`}>
+              <div key={index} data-reveal className={`reveal-hidden reveal-stagger-${index + 1}`}>
                 <FeatureCard
                   icon={feature.icon}
                   title={feature.title}
@@ -485,7 +510,7 @@ export default function SmartRide() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-6 md:-mt-10 px-4 sm:px-14">
             {steps.map((step, index) => (
-              <div key={index} className={`${getRevealClass('how-it-works')} reveal-stagger-${index + 1}`}>
+              <div key={index} data-reveal className={`reveal-hidden reveal-stagger-${index + 1}`}>
                 <StepCard
                   number={step.number}
                   title={step.title}

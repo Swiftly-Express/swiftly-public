@@ -193,6 +193,31 @@ export default function Contact() {
     return () => observer.disconnect();
   }, []);
 
+  // Per-card reveal for elements with `data-reveal` attribute
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const revealObserver = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            const animateClass = isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
+            el.classList.remove('reveal-hidden');
+            el.classList.add(animateClass);
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.05, rootMargin: '0px 0px -15% 0px' }
+    );
+
+    const els = Array.from(document.querySelectorAll('[data-reveal]')) as HTMLElement[];
+    els.forEach((el) => revealObserver.observe(el));
+
+    return () => revealObserver.disconnect();
+  }, [isDesktop]);
+
   const getRevealClass = (section: string) => {
     if (!sectionVisibility[section]) return 'reveal-hidden';
     return isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
@@ -383,7 +408,7 @@ export default function Contact() {
           className="py-4 md:py-6 lg:py-4 px-4 md:px-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {contactInfo.map((info, index) => (
-              <div key={index} className={`${getRevealClass('contact-info')} reveal-stagger-${index + 1}`}>
+              <div key={index} data-reveal className={`reveal-hidden reveal-stagger-${index + 1}`}>
                 <ContactInfoCard
                   icon={info.icon}
                   title={info.title}
@@ -411,7 +436,7 @@ export default function Contact() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
             {faqs.map((faq, index) => (
-              <div key={index} className={`${getRevealClass('faq')} reveal-stagger-${index + 1}`}>
+              <div key={index} data-reveal className={`reveal-hidden reveal-stagger-${index + 1}`}>
                 <FAQCard
                   question={faq.question}
                   answer={faq.answer}
