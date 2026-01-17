@@ -101,6 +101,31 @@ export default function HowItWorks() {
     return () => observer.disconnect();
   }, []);
 
+  // Per-card reveal for elements with `data-reveal` attribute (detailed steps cards)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const revealObserver = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            const animateClass = isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
+            el.classList.remove('reveal-hidden');
+            el.classList.add(animateClass);
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.05, rootMargin: '0px 0px -15% 0px' }
+    );
+
+    const els = Array.from(document.querySelectorAll('[data-reveal]')) as HTMLElement[];
+    els.forEach((el) => revealObserver.observe(el));
+
+    return () => revealObserver.disconnect();
+  }, [isDesktop]);
+
   const getRevealClass = (section: string) => {
     if (!sectionVisibility[section]) return 'reveal-hidden';
     return isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
@@ -312,7 +337,7 @@ export default function HowItWorks() {
           ref={el => sectionRefs.current['detailed-steps'] = el}
           className="py-4 md:py-6 lg:py-4 grid grid-cols-1 md:grid-cols-3 gap-4 px-0 mt-10 sm:mt-10 md:mt-16 md:px-3">
           {/* Step 01 */}
-          <div className={`bg-[#00D68F] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-1`}>
+          <div data-reveal className={`reveal-hidden reveal-stagger-1 bg-[#00D68F] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">01</YummyText>
@@ -336,7 +361,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Step 02 */}
-          <div className={`bg-violet-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-2`}>
+          <div data-reveal className={`reveal-hidden reveal-stagger-2 bg-violet-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">02</YummyText>
@@ -360,7 +385,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Step 03 */}
-          <div className={`bg-blue-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-3`}>
+          <div data-reveal className={`reveal-hidden reveal-stagger-3 bg-blue-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">03</YummyText>
@@ -384,7 +409,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Step 04 */}
-          <div className={`bg-[#FF4D00] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-1`}>
+          <div data-reveal className={`reveal-hidden reveal-stagger-1 bg-[#FF4D00] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">04</YummyText>
@@ -408,7 +433,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Step 05 */}
-          <div className={`bg-red-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-2`}>
+          <div data-reveal className={`reveal-hidden reveal-stagger-2 bg-red-500 rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">05</YummyText>
@@ -432,7 +457,7 @@ export default function HowItWorks() {
           </div>
 
           {/* Step 06 */}
-          <div className={`bg-[#00D68F] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white ${getRevealClass('detailed-steps')} reveal-stagger-3`}>
+          <div data-reveal className={`reveal-hidden reveal-stagger-3 bg-[#00D68F] rounded-2xl p-10 md:p-8 h-[100%] md:h-[410px] text-white`}>
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-4">
                 <YummyText className="text-5xl text-white/60 font-light">06</YummyText>
