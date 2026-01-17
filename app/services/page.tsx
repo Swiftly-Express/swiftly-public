@@ -114,6 +114,31 @@ export default function Services() {
     return () => observer.disconnect();
   }, []);
 
+  // Per-card reveal for elements with `data-reveal` attribute (services cards)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const revealObserver = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            const animateClass = isDesktop ? 'animate-revealUp' : 'animate-revealUpMobile';
+            el.classList.remove('reveal-hidden');
+            el.classList.add(animateClass);
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.05, rootMargin: '0px 0px -15% 0px' }
+    );
+
+    const els = Array.from(document.querySelectorAll('[data-reveal]')) as HTMLElement[];
+    els.forEach((el) => revealObserver.observe(el));
+
+    return () => revealObserver.disconnect();
+  }, [isDesktop]);
+
   const getRevealClass = (section: string) => {
     if (!sectionVisibility[section]) return 'reveal-hidden';
     if (section === 'hero') {
@@ -343,7 +368,7 @@ export default function Services() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 sm:px-0 md:px-0">
             {services.map((service, index) => (
-              <div key={index} className={`${getRevealClass('services')} reveal-stagger-${index + 1}`}>
+              <div key={index} data-reveal className={`reveal-hidden reveal-stagger-${index + 1}`}>
                 <ServiceCard
                   imageSrc={service.imageSrc}
                   title={service.title}
