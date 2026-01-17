@@ -123,11 +123,13 @@
 
 /* Reveal animation classes */
 .animate-revealUp {
-    animation: revealUp 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    /* slower, smoother reveal on desktop */
+    animation: revealUp 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .animate-revealUpMobile {
-    animation: revealUpMobile 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    /* slower, smoother reveal on mobile */
+    animation: revealUpMobile 1000ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .animate-slideRight {
@@ -148,28 +150,30 @@
 
 /* Stagger delays for child elements */
 .reveal-stagger-1 {
-    animation-delay: 100ms;
+    animation-delay: 150ms;
 }
 
 .reveal-stagger-2 {
-    animation-delay: 200ms;
-}
-
-.reveal-stagger-3 {
     animation-delay: 300ms;
 }
 
+.reveal-stagger-3 {
+    animation-delay: 450ms;
+}
+
 .reveal-stagger-4 {
-    animation-delay: 400ms;
+    animation-delay: 600ms;
 }
 
 .reveal-stagger-5 {
-    animation-delay: 500ms;
+    animation-delay: 750ms;
 }
 
 /* Initial hidden state */
 .reveal-hidden {
     opacity: 0;
+    /* keep initial offset so reveal feels like moving into place */
+    transform: translateY(40px);
 }
 
 /* Mobile menu slide-in animations */

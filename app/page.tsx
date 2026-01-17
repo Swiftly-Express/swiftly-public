@@ -237,26 +237,6 @@ export default function SwiftlyLanding() {
     return () => clearTimeout(t);
   }, []);
 
-  // Toggle exit/enter on scroll (exit when scrolling down past threshold, enter when back near top)
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    let ticking = false;
-    const threshold = 120;
-    const onScroll = () => {
-      const y = window.scrollY || window.pageYOffset;
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          if (y > threshold && heroAnimation !== 'exit') setHeroAnimation('exit');
-          if (y <= threshold && heroAnimation !== 'enter') setHeroAnimation('enter');
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [heroAnimation]);
-
   // Reveal animations for sections
   const [sectionVisibility, setSectionVisibility] = React.useState<{ [key: string]: boolean }>({});
   const sectionRefs = React.useRef<{ [key: string]: HTMLElement | null }>({});
@@ -268,17 +248,20 @@ export default function SwiftlyLanding() {
       (entries) => {
         entries.forEach((entry) => {
           const sectionId = entry.target.getAttribute('data-section');
-          if (sectionId) {
+          // Only mark sections as visible when they enter the viewport.
+          // Do not set them back to hidden when they leave (no reverse animation).
+          if (sectionId && entry.isIntersecting) {
             setSectionVisibility((prev) => ({
               ...prev,
-              [sectionId]: entry.isIntersecting,
+              [sectionId]: true,
             }));
           }
         });
       },
       {
-        threshold: 0.15,
-        rootMargin: '0px 0px -10% 0px',
+        threshold: 0.01,
+        // trigger slightly before section fully appears to feel more responsive
+        rootMargin: '0px 0px -20% 0px',
       }
     );
 
@@ -289,10 +272,36 @@ export default function SwiftlyLanding() {
     return () => observer.disconnect();
   }, []);
 
+  // Per-card reveal for elements with `data-reveal` attribute (home page cards).
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const revealObserver = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            const animateClass = isDesktopAnim ? 'animate-revealUp' : 'animate-revealUpMobile';
+            el.classList.remove('reveal-hidden');
+            el.classList.add(animateClass);
+            // stop observing after revealing (no reverse)
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.05, rootMargin: '0px 0px -15% 0px' }
+    );
+
+    const els = Array.from(document.querySelectorAll('[data-reveal]')) as HTMLElement[];
+    els.forEach((el) => revealObserver.observe(el));
+
+    return () => revealObserver.disconnect();
+  }, [isDesktopAnim]);
+
   const getRevealClass = (sectionId: string) => {
     const isVisible = sectionVisibility[sectionId];
     if (isVisible) {
-      return isDesktopAnim ? 'reveal-up' : 'reveal-up-mobile';
+      return isDesktopAnim ? 'animate-revealUp' : 'animate-revealUpMobile';
     }
     return 'reveal-hidden';
   };
@@ -609,7 +618,8 @@ export default function SwiftlyLanding() {
             {services.map((service, index) => (
               <div
                 key={index}
-                className={`bg-[#1E1E1E] rounded-3xl p-5 text-left flex flex-col items-start h-[350px] sm:h-[420px] relative overflow-hidden ${getRevealClass('services')} reveal-stagger-${index + 1}`}
+                data-reveal
+                className={`reveal-hidden bg-[#1E1E1E] rounded-3xl p-5 text-left flex flex-col items-start h-[350px] sm:h-[420px] relative overflow-hidden reveal-stagger-${index + 1}`}
                 style={{
                   background:
                     "radial-gradient(circle at center, #1a1a1a, #0d0d0d)",
@@ -696,7 +706,8 @@ export default function SwiftlyLanding() {
             {steps.map((step, index) => (
               <div
                 key={index}
-                className={`bg-[#1E1E1E] rounded-3xl p-6 sm:p-8 md:p-14 md:px-12 !h-[460px] !sm:h-[400px] !md:h-[460px] text-left flex flex-col items-start relative overflow-hidden ${getRevealClass('howitworks')} reveal-stagger-${index + 1}`}
+                data-reveal
+                className={`reveal-hidden bg-[#1E1E1E] rounded-3xl p-6 sm:p-8 md:p-14 md:px-12 !h-[460px] !sm:h-[400px] !md:h-[460px] text-left flex flex-col items-start relative overflow-hidden reveal-stagger-${index + 1}`}
               >
                 <div className="flex flex-col">
                   <YummyText className="text-[#F9FAFB] text-3xl sm:text-2xl md:text-3xl font-sm">

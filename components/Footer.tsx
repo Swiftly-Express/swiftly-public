@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import YummyText from '../components/YummyText';
 import PageWrapper from './PageWrapper';
 import InstagramIcon from './icons/InstagramIcon';
@@ -64,15 +65,21 @@ const Footer = () => {
             <YummyText className="text-lg font-medium mb-4">Contact Us</YummyText>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <span className="text-[#10b981] mt-1">📍</span>
+                <div className="w-6 h-6 mt-1 flex-shrink-0">
+                  <Image src="/locationicon.svg" alt="Location" width={24} height={24} className="object-contain" />
+                </div>
                 <YummyText className="text-gray-400 text-sm font-[300]">123 Logistics Avenue, Suite 100</YummyText>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-[#10b981] mt-1">📞</span>
+                <div className="w-6 h-6 mt-1 flex-shrink-0">
+                  <Image src="/telephone.svg" alt="Phone" width={24} height={24} className="object-contain" />
+                </div>
                 <YummyText className="text-gray-400 text-sm font-[300]">+1 (800) SWIFTLY</YummyText>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-[#10b981] mt-1">✉️</span>
+                <div className="w-6 h-6 mt-1 flex-shrink-0">
+                  <Image src="/mailicon.svg" alt="Email" width={24} height={24} className="object-contain" />
+                </div>
                 <YummyText className="text-gray-400 text-sm font-[300]">support@swiftlyexpress.com</YummyText>
               </li>
             </ul>
