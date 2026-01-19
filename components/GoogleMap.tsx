@@ -30,13 +30,42 @@ export default function GoogleMap({
 
   // Check if Google Maps is loaded
   useEffect(() => {
-    const checkGoogleMaps = () => {
-      if (typeof window !== 'undefined' && window.google && window.google.maps) {
-        setIsLoaded(true);
-      } else {
-        setTimeout(checkGoogleMaps, 100);
+    let attempts = 0;
+    const maxAttempts = 200; // ~20 seconds
+
+    const googleMapsApiKey = (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || process.env.VITE_GOOGLE_MAPS_API_KEY) as string | undefined;
+
+    const ensureScript = () => {
+      if (typeof window === 'undefined') return;
+      const hasScript = !!document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]');
+      if (!hasScript && googleMapsApiKey) {
+        const src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places,geometry&region=NG`;
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.defer = true;
+        s.onload = () => console.info('Google Maps script loaded');
+        s.onerror = (e) => console.error('Failed to load Google Maps script', e);
+        document.head.appendChild(s);
       }
     };
+
+    const checkGoogleMaps = () => {
+      attempts += 1;
+      if (typeof window !== 'undefined' && (window as any).google && (window as any).google.maps) {
+        setIsLoaded(true);
+        return;
+      }
+
+      if (attempts === 1) ensureScript();
+
+      if (attempts < maxAttempts) {
+        setTimeout(checkGoogleMaps, 100);
+      } else {
+        console.warn('Google Maps did not load within expected time. Make sure NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is set and valid.');
+      }
+    };
+
     checkGoogleMaps();
   }, []);
 

@@ -11,8 +11,9 @@ import GoogleMapsAutocomplete from '../../components/GoogleMapsAutocomplete';
 import Link from 'next/link';
 import axios from 'axios';
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookies';
+import { createDelivery } from '../../utils/authApi';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://api.swiftlyxpress.com';
+const API_BASE = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://api.swiftlyxpress.com';
 
 const apiClient = axios.create({
   baseURL: API_BASE,
@@ -173,6 +174,7 @@ export default function SmartRideBooking() {
       };
 
       let response;
+      let createResp: any = null;
       if (formData.image) {
         const fd = new FormData();
         fd.append('image', formData.image);
@@ -180,13 +182,18 @@ export default function SmartRideBooking() {
           if (typeof v === 'object') fd.append(k, JSON.stringify(v));
           else fd.append(k, String(v));
         });
-        response = await apiClient.post('/api/delivery/create', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+        createResp = await createDelivery(fd);
       } else {
-        response = await apiClient.post('/api/delivery/create', payload);
+        createResp = await createDelivery(payload);
       }
 
-      const dId = response?.data?.deliveryId || response?.data?.id || response?.data?._id || response?.data?.data?.id;
-      if (!dId) throw new Error('Failed to create delivery');
+      // createDelivery returns the backend response body (interceptor returns response.data)
+      const deliveryObj = createResp?.data?.delivery || createResp?.delivery || createResp?.data || createResp;
+      const dId = deliveryObj?._id || deliveryObj?.id || deliveryObj?.deliveryId || deliveryObj?.trackingNumber;
+      if (!dId) {
+        console.error('Create delivery response:', createResp);
+        throw new Error('Failed to create delivery (no id returned)');
+      }
       setDeliveryId(dId);
 
       let paymentWindow: Window | null = null;
@@ -195,13 +202,24 @@ export default function SmartRideBooking() {
         if (paymentWindow) paymentWindow.document.write('<p>Preparing payment...</p>');
       } catch (e) { paymentWindow = null; }
 
-      const initJson = await apiClient.post(`/api/payment/initialize/${dId}`, {
-        amount: calculateTotal().total,
-        currency: 'NGN',
-        email: formData.recipientEmail || 'customer@swiftlyxpress.com',
-        callback_url: `${window.location.origin}/customer/payment/callback`,
-        metadata: { deliveryId: dId }
-      });
+      let initJson;
+      try {
+        initJson = await apiClient.post(`/api/payment/initialize/${dId}`, {
+          amount: calculateTotal().total,
+          currency: 'NGN',
+          email: formData.recipientEmail || 'customer@swiftlyxpress.com',
+          callback_url: `${window.location.origin}/customer/payment/callback`,
+          metadata: { deliveryId: dId }
+        });
+      } catch (initErr: any) {
+        console.error('Payment initialize failed', initErr);
+        const url = initErr?.config?.url || `(initialize for ${dId})`;
+        const status = initErr?.response?.status;
+        const data = initErr?.response?.data;
+        alert(`Payment initialization failed (${status}) at ${url}: ${data?.message || JSON.stringify(data)}`);
+        setIsProcessingPayment(false);
+        return;
+      }
 
       const paymentObj = initJson?.data?.data?.payment || initJson?.data?.payment || initJson?.data?.data || initJson?.data;
       const authorizationUrl = paymentObj?.authorizationUrl || paymentObj?.authorization_url;
@@ -348,17 +366,23 @@ export default function SmartRideBooking() {
       <div className="min-h-screen bg-[#FFFFFF]">
         {/* Header */}
         <div className="bg-white">
-          <div className="max-w-6xl mx-auto px-4 py-0 h-20 md:h-32 flex items-center justify-between">
-            <Link href="/" className="inline-block mr-48">
-              <img src="/swiftly-logo.svg" alt="Swiftly" className="h-12 md:h-16 lg:h-40 object-contain" />
-            </Link>
-            <Button
-              variant="primary"
-              className="!bg-[#00B75A] text-sm hover:!bg-[#00B876] rounded-full px-6 py-2"
-              onClick={() => router.push('/')}
-            >
-              Back home
-            </Button>
+          <div className="max-w-6xl mx-auto px-2 sm:px-4 py-0 h-16 md:h-32 flex items-center justify-between mb-8 md:mb-0 sm:md-0 lg:mb-0t">
+            <div className="flex items-center gap-3">
+              <Link href="/" className="inline-block">
+                <img src="/swiftly-logo.svg" alt="Swiftly" className="h-40 md:h-22 lg:h-22 object-contain" />
+              </Link>
+            </div>
+
+            {/* Desktop/back button */}
+            <div>
+              <Button
+                variant="primary"
+                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#0A0A0A] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
+                onClick={() => router.push('/')}
+              >
+                Back home
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -966,6 +990,126 @@ export default function SmartRideBooking() {
             </form>
           </div>
         </div>
+
+        {/* Payment Drawer/Modal (render inside form view) */}
+        {showPaymentDrawer && (
+          <div
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowPaymentDrawer(false)}
+          >
+            <div
+              className={`bg-white ${isMobile
+                ? 'w-full rounded-t-3xl animate-slide-up'
+                : 'w-full max-w-md rounded-2xl animate-scale-in'
+                } shadow-2xl`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between p-6 border-b border-gray-100">
+                <h3 className="text-lg font-semibold text-[#0F172A]">Select Payment Method</h3>
+                <button
+                  onClick={() => setShowPaymentDrawer(false)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="p-6 space-y-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({ ...formData, paymentMethod: 'cash' });
+                    setShowPaymentDrawer(false);
+                  }}
+                  className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-[#00B75A] hover:bg-[#F0FDF4]/30 ${formData.paymentMethod === 'cash' ? 'border-[#00B75A] bg-[#F0FDF4]' : 'border-gray-200 bg-white'
+                    }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#F0FDF4] flex items-center justify-center flex-shrink-0">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-[#0F172A]">Cash on Delivery</p>
+                      <p className="text-xs text-[#64748B] mt-1">Pay with cash when your package is delivered</p>
+                    </div>
+                    {formData.paymentMethod === 'cash' && (
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({ ...formData, paymentMethod: 'card' });
+                    setShowPaymentDrawer(false);
+                  }}
+                  className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-[#00B75A] hover:bg-[#F0FDF4]/30 ${formData.paymentMethod === 'card' ? 'border-[#00B75A] bg-[#F0FDF4]' : 'border-gray-200 bg-white'
+                    }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#F0FDF4] flex items-center justify-center flex-shrink-0">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                        <line x1="1" y1="10" x2="23" y2="10" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-[#0F172A]">Pay Online (Card)</p>
+                      <p className="text-xs text-[#64748B] mt-1">Secure payment with your card</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" className="h-4" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-4" />
+                        <span className="text-xs font-medium text-[#64748B] px-2 py-0.5 bg-gray-100 rounded">Verve</span>
+                      </div>
+                    </div>
+                    {formData.paymentMethod === 'card' && (
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({ ...formData, paymentMethod: 'transfer' });
+                    setShowPaymentDrawer(false);
+                  }}
+                  className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-[#00B75A] hover:bg-[#F0FDF4]/30 ${formData.paymentMethod === 'transfer' ? 'border-[#00B75A] bg-[#F0FDF4]' : 'border-gray-200 bg-white'
+                    }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#F0FDF4] flex items-center justify-center flex-shrink-0">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-[#0F172A]">Bank Transfer</p>
+                      <p className="text-xs text-[#64748B] mt-1">Transfer directly to our account</p>
+                    </div>
+                    {formData.paymentMethod === 'transfer' && (
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -1404,8 +1548,8 @@ export default function SmartRideBooking() {
         >
           <div
             className={`bg-white ${isMobile
-                ? 'w-full rounded-t-3xl animate-slide-up'
-                : 'w-full max-w-md rounded-2xl animate-scale-in'
+              ? 'w-full rounded-t-3xl animate-slide-up'
+              : 'w-full max-w-md rounded-2xl animate-scale-in'
               } shadow-2xl`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -1433,8 +1577,8 @@ export default function SmartRideBooking() {
                   setShowPaymentDrawer(false);
                 }}
                 className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-[#00B75A] hover:bg-[#F0FDF4]/30 ${formData.paymentMethod === 'cash'
-                    ? 'border-[#00B75A] bg-[#F0FDF4]'
-                    : 'border-gray-200 bg-white'
+                  ? 'border-[#00B75A] bg-[#F0FDF4]'
+                  : 'border-gray-200 bg-white'
                   }`}
               >
                 <div className="flex items-center gap-4">
@@ -1464,8 +1608,8 @@ export default function SmartRideBooking() {
                   setShowPaymentDrawer(false);
                 }}
                 className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-[#00B75A] hover:bg-[#F0FDF4]/30 ${formData.paymentMethod === 'card'
-                    ? 'border-[#00B75A] bg-[#F0FDF4]'
-                    : 'border-gray-200 bg-white'
+                  ? 'border-[#00B75A] bg-[#F0FDF4]'
+                  : 'border-gray-200 bg-white'
                   }`}
               >
                 <div className="flex items-center gap-4">
@@ -1500,8 +1644,8 @@ export default function SmartRideBooking() {
                   setShowPaymentDrawer(false);
                 }}
                 className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-[#00B75A] hover:bg-[#F0FDF4]/30 ${formData.paymentMethod === 'transfer'
-                    ? 'border-[#00B75A] bg-[#F0FDF4]'
-                    : 'border-gray-200 bg-white'
+                  ? 'border-[#00B75A] bg-[#F0FDF4]'
+                  : 'border-gray-200 bg-white'
                   }`}
               >
                 <div className="flex items-center gap-4">
