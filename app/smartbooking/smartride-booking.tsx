@@ -1122,21 +1122,28 @@ export default function SmartRideBooking() {
     return (
       <div className="min-h-screen bg-[#FFFFFF]">
         <div className="bg-white">
-          <div className="max-w-6xl mx-auto px-4 py-0 h-20 md:h-32 flex items-center justify-between">
-            <Link href="/" className="inline-block mr-48">
-              <img src="/swiftly-logo.svg" alt="Swiftly" className="h-12 md:h-16 lg:h-40 object-contain" />
-            </Link>
-            <Button
-              variant="primary"
-              className="!bg-[#00B75A] text-sm hover:!bg-[#00B876] rounded-full px-6 py-2"
-              onClick={() => router.push('/')}
-            >
-              Back home
-            </Button>
+          <div className="max-w-6xl mx-auto px-2 sm:px-4 py-0 h-16 md:h-32 flex items-center justify-between mb-8 md:mb-0 sm:md-0 lg:mb-0t">
+            <div className="flex items-center gap-3">
+              <Link href="/" className="inline-block">
+                <img src="/swiftly-logo.svg" alt="Swiftly" className="h-40 md:h-22 lg:h-22 object-contain" />
+              </Link>
+            </div>
+
+            {/* Desktop/back button */}
+            <div>
+              <Button
+                variant="primary"
+                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#0A0A0A] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
+                onClick={() => router.push('/')}
+              >
+                Back home
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto -mt-6 px-4">
+        {/* Breadcrumb */}
+        <div className="max-w-4xl mx-auto -mt-6 px-4 sm:px-6 lg:px-8">
           <Breadcrumb steps={breadcrumbSteps} currentStep={getCurrentStepIndex()} />
         </div>
 
@@ -1293,18 +1300,25 @@ export default function SmartRideBooking() {
   if (currentStep === 'finding-rider' || currentStep === 'rider-found') {
     return (
       <div className="min-h-screen bg-[#FFFFFF]">
+        {/* Header */}
         <div className="bg-white">
-          <div className="max-w-6xl mx-auto px-4 py-0 h-20 md:h-32 flex items-center justify-between">
-            <Link href="/" className="inline-block mr-48">
-              <img src="/swiftly-logo.svg" alt="Swiftly" className="h-12 md:h-16 lg:h-40 object-contain" />
-            </Link>
-            <Button
-              variant="primary"
-              className="!bg-[#00B75A] text-sm hover:!bg-[#00B876] rounded-full px-6 py-2"
-              onClick={() => router.push('/')}
-            >
-              Back home
-            </Button>
+          <div className="max-w-6xl mx-auto px-2 sm:px-4 py-0 h-16 md:h-32 flex items-center justify-between mb-8 md:mb-0 sm:md-0 lg:mb-0t">
+            <div className="flex items-center gap-3">
+              <Link href="/" className="inline-block">
+                <img src="/swiftly-logo.svg" alt="Swiftly" className="h-40 md:h-22 lg:h-22 object-contain" />
+              </Link>
+            </div>
+
+            {/* Desktop/back button */}
+            <div>
+              <Button
+                variant="primary"
+                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#0A0A0A] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
+                onClick={() => router.push('/')}
+              >
+                Back home
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -1385,18 +1399,25 @@ export default function SmartRideBooking() {
   if (currentStep === 'rider-details') {
     return (
       <div className="min-h-screen bg-[#FFFFFF]">
+        {/* Header */}
         <div className="bg-white">
-          <div className="max-w-6xl mx-auto px-4 py-0 h-20 md:h-32 flex items-center justify-between">
-            <Link href="/" className="inline-block mr-48">
-              <img src="/swiftly-logo.svg" alt="Swiftly" className="h-12 md:h-16 lg:h-40 object-contain" />
-            </Link>
-            <Button
-              variant="primary"
-              className="!bg-[#00B75A] text-sm hover:!bg-[#00B876] rounded-full px-6 py-2"
-              onClick={() => router.push('/')}
-            >
-              Back home
-            </Button>
+          <div className="max-w-6xl mx-auto px-2 sm:px-4 py-0 h-16 md:h-32 flex items-center justify-between mb-8 md:mb-0 sm:md-0 lg:mb-0t">
+            <div className="flex items-center gap-3">
+              <Link href="/" className="inline-block">
+                <img src="/swiftly-logo.svg" alt="Swiftly" className="h-40 md:h-22 lg:h-22 object-contain" />
+              </Link>
+            </div>
+
+            {/* Desktop/back button */}
+            <div>
+              <Button
+                variant="primary"
+                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#0A0A0A] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
+                onClick={() => router.push('/')}
+              >
+                Back home
+              </Button>
+            </div>
           </div>
         </div>
 
