@@ -1,25 +1,43 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Calendar, Bike, Phone, MessageCircle, Package, CheckCircle } from 'lucide-react';
 import Button from '../../components/Button';
 import YummyText from '../../components/YummyText';
 import Breadcrumb from '../../components/Breadcrumb';
 import GoogleMap from '../../components/GoogleMap';
+import GoogleMapsAutocomplete from '../../components/GoogleMapsAutocomplete';
 import Link from 'next/link';
+import axios from 'axios';
+import { getCookie, setCookie, deleteCookie } from '../../utils/cookies';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://api.swiftlyxpress.com';
+
+const apiClient = axios.create({
+  baseURL: API_BASE,
+  headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+  withCredentials: true
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = getCookie('customer_token') || getCookie('auth_token') || getCookie('rider_token') || getCookie('admin_token');
+  if (token && config.headers) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 const sideBottomShadow = {
   boxShadow: '2px 2px 4px rgba(0,0,0,0.06), -2px 2px 4px rgba(0,0,0,0.06), 0 4px 8px rgba(0,0,0,0.08)'
 };
 
-
-
 export default function SmartRideBooking() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<'form'|'summary'|'finding-rider'|'rider-found'|'rider-details'>('form');
+  const [currentStep, setCurrentStep] = useState<'form' | 'summary' | 'finding-rider' | 'rider-found' | 'rider-details'>('form');
   const [isSearching, setIsSearching] = useState(false);
+  const sliderRef = useRef<HTMLInputElement>(null);
+  const hideBubbleTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [sliderBubble, setSliderBubble] = useState<{ percent: number; value: number } | null>(null);
+  const [showFineTuneInfo, setShowFineTuneInfo] = useState(false);
 
   const [formData, setFormData] = useState({
     deliveryType: 'Smart Ride',
@@ -31,13 +49,31 @@ export default function SmartRideBooking() {
     recipientPhone: '',
     deliveryAddress: '',
     recipientEmail: '',
+    // New package sizing fields
+    sizeCategory: 'small',
+    weightCategory: 'light',
+    dimensions: '30×30×30 cm',
+    sizeScale: 100,
     weight: '',
-    length: '',
-    width: '',
-    height: '',
     packageDescription: '',
     declaredValue: '',
+    // Payment and image fields
+    image: null as File | null,
+    paymentMethod: '',
+    paymentNotes: ''
   });
+
+  const [showPaymentDrawer, setShowPaymentDrawer] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [deliveryId, setDeliveryId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -49,32 +85,25 @@ export default function SmartRideBooking() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    // Move to internal summary step
     setCurrentStep('summary');
   };
 
   const calculateTotal = () => {
-    // Base rate starts from delivery type base
-    const baseDelivery = formData.deliveryType === 'Smart Ride' ? 500 : 1000;
+    const baseDelivery = 500;
 
-    // Parse numeric package inputs
-    const weight = parseFloat(formData.weight as unknown as string) || 0; // kg
-    const length = parseFloat(formData.length as unknown as string) || 0; // cm
-    const width = parseFloat(formData.width as unknown as string) || 0; // cm
-    const height = parseFloat(formData.height as unknown as string) || 0; // cm
+    // Parse weight - use explicit weight if provided, otherwise derive from category
+    const weightMap: Record<string, number> = { light: 2.5, heavy: 12.5, very_heavy: 25 };
+    const explicitWeight = parseFloat(formData.weight);
+    const effectiveWeight = !isNaN(explicitWeight) && explicitWeight > 0
+      ? explicitWeight
+      : weightMap[formData.weightCategory] || 2.5;
 
-    // Calculate volumetric weight (common divisor 5000 for cm -> kg)
-    const volumetricWeight = (length * width * height) / 5000;
-    const effectiveWeight = Math.max(weight, volumetricWeight, 0);
-
-    // Per-kg rate (tweakable)
-    const perKgRate = 200; // ₦ per kg
+    const perKgRate = 200;
     const weightCharge = Math.ceil(effectiveWeight) * perKgRate;
 
     const baseRate = baseDelivery + weightCharge;
 
-    // Insurance: 1% of declared value, min ₦200 if declared > 0
-    const declaredValue = parseFloat(formData.declaredValue as unknown as string) || 0;
+    const declaredValue = parseFloat(formData.declaredValue) || 0;
     const insurance = declaredValue > 0 ? Math.max(Math.round(declaredValue * 0.01), 200) : 0;
 
     const total = baseRate + insurance;
@@ -83,28 +112,20 @@ export default function SmartRideBooking() {
       baseRate,
       insurance,
       total,
-      details: { weight, length, width, height, volumetricWeight, effectiveWeight, weightCharge, declaredValue }
+      details: { effectiveWeight, weightCharge, declaredValue }
     };
   };
-
-  
-
 
   const breadcrumbSteps = ['Package Information', 'Package Summary', 'Rider Matching', 'Rider Details'];
 
   const getCurrentStepIndex = () => {
     switch (currentStep) {
-      case 'form':
-        return 0;
-      case 'summary':
-        return 1;
+      case 'form': return 0;
+      case 'summary': return 1;
       case 'finding-rider':
-      case 'rider-found':
-        return 2;
-      case 'rider-details':
-        return 3;
-      default:
-        return 0;
+      case 'rider-found': return 2;
+      case 'rider-details': return 3;
+      default: return 0;
     }
   };
 
@@ -117,17 +138,216 @@ export default function SmartRideBooking() {
     }, 3000);
   };
 
-  const proceedToPayment = () => {
-    // placeholder for payment flow
-    router.push('/payment');
+  const proceedToPayment = async () => {
+    if (!formData.paymentMethod) {
+      alert('Please select a payment method');
+      setShowPaymentDrawer(true);
+      return;
+    }
+
+    if (formData.paymentMethod !== 'card') {
+      alert('Only online card payment is supported for Smart Ride');
+      return;
+    }
+
+    try {
+      setIsProcessingPayment(true);
+
+      const payload = {
+        senderName: formData.senderName,
+        senderPhone: formData.senderPhone,
+        pickupDate: formData.pickupDate,
+        recipientName: formData.recipientName,
+        recipientPhone: formData.recipientPhone,
+        recipientEmail: formData.recipientEmail,
+        pickupAddress: { street: formData.pickupAddress, city: '', state: 'Unknown', zipCode: '00000', coordinates: { lat: 0, lng: 0 } },
+        deliveryAddress: { street: formData.deliveryAddress, city: '', state: 'Unknown', zipCode: '00000', coordinates: { lat: 0, lng: 0 } },
+        packageDetails: {
+          sizeCategory: formData.sizeCategory,
+          weightCategory: formData.weightCategory,
+          weight: formData.weight || `${formData.weightCategory} weight`,
+          dimensions: formData.dimensions,
+          description: formData.packageDescription
+        },
+        payment: { method: formData.paymentMethod, notes: formData.paymentNotes }
+      };
+
+      let response;
+      if (formData.image) {
+        const fd = new FormData();
+        fd.append('image', formData.image);
+        Object.entries(payload).forEach(([k, v]) => {
+          if (typeof v === 'object') fd.append(k, JSON.stringify(v));
+          else fd.append(k, String(v));
+        });
+        response = await apiClient.post('/api/delivery/create', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      } else {
+        response = await apiClient.post('/api/delivery/create', payload);
+      }
+
+      const dId = response?.data?.deliveryId || response?.data?.id || response?.data?._id || response?.data?.data?.id;
+      if (!dId) throw new Error('Failed to create delivery');
+      setDeliveryId(dId);
+
+      let paymentWindow: Window | null = null;
+      try {
+        paymentWindow = window.open('', '_blank');
+        if (paymentWindow) paymentWindow.document.write('<p>Preparing payment...</p>');
+      } catch (e) { paymentWindow = null; }
+
+      const initJson = await apiClient.post(`/api/payment/initialize/${dId}`, {
+        amount: calculateTotal().total,
+        currency: 'NGN',
+        email: formData.recipientEmail || 'customer@swiftlyxpress.com',
+        callback_url: `${window.location.origin}/customer/payment/callback`,
+        metadata: { deliveryId: dId }
+      });
+
+      const paymentObj = initJson?.data?.data?.payment || initJson?.data?.payment || initJson?.data?.data || initJson?.data;
+      const authorizationUrl = paymentObj?.authorizationUrl || paymentObj?.authorization_url;
+      const paymentReference = paymentObj?.reference || paymentObj?.id;
+
+      if (!authorizationUrl && !paymentReference) throw new Error('Payment initialization failed');
+
+      try {
+        if (dId) setCookie('pending_payment_delivery_id', String(dId), 1);
+        if (paymentReference) setCookie('pending_payment_id', String(paymentReference), 1);
+      } catch (e) { }
+
+      if (authorizationUrl) {
+        if (paymentWindow) paymentWindow.location.href = authorizationUrl;
+        else window.open(authorizationUrl, '_blank');
+        setIsProcessingPayment(false);
+        return;
+      }
+
+      if (paymentReference) {
+        try { if (paymentWindow) paymentWindow.close(); } catch (e) { }
+        const PaystackPop = (await import('@paystack/inline-js')).default;
+        const paystackPublicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_xxxx';
+        const handler = PaystackPop.setup({
+          key: paystackPublicKey,
+          email: formData.recipientEmail || 'customer@swiftlyxpress.com',
+          amount: calculateTotal().total * 100,
+          currency: 'NGN',
+          ref: paymentReference,
+          metadata: { deliveryId: dId },
+          onSuccess: async (transaction: any) => {
+            try { if (handler && typeof handler.closeIframe === 'function') handler.closeIframe(); } catch (e) { }
+            const pidEnc = encodeURIComponent(paymentReference);
+            const didPart = dId ? `&deliveryId=${encodeURIComponent(dId)}` : '';
+            router.push(`/customer/payment/success?paymentId=${pidEnc}${didPart}`);
+          },
+          onCancel: () => { setIsProcessingPayment(false); }
+        });
+        handler.openIframe();
+        setIsProcessingPayment(false);
+      }
+    } catch (err: any) {
+      console.error('Payment error', err);
+      alert(err?.message || 'Payment failed');
+      setIsProcessingPayment(false);
+    }
   };
 
-  // Render different steps
+  // Helper for size category dropdown
+  const handleSizeCategoryChange = (label: string) => {
+    const valueMap: Record<string, 'small' | 'big' | 'very_big'> = { 'Small': 'small', 'Medium': 'big', 'Very Big': 'very_big' };
+    const cat = valueMap[label];
+    const weightMap: Record<string, 'light' | 'heavy' | 'very_heavy'> = { small: 'light', big: 'heavy', very_big: 'very_heavy' };
+    const dimsMap: Record<string, number[]> = { small: [30, 30, 30], big: [50, 40, 30], very_big: [80, 60, 50] };
+    const base = dimsMap[cat];
+    const factor = (formData.sizeScale || 100) / 100;
+    const dims = `${Math.round(base[0] * factor)}×${Math.round(base[1] * factor)}×${Math.round(base[2] * factor)} cm`;
+    setFormData({
+      ...formData,
+      sizeCategory: cat,
+      weightCategory: weightMap[cat],
+      dimensions: dims
+    });
+  };
+
+  const handleWeightCategoryChange = (label: string) => {
+    const valueMap: Record<string, 'light' | 'heavy' | 'very_heavy'> = { 'Light': 'light', 'Heavy': 'heavy', 'Very Heavy': 'very_heavy' };
+    setFormData({ ...formData, weightCategory: valueMap[label] });
+  };
+
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const scale = parseInt(e.target.value, 10);
+    const dimsMap: Record<string, number[]> = { small: [30, 30, 30], big: [50, 40, 30], very_big: [80, 60, 50] };
+    const base = dimsMap[formData.sizeCategory] || dimsMap.small;
+    const factor = scale / 100;
+    const dims = `${Math.round(base[0] * factor)}×${Math.round(base[1] * factor)}×${Math.round(base[2] * factor)} cm`;
+    setFormData({ ...formData, sizeScale: scale, dimensions: dims });
+
+    const min = 70;
+    const max = 130;
+    const percent = (scale - min) / (max - min);
+    setSliderBubble({ percent, value: scale });
+    if (hideBubbleTimeout.current) clearTimeout(hideBubbleTimeout.current);
+    hideBubbleTimeout.current = setTimeout(() => setSliderBubble(null), 1200);
+  };
+
+  const handleSliderMouseMove = () => {
+    if (!sliderRef.current) return;
+    const val = parseInt(sliderRef.current.value, 10);
+    const min = 70; const max = 130;
+    const percent = (val - min) / (max - min);
+    setSliderBubble({ percent, value: val });
+  };
+
+  const handleSliderMouseLeave = () => {
+    if (hideBubbleTimeout.current) clearTimeout(hideBubbleTimeout.current);
+    hideBubbleTimeout.current = setTimeout(() => setSliderBubble(null), 800);
+  };
+
+  // Simple dropdown component
+  const StyledDropdown = ({ value, onChange, options, tooltips }: {
+    value: string;
+    onChange: (val: string) => void;
+    options: string[];
+    tooltips?: Record<string, string>;
+  }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-sm text-left text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none flex items-center justify-between"
+        >
+          <span>{value}</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 9l6 6 6-6" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        {isOpen && (
+          <div className="absolute z-10 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            {options.map(opt => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => {
+                  onChange(opt);
+                  setIsOpen(false);
+                }}
+                className="w-full px-4 py-3 text-left text-sm text-[#0F172A] hover:bg-[#F8F9FA] transition-colors"
+                title={tooltips?.[opt]}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   if (currentStep === 'form') {
     return (
       <div className="min-h-screen bg-[#FFFFFF]">
         {/* Header */}
-        <div className="bg-white ">
+        <div className="bg-white">
           <div className="max-w-6xl mx-auto px-4 py-0 h-20 md:h-32 flex items-center justify-between">
             <Link href="/" className="inline-block mr-48">
               <img src="/swiftly-logo.svg" alt="Swiftly" className="h-12 md:h-16 lg:h-40 object-contain" />
@@ -147,7 +367,7 @@ export default function SmartRideBooking() {
           <Breadcrumb steps={breadcrumbSteps} currentStep={getCurrentStepIndex()} />
         </div>
 
-        {/* Page Title (outside the card) */}
+        {/* Page Title */}
         <div className="max-w-5xl mx-auto px-4">
           <div className="mb-3">
             <YummyText className="text-3xl font-medium text-gray-900 mb-1">Book a Delivery</YummyText>
@@ -182,10 +402,12 @@ export default function SmartRideBooking() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Pickup Details */}
                 <div>
-                  <div className="text-base font-sm text-[#0F172A] mb-4">Pickup Details<div className="border-t border-gray-300 mt-2"></div></div>
+                  <div className="text-base font-medium text-[#0F172A] mb-4">
+                    Pickup Details
+                    <div className="border-t border-gray-300 mt-2"></div>
+                  </div>
 
                   <div className="space-y-4">
-                    {/* Sender Name */}
                     <div>
                       <label className="block text-sm font-medium text-[#0F172A] mb-2">Sender Name</label>
                       <input
@@ -199,7 +421,6 @@ export default function SmartRideBooking() {
                       />
                     </div>
 
-                    {/* Phone Number */}
                     <div>
                       <label className="block text-sm font-medium text-[#0F172A] mb-2">Phone Number</label>
                       <input
@@ -207,49 +428,45 @@ export default function SmartRideBooking() {
                         name="senderPhone"
                         value={formData.senderPhone}
                         onChange={handleChange}
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="+234 800 000 0000"
                         className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none"
                         required
                       />
                     </div>
 
-                    {/* Pickup Address */}
                     <div>
                       <label className="block text-sm font-medium text-[#0F172A] mb-2">Pickup Address</label>
-                      <textarea
-                        name="pickupAddress"
+                      <GoogleMapsAutocomplete
                         value={formData.pickupAddress}
-                        onChange={handleChange}
-                        placeholder="123 Main Street, New York, NY 10001"
-                        rows={3}
-                        className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none resize-none"
-                        required
-                      ></textarea>
+                        onChange={(val) => setFormData({ ...formData, pickupAddress: val })}
+                        onPlaceSelect={(place) => setFormData({ ...formData, pickupAddress: `${place.street}${place.city ? ', ' + place.city : ''}` })}
+                        placeholder="123 Main Street"
+                        className="w-full"
+                      />
                     </div>
 
-                    {/* Pickup Date */}
                     <div>
                       <label className="block text-sm font-medium text-[#0F172A] mb-2">Pickup Date</label>
-                      <div className="relative">
-                        <input
-                          type="date"
-                          name="pickupDate"
-                          value={formData.pickupDate}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none"
-                          required
-                        />
-                      </div>
+                      <input
+                        type="date"
+                        name="pickupDate"
+                        value={formData.pickupDate}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none"
+                        required
+                      />
                     </div>
                   </div>
                 </div>
 
                 {/* Delivery Details */}
                 <div>
-                  <div className="text-base font-sm text-[#0F172A] mb-4">Delivery Details<div className="border-t border-gray-300 mt-2"></div></div>
+                  <div className="text-base font-medium text-[#0F172A] mb-4">
+                    Delivery Details
+                    <div className="border-t border-gray-300 mt-2"></div>
+                  </div>
 
                   <div className="space-y-4">
-                    {/* Recipient Name */}
                     <div>
                       <label className="block text-sm font-medium text-[#0F172A] mb-2">Recipient Name</label>
                       <input
@@ -263,7 +480,6 @@ export default function SmartRideBooking() {
                       />
                     </div>
 
-                    {/* Phone Number */}
                     <div>
                       <label className="block text-sm font-medium text-[#0F172A] mb-2">Phone Number</label>
                       <input
@@ -271,27 +487,23 @@ export default function SmartRideBooking() {
                         name="recipientPhone"
                         value={formData.recipientPhone}
                         onChange={handleChange}
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="+234 800 000 0000"
                         className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none"
                         required
                       />
                     </div>
 
-                    {/* Delivery Address */}
                     <div>
                       <label className="block text-sm font-medium text-[#0F172A] mb-2">Delivery Address</label>
-                      <textarea
-                        name="deliveryAddress"
+                      <GoogleMapsAutocomplete
                         value={formData.deliveryAddress}
-                        onChange={handleChange}
-                        placeholder="456 Oak Avenue, Los Angeles, CA 90001"
-                        rows={3}
-                        className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none resize-none"
-                        required
-                      ></textarea>
+                        onChange={(val) => setFormData({ ...formData, deliveryAddress: val })}
+                        onPlaceSelect={(place) => setFormData({ ...formData, deliveryAddress: `${place.street}${place.city ? ', ' + place.city : ''}` })}
+                        placeholder="456 Oak Avenue"
+                        className="w-full"
+                      />
                     </div>
 
-                    {/* Email (for notifications) */}
                     <div>
                       <label className="block text-sm font-medium text-[#0F172A] mb-2">Email (for notifications)</label>
                       <input
@@ -312,48 +524,269 @@ export default function SmartRideBooking() {
 
               {/* Package Details */}
               <div>
-                <div className="text-xl font-sm text-[#0F172A] mb-6">Package Details<div className="border-t border-gray-300 my-5"></div></div>
+                <div className="text-xl font-medium text-[#0F172A] mb-6">
+                  Package Details
+                  <div className="border-t border-gray-300 my-5"></div>
+                </div>
 
-                {/* Weight, Length, Width */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-[#0F172A] mb-2">Weight (kg)</label>
-                    <input
-                      type="number"
-                      name="weight"
-                      value={formData.weight}
-                      onChange={handleChange}
-                      placeholder="2.5"
-                      step="0.1"
-                      className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none"
-                      required
-                    />
-                  </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-[#0F172A] mb-3">Package Size & Weight</label>
 
-                  <div>
-                    <label className="block text-sm font-medium text-[#0F172A] mb-2">Length (cm)</label>
-                    <input
-                      type="number"
-                      name="length"
-                      value={formData.length}
-                      onChange={handleChange}
-                      placeholder="30"
-                      className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none"
-                      required
-                    />
-                  </div>
+                  <div className="space-y-4">
+                    {/* Size Category Selection */}
+                    <div>
+                      <label className="block text-sm font-medium text-[#0F172A] mb-2">Size Category</label>
+                      <StyledDropdown
+                        value={
+                          formData.sizeCategory === 'small' ? 'Small' :
+                            formData.sizeCategory === 'big' ? 'Medium' :
+                              formData.sizeCategory === 'very_big' ? 'Very Big' :
+                                'Size Category'
+                        }
+                        onChange={handleSizeCategoryChange}
+                        options={['Small', 'Medium', 'Very Big']}
+                        tooltips={{
+                          'Small': 'Perfect for phones, books, or small gifts. Think shoe box size.',
+                          'Medium': 'Great for laptops, clothes, or documents. About the size of a briefcase.',
+                          'Very Big': 'For electronics or furniture parts. As big as a suitcase or larger.'
+                        }}
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-[#0F172A] mb-2">Width (cm)</label>
-                    <input
-                      type="number"
-                      name="width"
-                      value={formData.width}
-                      onChange={handleChange}
-                      placeholder="20"
-                      className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none"
-                      required
-                    />
+                    {/* Size Adjustment Slider */}
+                    <div className="bg-[#FFFFFF] rounded-2xl p-5 border border-gray-200">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-xl bg-[FFFFFF]/10 shadow-sm border flex items-center justify-center">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                              <rect x="3" y="3" width="7" height="7" rx="1" />
+                              <rect x="14" y="3" width="7" height="7" rx="1" />
+                              <rect x="14" y="14" width="7" height="7" rx="1" />
+                              <rect x="3" y="14" width="7" height="7" rx="1" />
+                            </svg>
+                          </div>
+                          <label className="text-sm font-semibold text-[#0F172A]">Adjust Size</label>
+                          <button
+                            type="button"
+                            onClick={() => setShowFineTuneInfo(v => !v)}
+                            className="p-1.5 rounded-lg hover:bg-white/60 transition-colors"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M12 16v-4M12 8h.01" />
+                            </svg>
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#00B75A]"></div>
+                            <span className="text-xs font-medium text-[#00B75A]">{formData.dimensions}</span>
+                          </div>
+                          <div className="w-px h-4 bg-gray-200"></div>
+                          <span className="text-xs font-bold text-[#0F172A]">{formData.sizeScale}%</span>
+                        </div>
+                      </div>
+
+                      {showFineTuneInfo && (
+                        <div className="mb-4 p-4 rounded-xl bg-white border border-[#00B75A]/20 shadow-sm">
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#00B75A] to-[#00D68F] flex items-center justify-center shadow-sm">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 16v-4M12 8h.01" />
+                              </svg>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-semibold text-[#0F172A] mb-2">Quick Size Adjustments</div>
+                              <div className="space-y-1.5 text-xs text-[#64748B]">
+                                <div className="flex items-start gap-2">
+                                  <span className="text-[#00B75A] mt-0.5">→</span>
+                                  <span>Drag the slider to fine-tune your package dimensions</span>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                  <span className="text-[#00B75A] mt-0.5">→</span>
+                                  <span>Real-time preview shows exact measurements</span>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                  <span className="text-[#00B75A] mt-0.5">→</span>
+                                  <span>Range from 70% to 130% of base size</span>
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setShowFineTuneInfo(false)}
+                              className="flex-shrink-0 w-6 h-6 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round">
+                                <path d="M18 6L6 18M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="relative px-1">
+                        <div className="absolute top-1/2 left-0 right-0 h-1.5 -translate-y-1/2 bg-gradient-to-r from-gray-200 via-[#00B75A]/20 to-gray-200 rounded-full pointer-events-none"></div>
+
+                        <input
+                          ref={sliderRef}
+                          type="range"
+                          min="70"
+                          max="130"
+                          value={formData.sizeScale}
+                          onChange={handleSliderChange}
+                          onMouseMove={handleSliderMouseMove}
+                          onMouseLeave={handleSliderMouseLeave}
+                          className="w-full h-1.5 bg-transparent rounded-full appearance-none cursor-pointer slider relative z-10"
+                          style={{
+                            background: 'transparent',
+                            WebkitAppearance: 'none',
+                            appearance: 'none'
+                          }}
+                        />
+
+                        {sliderBubble && (
+                          <div
+                            style={{ left: `${sliderBubble.percent * 100}%` }}
+                            className="absolute -top-10 transform -translate-x-1/2 animate-in fade-in zoom-in duration-200"
+                          >
+                            <div className="relative">
+                              <div className="px-3 py-1.5 bg-[#0F172A] text-white text-xs font-bold rounded-lg shadow-lg">
+                                {sliderBubble.value}%
+                              </div>
+                              <div className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-2 h-2 bg-[#0F172A] rotate-45"></div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between mt-3 px-1">
+                        <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12h14M5 12l4-4M5 12l4 4" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          <span className="font-medium">Smaller</span>
+                        </div>
+                        <div className="px-3 py-1 bg-white rounded-full border border-gray-200 text-xs font-medium text-[#64748B]">
+                          70% - 130%
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+                          <span className="font-medium">Larger</span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                            <path d="M19 12H5M19 12l-4 4M19 12l-4-4" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <style jsx>{`
+                        .slider::-webkit-slider-thumb {
+                          -webkit-appearance: none;
+                          appearance: none;
+                          width: 20px;
+                          height: 20px;
+                          border-radius: 50%;
+                          background: linear-gradient(135deg, #00B75A 0%, #00D68F 100%);
+                          cursor: pointer;
+                          border: 3px solid white;
+                          box-shadow: 0 2px 8px rgba(0, 183, 90, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.05);
+                          transition: transform 0.2s ease, box-shadow 0.2s ease;
+                        }
+                        
+                        .slider::-webkit-slider-thumb:hover {
+                          transform: scale(1.15);
+                          box-shadow: 0 4px 12px rgba(0, 183, 90, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.05);
+                        }
+                        
+                        .slider::-webkit-slider-thumb:active {
+                          transform: scale(1.05);
+                          box-shadow: 0 2px 8px rgba(0, 183, 90, 0.5), 0 0 0 2px rgba(0, 183, 90, 0.2);
+                        }
+                        
+                        .slider::-moz-range-thumb {
+                          width: 20px;
+                          height: 20px;
+                          border-radius: 50%;
+                          background: linear-gradient(135deg, #00B75A 0%, #00D68F 100%);
+                          cursor: pointer;
+                          border: 3px solid white;
+                          box-shadow: 0 2px 8px rgba(0, 183, 90, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.05);
+                          transition: transform 0.2s ease, box-shadow 0.2s ease;
+                        }
+                        
+                        .slider::-moz-range-thumb:hover {
+                          transform: scale(1.15);
+                          box-shadow: 0 4px 12px rgba(0, 183, 90, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.05);
+                        }
+                        
+                        .slider::-moz-range-thumb:active {
+                          transform: scale(1.05);
+                          box-shadow: 0 2px 8px rgba(0, 183, 90, 0.5), 0 0 0 2px rgba(0, 183, 90, 0.2);
+                        }
+                      `}</style>
+                    </div>
+
+                    {/* Weight Category Selection */}
+                    <div>
+                      <label className="block text-sm font-medium text-[#0F172A] mb-2">Weight Category</label>
+                      <StyledDropdown
+                        value={
+                          formData.weightCategory === 'light' ? 'Light' :
+                            formData.weightCategory === 'heavy' ? 'Heavy' :
+                              formData.weightCategory === 'very_heavy' ? 'Very Heavy' :
+                                'Weight Category'
+                        }
+                        onChange={handleWeightCategoryChange}
+                        options={['Light', 'Heavy', 'Very Heavy']}
+                        tooltips={{
+                          'Light': 'Easy to carry with one hand. Under 5kg - like a few books or a laptop.',
+                          'Heavy': 'Needs both hands to lift. 5-20kg - think microwave or bag of rice.',
+                          'Very Heavy': 'Requires serious effort, maybe two people. Over 20kg - like furniture.'
+                        }}
+                      />
+                    </div>
+
+                    {/* Optional Specific Weight */}
+                    <div className="bg-[#FFFFFF] rounded-2xl p-5 border border-gray-200">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-8 h-8 rounded-xl bg-[#FFFFFF]/10 shadow-sm border flex items-center justify-center">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                            <path d="M2 17l10 5 10-5" />
+                            <path d="M2 12l10 5 10-5" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <label className="text-sm font-semibold text-[#0F172A] block">
+                            Exact Weight (optional)
+                          </label>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          name="weight"
+                          value={formData.weight}
+                          onChange={handleChange}
+                          placeholder="2.5 kg, 10 kg"
+                          className="w-full px-4 py-3 rounded-xl bg-white border border-gray-200 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00B75A] focus:border-transparent shadow-sm transition-all"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                            <line x1="12" y1="22.08" x2="12" y2="12" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="mt-2 flex items-start gap-1.5 text-xs text-[#64748B]">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+                          <circle cx="12" cy="12" r="10" stroke="#64748B" strokeWidth="2" />
+                          <path d="M12 16v-4M12 8h.01" stroke="#64748B" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                        <span>Enter a specific weight or range if you know it.</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -370,25 +803,165 @@ export default function SmartRideBooking() {
                     required
                   ></textarea>
                 </div>
+
                 {/* Declared Value */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-[#0F172A] mb-2">Declared Value ($)</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-2">
+                    Declared Value (₦)
+                    <span className="text-xs text-gray-500 ml-2 block md:inline">(For insurance)</span>
+                  </label>
                   <input
                     type="number"
                     name="declaredValue"
                     value={formData.declaredValue}
                     onChange={handleChange}
-                    placeholder="100.00"
+                    placeholder="10000.00"
                     step="0.01"
                     className="w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none"
-                    required
                   />
+                </div>
+
+                {/* Package Image Upload */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-[#0F172A] mb-2">Package Image (optional)</label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      id="package-image-upload"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          if (file.size > 10 * 1024 * 1024) {
+                            alert('File size must be less than 10MB');
+                            return;
+                          }
+                          setFormData({ ...formData, image: file });
+                        }
+                      }}
+                    />
+                    {formData.image ? (
+                      <div className="relative border-2 border-[#00B75A] rounded-xl p-4 bg-[#F0FDF4]">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-lg bg-[#00B75A]/10 flex items-center justify-center flex-shrink-0">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                              <circle cx="8.5" cy="8.5" r="1.5" />
+                              <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-[#0F172A] truncate">{formData.image.name}</p>
+                            <p className="text-xs text-[#64748B]">{(formData.image.size / 1024).toFixed(1)} KB</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, image: null })}
+                            className="p-2 rounded-lg hover:bg-red-50 transition-colors"
+                          >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2">
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <label
+                        htmlFor="package-image-upload"
+                        className="block border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-[#00B75A] hover:bg-[#F0FDF4]/30 transition-all"
+                      >
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-12 h-12 rounded-full bg-[#F8F9FA] flex items-center justify-center">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                              <polyline points="17 8 12 3 7 8" />
+                              <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-[#0F172A]">Click to upload package image</p>
+                            <p className="text-xs text-[#64748B] mt-1">PNG, JPG up to 10MB</p>
+                          </div>
+                        </div>
+                      </label>
+                    )}
+                  </div>
+                </div>
+
+                {/* Payment Method Selection */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-[#0F172A] mb-2">Payment Method</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPaymentDrawer(true)}
+                    className="w-full px-4 py-3 rounded-xl bg-white border-2 border-gray-300 text-left flex items-center justify-between hover:border-[#00B75A] transition-all"
+                  >
+                    {formData.paymentMethod ? (
+                      <div className="flex items-center gap-3">
+                        {formData.paymentMethod === 'cash' && (
+                          <>
+                            <div className="w-10 h-10 rounded-full bg-[#F0FDF4] flex items-center justify-center">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                                <rect x="2" y="5" width="20" height="14" rx="2" />
+                                <circle cx="12" cy="12" r="3" />
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-[#0F172A]">Cash on Delivery</p>
+                              <p className="text-xs text-[#64748B]">Pay with cash when delivered</p>
+                            </div>
+                          </>
+                        )}
+                        {formData.paymentMethod === 'card' && (
+                          <>
+                            <div className="w-10 h-10 rounded-full bg-[#F0FDF4] flex items-center justify-center">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                                <line x1="1" y1="10" x2="23" y2="10" />
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-[#0F172A]">Pay Online (Card)</p>
+                              <div className="flex items-center gap-1.5 mt-1">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" className="h-4" />
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-4" />
+                                <span className="text-xs text-[#64748B]">Verve</span>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                        {formData.paymentMethod === 'transfer' && (
+                          <>
+                            <div className="w-10 h-10 rounded-full bg-[#F0FDF4] flex items-center justify-center">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                                <line x1="12" y1="1" x2="12" y2="23" />
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-[#0F172A]">Bank Transfer</p>
+                              <p className="text-xs text-[#64748B]">Transfer to our account</p>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-[#94A3B8]">Select payment method</span>
+                    )}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
                 </div>
               </div>
 
               {/* Submit Button */}
               <div className="flex justify-center pt-4">
-                <Button variant="primary" className="!w-full !py-4 !bg-[#00B75A] !text-sm !font-[400]">Review Summary</Button>
+                <Button variant="primary" className="!w-full !py-4 !bg-[#00B75A] !text-sm !font-[400]">
+                  Review Summary
+                </Button>
               </div>
             </form>
           </div>
@@ -400,13 +973,15 @@ export default function SmartRideBooking() {
   // Package Summary
   if (currentStep === 'summary') {
     const pricing = calculateTotal();
-    const declaredValueNumber = pricing.details?.declaredValue ?? (parseFloat(formData.declaredValue as unknown as string) || 0);
-    
+    const declaredValueNumber = pricing.details?.declaredValue ?? (parseFloat(formData.declaredValue) || 0);
+
     return (
       <div className="min-h-screen bg-[#FFFFFF]">
         <div className="bg-white">
-          <div className="max-w-6xl mx-auto px-4 py-10 flex items-center justify-between">
-            <YummyText className="text-3xl font-medium text-black">Swiftly</YummyText>
+          <div className="max-w-6xl mx-auto px-4 py-0 h-20 md:h-32 flex items-center justify-between">
+            <Link href="/" className="inline-block mr-48">
+              <img src="/swiftly-logo.svg" alt="Swiftly" className="h-12 md:h-16 lg:h-40 object-contain" />
+            </Link>
             <Button
               variant="primary"
               className="!bg-[#00B75A] text-sm hover:!bg-[#00B876] rounded-full px-6 py-2"
@@ -425,93 +1000,69 @@ export default function SmartRideBooking() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-9">
             {/* Pick-Up Information */}
             <div className="relative w-full bg-transparent">
-              {/* SVG scalloped mask (unique ID for pickup) */}
-              <svg
-                className="absolute inset-0 w-full h-full pointer-events-none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden
-              >
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                 <defs>
                   <mask id="scallop-mask-pickup" x="0" y="0" width="100%" height="100%">
-                    {/* Full white rectangle (base area) */}
                     <rect x="0" y="0" width="100%" height="100%" fill="white" />
-
-                    {/* TOP scallops */}
                     <g fill="black">
                       {Array.from({ length: 20 }).map((_, i) => (
                         <circle key={`top-p-${i}`} cx={i * 40 + 20} cy={0} r={15} />
                       ))}
                     </g>
-
-                    {/* BOTTOM scallops */}
                     <g fill="black">
                       {Array.from({ length: 20 }).map((_, i) => (
-                        <circle key={`bottom-p-${i}`} cx={i * 40 + 20} cy="100%"  r={15} />
+                        <circle key={`bottom-p-${i}`} cx={i * 40 + 20} cy="100%" r={15} />
                       ))}
                     </g>
                   </mask>
                 </defs>
               </svg>
 
-              {/* Actual card content */}
               <div
                 className="bg-[#F7F7F7] text-[#0F172A] p-12 pb-12 min-h-[260%] rounded-2xl"
                 style={{ mask: 'url(#scallop-mask-pickup)', WebkitMask: 'url(#scallop-mask-pickup)' }}
               >
                 <h2 className="text-xl font-semibold mb-5">Pick-Up Information</h2>
-
-                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Sender Name</span><p className="inline mx-3 font-[300]"> {formData.senderName}</p></p>
-                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Phone</span><p className="inline mx-3 font-[300]"> {formData.senderPhone}</p></p>
-                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Address</span><p className="inline mx-3 font-[300]"> {formData.pickupAddress}</p></p>
-                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Pick-Up Confirmation</span><p className="inline mx-3 font-[300]"> {formData.senderName}</p></p>
-                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Pick-up date</span><p className="inline mx-3 font-[300]"> {formData.pickupDate} 1:42 PM</p></p>
-                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Notes</span><p className="inline mx-3 font-[300]"> Delivery at the front desk</p></p>
+                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Sender Name</span><span className="mx-3 font-[300]">{formData.senderName}</span></p>
+                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Phone</span><span className="mx-3 font-[300]">{formData.senderPhone}</span></p>
+                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Address</span><span className="mx-3 font-[300]">{formData.pickupAddress}</span></p>
+                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Pick-Up Confirmation</span><span className="mx-3 font-[300]">{formData.senderName}</span></p>
+                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Pick-up date</span><span className="mx-3 font-[300]">{formData.pickupDate} 1:42 PM</span></p>
+                <p className="mb-1"><span className="text-[#4B5563] font-[600]">Notes</span><span className="mx-3 font-[300]">Delivery at the front desk</span></p>
               </div>
             </div>
 
             {/* Delivery Information */}
             <div className="relative w-full bg-transparent">
-              {/* SVG scalloped mask (unique ID for delivery) */}
-              <svg
-                className="absolute inset-0 w-full h-full pointer-events-none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden
-              >
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                 <defs>
                   <mask id="scallop-mask-delivery" x="0" y="0" width="100%" height="100%">
-                    {/* Full white rectangle (base area) */}
                     <rect x="0" y="0" width="100%" height="100%" fill="white" />
-
-                    {/* TOP scallops */}
                     <g fill="black">
                       {Array.from({ length: 20 }).map((_, i) => (
                         <circle key={`top-d-${i}`} cx={i * 40 + 20} cy={0} r={15} />
                       ))}
                     </g>
-
-                    {/* BOTTOM scallops */}
                     <g fill="black">
                       {Array.from({ length: 20 }).map((_, i) => (
-                        <circle key={`bottom-d-${i}`} cx={i * 40 + 20} cy="100%"  r={15} />
+                        <circle key={`bottom-d-${i}`} cx={i * 40 + 20} cy="100%" r={15} />
                       ))}
                     </g>
                   </mask>
                 </defs>
               </svg>
 
-              {/* Actual card content */}
               <div
                 className="bg-[#00B75A] text-white p-12 pb-12 min-h-[260%] rounded-2xl"
                 style={{ mask: 'url(#scallop-mask-delivery)', WebkitMask: 'url(#scallop-mask-delivery)' }}
               >
                 <h2 className="text-xl font-semibold text-white mb-5">Delivery Information</h2>
-
-                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Sender Name</span><p className="inline mx-3 font-[300]"> {formData.recipientName} </p></p>
-                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Phone</span><p className="inline mx-3 font-[300]"> {formData.recipientPhone}</p></p>
-                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Address</span><p className="inline mx-3 font-[300]"> {formData.deliveryAddress}</p></p>
-                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Pick-Up Confirmation</span><p className="inline mx-3 font-[300]"> {formData.recipientName}</p></p>
-                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Delivery Date</span><p className="inline mx-3 font-[300]"> {formData.pickupDate} 3:42 PM</p></p>
-                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Notes</span><p className="inline mx-3 font-[300]"> Delivery at the front desk</p></p>
+                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Recipient Name</span><span className="mx-3 font-[300]">{formData.recipientName}</span></p>
+                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Phone</span><span className="mx-3 font-[300]">{formData.recipientPhone}</span></p>
+                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Address</span><span className="mx-3 font-[300]">{formData.deliveryAddress}</span></p>
+                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Delivery Confirmation</span><span className="mx-3 font-[300]">{formData.recipientName}</span></p>
+                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Delivery Date</span><span className="mx-3 font-[300]">{formData.pickupDate} 3:42 PM</span></p>
+                <p className="mb-1"><span className="text-[#FFFFFF] font-[600]">Notes</span><span className="mx-3 font-[300]">Delivery at the front desk</span></p>
               </div>
             </div>
           </div>
@@ -519,19 +1070,24 @@ export default function SmartRideBooking() {
           {/* Package Information */}
           <div className="bg-white rounded-2xl mt-2">
             <h2 className="text-xl font-medium text-[#1E1E1E] mb-6">Package Information</h2>
-            
+
             <div className="grid grid-cols-3 gap-6 mb-6">
               <div>
-                <p className="text-sm text-[#1E1E1E] font-medium mb-1">Weight (kg)</p>
-                <p className="font-sm text-[#1E1E1E] bg-[#FBFBFB] rounded-md px-3 py-3">{formData.weight}</p>
+                <p className="text-sm text-[#1E1E1E] font-medium mb-1">Size Category</p>
+                <p className="font-sm text-[#1E1E1E] bg-[#FBFBFB] rounded-md px-3 py-3">
+                  {formData.sizeCategory === 'small' ? 'Small' : formData.sizeCategory === 'big' ? 'Medium' : 'Very Big'}
+                </p>
               </div>
               <div>
-                <p className="text-sm text-[#1E1E1E] font-medium mb-1">Length (cm)</p>
-                <p className="font-sm text-[#1E1E1E] bg-[#FBFBFB] rounded-md px-3 py-3">{formData.length}</p>
+                <p className="text-sm text-[#1E1E1E] font-medium mb-1">Dimensions</p>
+                <p className="font-sm text-[#1E1E1E] bg-[#FBFBFB] rounded-md px-3 py-3">{formData.dimensions}</p>
               </div>
               <div>
-                <p className="text-sm text-[#1E1E1E] font-medium mb-1">Width (cm)</p>
-                <p className="font-sm text-[#1E1E1E] bg-[#FBFBFB] rounded-md px-3 py-3">{formData.width}</p>
+                <p className="text-sm text-[#1E1E1E] font-medium mb-1">Weight Category</p>
+                <p className="font-sm text-[#1E1E1E] bg-[#FBFBFB] rounded-md px-3 py-3">
+                  {formData.weightCategory === 'light' ? 'Light' : formData.weightCategory === 'heavy' ? 'Heavy' : 'Very Heavy'}
+                  {formData.weight && ` (${formData.weight})`}
+                </p>
               </div>
             </div>
 
@@ -556,8 +1112,7 @@ export default function SmartRideBooking() {
                   <span className="text-[15px]">Insurance (1% of declared value)</span>
                   <span className="text-[15px]">₦{pricing.insurance.toLocaleString()}</span>
                 </div>
-                
-                {/* Divider for Total */}
+
                 <div className="border-t border-gray-300 pt-3 mt-3">
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-medium text-[#0F172A]">Total</span>
@@ -566,7 +1121,7 @@ export default function SmartRideBooking() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex gap-4">
               <button
                 type="button"
@@ -590,14 +1145,15 @@ export default function SmartRideBooking() {
     );
   }
 
-
   // Finding Rider / Rider Found
   if (currentStep === 'finding-rider' || currentStep === 'rider-found') {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#FFFFFF]">
         <div className="bg-white">
-          <div className="max-w-6xl mx-auto px-4 py-10 flex items-center justify-between">
-            <YummyText className="text-3xl font-medium text-black">Swiftly</YummyText>
+          <div className="max-w-6xl mx-auto px-4 py-0 h-20 md:h-32 flex items-center justify-between">
+            <Link href="/" className="inline-block mr-48">
+              <img src="/swiftly-logo.svg" alt="Swiftly" className="h-12 md:h-16 lg:h-40 object-contain" />
+            </Link>
             <Button
               variant="primary"
               className="!bg-[#00B75A] text-sm hover:!bg-[#00B876] rounded-full px-6 py-2"
@@ -613,79 +1169,67 @@ export default function SmartRideBooking() {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 py-8">
-          {/* Map with loader overlay */}
-          <div className="bg-white rounded-2xl overflow-hidden shadow-sm mb-6 relative" style={{ height: '420px' }}>
-            <GoogleMap 
-              center={{ lat: 5.0378, lng: 7.9085 }}
-              zoom={14}
-              showMarker={!isSearching}
+          {/* Map with centered bike icon */}
+          <div className="bg-white rounded-3xl overflow-hidden shadow-sm mb-6 relative" style={{ height: '420px' }}>
+            <GoogleMap
+              center={{ lat: 6.5244, lng: 3.3792 }}
+              zoom={13}
+              showMarker={false}
               className="w-full h-full"
             />
-            
-            {/* Centered loader overlay on map */}
-            {isSearching && (
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                <div className="bg-white rounded-full p-6 shadow-lg">
-                  <div className="w-16 h-16 border-4 border-[#00B75A] border-t-transparent rounded-full animate-spin"></div>
-                </div>
+
+            {/* Centered bike icon on map */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+              <div className="w-16 h-16 bg-[#00B75A] rounded-2xl flex items-center justify-center shadow-lg">
+                <Bike className="w-8 h-8 text-white" />
               </div>
-            )}
+            </div>
           </div>
 
           {/* Status text and content */}
           <div className="text-center mb-8">
             {isSearching ? (
               <>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-2">Finding Nearby Riders</h2>
-                <p className="text-gray-600 text-sm">You can make payment as soon as you are paired with a rider.<br />Hold On</p>
+                <h2 className="text-3xl font-semibold text-gray-900 mb-3">Finding Nearby Riders</h2>
+                <p className="text-gray-600 text-base">You can make payment as soon as you are paired with a rider.<br />Hold On</p>
               </>
             ) : (
               <>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-2">Rider Found 🎉</h2>
-                <p className="text-gray-600 text-sm mb-6">Great news! We found a rider near your pickup location.</p>
-                <Button variant="primary" className="!bg-[#00B75A] !text-white !py-3 !px-12 !rounded-lg" onClick={proceedToPayment}>Make Payment</Button>
+                <h2 className="text-3xl font-semibold text-gray-900 mb-3">Rider Found 🎉</h2>
+                <p className="text-gray-600 text-base mb-6">Great news! We found a rider near your pickup location.</p>
+                <Button
+                  variant="primary"
+                  className="!bg-white !text-[#0F172A] !border-2 !border-[#0F172A] !py-3 !px-12 !rounded-full hover:!bg-gray-50"
+                  onClick={proceedToPayment}
+                >
+                  Make Payment
+                </Button>
               </>
             )}
           </div>
 
+          {/* Loader spinner above skeleton placeholders */}
+          {isSearching && (
+            <div className="flex items-center justify-center mb-6">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#00B75A] border-t-transparent"></div>
+            </div>
+          )}
+
           {/* Skeleton placeholders when searching */}
           {isSearching && (
-            <div className="space-y-4 max-w-4xl mx-auto">
-              {/* Skeleton card 1 */}
-              <div className="bg-white rounded-lg p-4 shadow-sm animate-pulse">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            <div className="space-y-4 max-w-4xl mx-auto opacity-20">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                    <div className="w-24 h-10 bg-gray-200 rounded-lg"></div>
                   </div>
-                  <div className="w-20 h-8 bg-gray-200 rounded"></div>
                 </div>
-              </div>
-
-              {/* Skeleton card 2 */}
-              <div className="bg-white rounded-lg p-4 shadow-sm animate-pulse">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-                  </div>
-                  <div className="w-20 h-8 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-
-              {/* Skeleton card 3 */}
-              <div className="bg-white rounded-lg p-4 shadow-sm animate-pulse">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-4/5"></div>
-                    <div className="h-3 bg-gray-200 rounded w-2/5"></div>
-                  </div>
-                  <div className="w-20 h-8 bg-gray-200 rounded"></div>
-                </div>
-              </div>
+              ))}
             </div>
           )}
         </div>
@@ -696,10 +1240,12 @@ export default function SmartRideBooking() {
   // Rider Details & Tracking
   if (currentStep === 'rider-details') {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#FFFFFF]">
         <div className="bg-white">
-          <div className="max-w-6xl mx-auto px-4 py-10 flex items-center justify-between">
-            <YummyText className="text-3xl font-medium text-black">Swiftly</YummyText>
+          <div className="max-w-6xl mx-auto px-4 py-0 h-20 md:h-32 flex items-center justify-between">
+            <Link href="/" className="inline-block mr-48">
+              <img src="/swiftly-logo.svg" alt="Swiftly" className="h-12 md:h-16 lg:h-40 object-contain" />
+            </Link>
             <Button
               variant="primary"
               className="!bg-[#00B75A] text-sm hover:!bg-[#00B876] rounded-full px-6 py-2"
@@ -714,110 +1260,131 @@ export default function SmartRideBooking() {
           <Breadcrumb steps={breadcrumbSteps} currentStep={getCurrentStepIndex()} />
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 py-8">
-          {/* Map with route */}
-          <div className="bg-gray-300 rounded-3xl h-80 mb-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-300"></div>
-            {/* Simulate route line */}
-            <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }}>
-              <line x1="30%" y1="60%" x2="70%" y2="40%" stroke="#00B75A" strokeWidth="4" />
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* Map with route visualization */}
+          <div className="bg-white rounded-3xl overflow-hidden shadow-sm mb-8 relative" style={{ height: '400px' }}>
+            <GoogleMap
+              center={{ lat: 6.5244, lng: 3.3792 }}
+              zoom={13}
+              showMarker={true}
+              className="w-full h-full"
+            />
+
+            {/* Route line overlay */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+              <line x1="25%" y1="65%" x2="75%" y2="35%" stroke="#00B75A" strokeWidth="4" />
             </svg>
+
             {/* Pickup marker */}
-            <div className="absolute" style={{ left: '30%', top: '60%', transform: 'translate(-50%, -50%)' }}>
-              <div className="w-8 h-8 bg-green-500 rounded-full border-4 border-white"></div>
+            <div className="absolute" style={{ left: '25%', top: '65%', transform: 'translate(-50%, -50%)', zIndex: 2 }}>
+              <div className="relative">
+                <div className="w-10 h-10 bg-[#00B75A] rounded-full border-4 border-white shadow-lg"></div>
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap bg-white px-2 py-1 rounded shadow text-xs font-medium">
+                  Pickup
+                </div>
+              </div>
             </div>
+
             {/* Delivery marker */}
-            <div className="absolute" style={{ left: '70%', top: '40%', transform: 'translate(-50%, -50%)' }}>
-              <div className="w-8 h-8 bg-red-500 rounded-full border-4 border-white"></div>
+            <div className="absolute" style={{ left: '75%', top: '35%', transform: 'translate(-50%, -50%)', zIndex: 2 }}>
+              <div className="relative">
+                <div className="w-10 h-10 bg-red-500 rounded-full border-4 border-white shadow-lg"></div>
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap bg-white px-2 py-1 rounded shadow text-xs font-medium">
+                  Delivery
+                </div>
+              </div>
             </div>
-            {/* Rider position */}
-            <div className="absolute" style={{ left: '45%', top: '52%', transform: 'translate(-50%, -50%)', zIndex: 10 }}>
-              <div className="w-12 h-12 bg-[#00B75A] rounded-full flex items-center justify-center">
-                <Bike className="w-6 h-6 text-white" />
+
+            {/* Rider current position */}
+            <div className="absolute" style={{ left: '45%', top: '52%', transform: 'translate(-50%, -50%)', zIndex: 3 }}>
+              <div className="w-14 h-14 bg-[#00B75A] rounded-full flex items-center justify-center shadow-xl border-4 border-white">
+                <Bike className="w-7 h-7 text-white" />
               </div>
             </div>
           </div>
 
           {/* Rider Details Card */}
-          <div className="bg-white rounded-2xl p-8 mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Rider Details</h2>
+          <div className="bg-white rounded-3xl p-8 shadow-sm">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-8">Rider Details</h2>
 
-            <div className="flex items-start gap-6 mb-8">
+            <div className="flex items-start gap-8 mb-10">
               {/* Rider Photo */}
-              <div className="w-32 h-32 bg-gray-300 rounded-lg overflow-hidden flex-shrink-0">
-                <div className="w-full h-full bg-gradient-to-br from-gray-400 to-gray-500"></div>
+              <div className="w-40 h-40 bg-gray-200 rounded-2xl overflow-hidden flex-shrink-0">
+                <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400"></div>
               </div>
 
               {/* Rider Info */}
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="text-xl font-semibold text-gray-900">Kufre Sunday</h3>
-                  <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">Rider ID Verified</span>
-                  <span className="text-gray-600 text-sm">120 Rides</span>
+                <div className="flex items-center gap-3 mb-4">
+                  <h3 className="text-2xl font-semibold text-gray-900">Kufre Sunday</h3>
+                  <span className="px-3 py-1.5 bg-green-100 text-green-700 text-xs rounded-full font-semibold border border-green-200">
+                    Rider ID Verified
+                  </span>
+                  <span className="text-gray-500 text-sm font-medium">120 Rides</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mt-4">
+                <div className="grid grid-cols-3 gap-6 mt-6">
                   <div>
-                    <p className="text-sm text-gray-600">Bike Model</p>
-                    <p className="font-medium text-gray-900">Bajaj Boxer</p>
+                    <p className="text-sm text-gray-500 mb-1">Bike Model</p>
+                    <p className="font-semibold text-gray-900">Bajaj Boxer</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Plate number</p>
-                    <p className="font-medium text-gray-900">LAG 234 KJ</p>
+                    <p className="text-sm text-gray-500 mb-1">Plate number</p>
+                    <p className="font-semibold text-gray-900">LAG 234 KJ</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Estimated Arrival</p>
-                    <p className="font-medium text-gray-900">6 mins</p>
+                    <p className="text-sm text-gray-500 mb-1">Estimated Arrival</p>
+                    <p className="font-semibold text-gray-900">6 mins</p>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3">
-                <button className="flex items-center gap-2 px-6 py-3 bg-[#00B75A] text-white rounded-lg hover:bg-[#00A050] transition-colors">
+              <div className="flex flex-col gap-3">
+                <button className="flex items-center justify-center gap-2 px-8 py-3.5 bg-[#00B75A] text-white rounded-full hover:bg-[#00A050] transition-colors shadow-sm">
                   <Phone className="w-5 h-5" />
-                  <span className="font-medium">Call</span>
+                  <span className="font-semibold">Call</span>
                 </button>
-                <button className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-[#00B75A] text-[#00B75A] rounded-lg hover:bg-green-50 transition-colors">
+                <button className="flex items-center justify-center gap-2 px-8 py-3.5 bg-white border-2 border-[#00B75A] text-[#00B75A] rounded-full hover:bg-green-50 transition-colors">
                   <MessageCircle className="w-5 h-5" />
-                  <span className="font-medium">Chat</span>
+                  <span className="font-semibold">Chat</span>
                 </button>
               </div>
             </div>
 
             {/* Tracking Steps */}
-            <div className="border-t pt-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6">Tracking</h3>
+            <div className="border-t border-gray-200 pt-10">
+              <h3 className="text-xl font-semibold text-gray-900 mb-8">Tracking</h3>
 
-              <div className="flex items-center justify-between max-w-2xl mx-auto">
+              <div className="flex items-center justify-between max-w-3xl mx-auto">
                 {/* Dispatch */}
                 <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 bg-[#00B75A] rounded-full flex items-center justify-center mb-2">
-                    <Bike className="w-8 h-8 text-white" />
+                  <div className="w-20 h-20 bg-[#00B75A] rounded-full flex items-center justify-center mb-3 shadow-sm">
+                    <Bike className="w-10 h-10 text-white" />
                   </div>
-                  <p className="text-sm font-medium text-[#00B75A]">Dispatch</p>
+                  <p className="text-sm font-semibold text-[#00B75A]">Dispatch</p>
                 </div>
 
                 {/* Connecting line */}
-                <div className="flex-1 h-1 bg-gray-200 mx-4"></div>
+                <div className="flex-1 h-1 bg-gray-200 mx-6"></div>
 
                 {/* Pick Up */}
                 <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-2">
-                    <Package className="w-8 h-8 text-gray-400" />
+                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                    <Package className="w-10 h-10 text-gray-400" />
                   </div>
-                  <p className="text-sm font-medium text-gray-400">Pick Up</p>
+                  <p className="text-sm font-semibold text-gray-400">Pick Up</p>
                 </div>
 
                 {/* Connecting line */}
-                <div className="flex-1 h-1 bg-gray-200 mx-4"></div>
+                <div className="flex-1 h-1 bg-gray-200 mx-6"></div>
 
                 {/* Delivery */}
                 <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-2">
-                    <CheckCircle className="w-8 h-8 text-gray-400" />
+                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                    <CheckCircle className="w-10 h-10 text-gray-400" />
                   </div>
-                  <p className="text-sm font-medium text-gray-400">Delivery</p>
+                  <p className="text-sm font-semibold text-gray-400">Delivery</p>
                 </div>
               </div>
             </div>
@@ -827,6 +1394,168 @@ export default function SmartRideBooking() {
     );
   }
 
-  return null;
-}
+  return (
+    <>
+      {/* Payment Method Drawer/Modal */}
+      {showPaymentDrawer && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => setShowPaymentDrawer(false)}
+        >
+          <div
+            className={`bg-white ${isMobile
+                ? 'w-full rounded-t-3xl animate-slide-up'
+                : 'w-full max-w-md rounded-2xl animate-scale-in'
+              } shadow-2xl`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <h3 className="text-lg font-semibold text-[#0F172A]">Select Payment Method</h3>
+              <button
+                onClick={() => setShowPaymentDrawer(false)}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
 
+            {/* Payment Options */}
+            <div className="p-6 space-y-3">
+              {/* Cash on Delivery */}
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData({ ...formData, paymentMethod: 'cash' });
+                  setShowPaymentDrawer(false);
+                }}
+                className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-[#00B75A] hover:bg-[#F0FDF4]/30 ${formData.paymentMethod === 'cash'
+                    ? 'border-[#00B75A] bg-[#F0FDF4]'
+                    : 'border-gray-200 bg-white'
+                  }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#F0FDF4] flex items-center justify-center flex-shrink-0">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                      <rect x="2" y="5" width="20" height="14" rx="2" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-[#0F172A]">Cash on Delivery</p>
+                    <p className="text-xs text-[#64748B] mt-1">Pay with cash when your package is delivered</p>
+                  </div>
+                  {formData.paymentMethod === 'cash' && (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </div>
+              </button>
+
+              {/* Pay Online (Card) */}
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData({ ...formData, paymentMethod: 'card' });
+                  setShowPaymentDrawer(false);
+                }}
+                className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-[#00B75A] hover:bg-[#F0FDF4]/30 ${formData.paymentMethod === 'card'
+                    ? 'border-[#00B75A] bg-[#F0FDF4]'
+                    : 'border-gray-200 bg-white'
+                  }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#F0FDF4] flex items-center justify-center flex-shrink-0">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                      <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                      <line x1="1" y1="10" x2="23" y2="10" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-[#0F172A]">Pay Online (Card)</p>
+                    <p className="text-xs text-[#64748B] mt-1">Secure payment with your card</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" className="h-4" />
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-4" />
+                      <span className="text-xs font-medium text-[#64748B] px-2 py-0.5 bg-gray-100 rounded">Verve</span>
+                    </div>
+                  </div>
+                  {formData.paymentMethod === 'card' && (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </div>
+              </button>
+
+              {/* Bank Transfer */}
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData({ ...formData, paymentMethod: 'transfer' });
+                  setShowPaymentDrawer(false);
+                }}
+                className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:border-[#00B75A] hover:bg-[#F0FDF4]/30 ${formData.paymentMethod === 'transfer'
+                    ? 'border-[#00B75A] bg-[#F0FDF4]'
+                    : 'border-gray-200 bg-white'
+                  }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#F0FDF4] flex items-center justify-center flex-shrink-0">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                      <line x1="12" y1="1" x2="12" y2="23" />
+                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-[#0F172A]">Bank Transfer</p>
+                    <p className="text-xs text-[#64748B] mt-1">Transfer directly to our account</p>
+                  </div>
+                  {formData.paymentMethod === 'transfer' && (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00B75A" strokeWidth="2">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes slide-up {
+          from {
+            transform: translateY(100%);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes scale-in {
+          from {
+            transform: scale(0.95);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        
+        .animate-slide-up {
+          animation: slide-up 0.3s ease-out;
+        }
+        
+        .animate-scale-in {
+          animation: scale-in 0.2s ease-out;
+        }
+      `}</style>
+    </>
+  );
+}

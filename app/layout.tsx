@@ -2,6 +2,7 @@ import '../styles/globals.css'
 import './reveal-animations.css'
 import React from 'react'
 import Layout from '../components/Layout'
+import Script from 'next/script'
 
 export const metadata = {
   metadataBase: new URL('https://swiftlyxpress.com'),
@@ -62,12 +63,28 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
   return (
     <html lang="en">
       <head>
         <link rel="icon" type="image/svg+xml" href="/swiftly-logo.svg" />
       </head>
       <body className="bricolage-font overflow-x-hidden">
+        {/* Google Maps Script - conditional loading */}
+        {googleMapsApiKey && (
+          <Script
+            src={`https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places,geometry&region=NG`}
+            strategy="afterInteractive"
+          />
+        )}
+
+        {/* Paystack Inline SDK */}
+        <Script
+          src="https://js.paystack.co/v1/inline.js"
+          strategy="afterInteractive"
+        />
+
         <Layout>{children}</Layout>
       </body>
     </html>
