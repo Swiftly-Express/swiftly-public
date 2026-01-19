@@ -137,11 +137,7 @@ export default function PaymentSuccessPage() {
                 <p className="text-sm text-[#64748B]">Redirecting to tracking in {countdown} seconds...</p>
                 <div className="w-8 h-8 rounded-full border-2 border-t-transparent border-[#00B75A] animate-spin"></div>
               </div>
-            ) : (
-              <div className="flex justify-center">
-                <button onClick={goToDeliveries} className="px-6 py-3 bg-[#00B75A] text-white rounded-full">My Deliveries</button>
-              </div>
-            )}
+            ) : null}
           </div>
         )}
       </div>

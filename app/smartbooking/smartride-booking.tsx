@@ -45,10 +45,12 @@ export default function SmartRideBooking() {
     senderName: '',
     senderPhone: '',
     pickupAddress: '',
+    pickupPlace: null as null | any,
     pickupDate: '',
     recipientName: '',
     recipientPhone: '',
     deliveryAddress: '',
+    deliveryPlace: null as null | any,
     recipientEmail: '',
     // New package sizing fields
     sizeCategory: 'small',
@@ -81,6 +83,58 @@ export default function SmartRideBooking() {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  // Geocode manually typed address
+  const geocodeAddress = async (address: string, fieldType: 'pickup' | 'delivery') => {
+    if (!address || address.trim().length < 5) return;
+
+    try {
+      if (typeof window === 'undefined' || !window.google?.maps) return;
+
+      const geocoder = new window.google.maps.Geocoder();
+      const result = await geocoder.geocode({ address, componentRestrictions: { country: 'NG' } });
+
+      if (result.results && result.results.length > 0) {
+        const place = result.results[0];
+        const components = place.address_components || [];
+
+        const extract = () => {
+          const out = { city: '', state: '', postal_code: '', country: '' };
+          components.forEach(c => {
+            if (c.types.includes('locality')) out.city = c.long_name;
+            if (c.types.includes('administrative_area_level_1')) out.state = c.long_name;
+            if (c.types.includes('postal_code')) out.postal_code = c.long_name;
+            if (c.types.includes('country')) out.country = c.long_name;
+          });
+          return out;
+        };
+
+        const c = extract();
+        const placeData = {
+          street: address,
+          city: c.city,
+          state: c.state,
+          zipCode: c.postal_code,
+          country: c.country,
+          coordinates: {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng()
+          },
+          place_id: place.place_id
+        };
+
+        if (fieldType === 'pickup') {
+          setFormData(prev => ({ ...prev, pickupPlace: placeData }));
+          console.log('Pickup geocoded:', placeData);
+        } else {
+          setFormData(prev => ({ ...prev, deliveryPlace: placeData }));
+          console.log('Delivery geocoded:', placeData);
+        }
+      }
+    } catch (error) {
+      console.error('Geocoding error:', error);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -161,8 +215,20 @@ export default function SmartRideBooking() {
         recipientName: formData.recipientName,
         recipientPhone: formData.recipientPhone,
         recipientEmail: formData.recipientEmail,
-        pickupAddress: { street: formData.pickupAddress, city: '', state: 'Unknown', zipCode: '00000', coordinates: { lat: 0, lng: 0 } },
-        deliveryAddress: { street: formData.deliveryAddress, city: '', state: 'Unknown', zipCode: '00000', coordinates: { lat: 0, lng: 0 } },
+        pickupAddress: {
+          street: formData.pickupPlace?.street || formData.pickupAddress,
+          city: formData.pickupPlace?.city || '',
+          state: formData.pickupPlace?.state || 'Unknown',
+          zipCode: formData.pickupPlace?.zipCode || '',
+          coordinates: formData.pickupPlace?.coordinates || null
+        },
+        deliveryAddress: {
+          street: formData.deliveryPlace?.street || formData.deliveryAddress,
+          city: formData.deliveryPlace?.city || '',
+          state: formData.deliveryPlace?.state || 'Unknown',
+          zipCode: formData.deliveryPlace?.zipCode || '',
+          coordinates: formData.deliveryPlace?.coordinates || null
+        },
         packageDetails: {
           sizeCategory: formData.sizeCategory,
           weightCategory: formData.weightCategory,
@@ -196,11 +262,7 @@ export default function SmartRideBooking() {
       }
       setDeliveryId(dId);
 
-      let paymentWindow: Window | null = null;
-      try {
-        paymentWindow = window.open('', '_blank');
-        if (paymentWindow) paymentWindow.document.write('<p>Preparing payment...</p>');
-      } catch (e) { paymentWindow = null; }
+      // Avoid opening a blank popup and writing into it (causes cross-origin and DOM errors).
 
       let initJson;
       try {
@@ -214,8 +276,8 @@ export default function SmartRideBooking() {
       } catch (initErr: any) {
         console.error('Payment initialize failed', initErr);
         const url = initErr?.config?.url || `(initialize for ${dId})`;
-        const status = initErr?.response?.status;
-        const data = initErr?.response?.data;
+        const status = initErr?.response?.status || initErr?.status || 'Network/Unknown';
+        const data = initErr?.response?.data || initErr?.message || initErr;
         alert(`Payment initialization failed (${status}) at ${url}: ${data?.message || JSON.stringify(data)}`);
         setIsProcessingPayment(false);
         return;
@@ -233,33 +295,22 @@ export default function SmartRideBooking() {
       } catch (e) { }
 
       if (authorizationUrl) {
-        if (paymentWindow) paymentWindow.location.href = authorizationUrl;
-        else window.open(authorizationUrl, '_blank');
+        window.open(authorizationUrl, '_blank');
         setIsProcessingPayment(false);
         return;
       }
 
       if (paymentReference) {
-        try { if (paymentWindow) paymentWindow.close(); } catch (e) { }
-        const PaystackPop = (await import('@paystack/inline-js')).default;
-        const paystackPublicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_xxxx';
-        const handler = PaystackPop.setup({
-          key: paystackPublicKey,
-          email: formData.recipientEmail || 'customer@swiftlyxpress.com',
-          amount: calculateTotal().total * 100,
-          currency: 'NGN',
-          ref: paymentReference,
-          metadata: { deliveryId: dId },
-          onSuccess: async (transaction: any) => {
-            try { if (handler && typeof handler.closeIframe === 'function') handler.closeIframe(); } catch (e) { }
-            const pidEnc = encodeURIComponent(paymentReference);
-            const didPart = dId ? `&deliveryId=${encodeURIComponent(dId)}` : '';
-            router.push(`/customer/payment/success?paymentId=${pidEnc}${didPart}`);
-          },
-          onCancel: () => { setIsProcessingPayment(false); }
-        });
-        handler.openIframe();
+        // Fallback: open Paystack hosted checkout for the returned reference
+        try {
+          const hosted = `https://checkout.paystack.com/${paymentReference}`;
+          window.open(hosted, '_blank');
+        } catch (e) {
+          console.error('Failed to open hosted checkout', e);
+          alert('Unable to start hosted checkout. Please try again.');
+        }
         setIsProcessingPayment(false);
+        return;
       }
     } catch (err: any) {
       console.error('Payment error', err);
@@ -377,7 +428,7 @@ export default function SmartRideBooking() {
             <div>
               <Button
                 variant="primary"
-                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#0A0A0A] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
+                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#000000] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
                 onClick={() => router.push('/')}
               >
                 Back home
@@ -463,10 +514,22 @@ export default function SmartRideBooking() {
                       <GoogleMapsAutocomplete
                         value={formData.pickupAddress}
                         onChange={(val) => setFormData({ ...formData, pickupAddress: val })}
-                        onPlaceSelect={(place) => setFormData({ ...formData, pickupAddress: `${place.street}${place.city ? ', ' + place.city : ''}` })}
+                        onPlaceSelect={(place) => {
+                          console.log('Pickup place selected:', place);
+                          setFormData({ ...formData, pickupAddress: `${place.street}${place.city ? ', ' + place.city : ''}`, pickupPlace: place });
+                        }}
+                        onBlur={() => {
+                          // Geocode if user typed manually and didn't select from dropdown
+                          if (formData.pickupAddress && !formData.pickupPlace?.coordinates) {
+                            geocodeAddress(formData.pickupAddress, 'pickup');
+                          }
+                        }}
                         placeholder="123 Main Street"
                         className="w-full"
                       />
+                      {formData.pickupPlace?.coordinates && (
+                        <p className="text-xs text-green-600 mt-1">✓ Location captured: {formData.pickupPlace.coordinates.lat.toFixed(4)}, {formData.pickupPlace.coordinates.lng.toFixed(4)}</p>
+                      )}
                     </div>
 
                     <div>
@@ -522,10 +585,22 @@ export default function SmartRideBooking() {
                       <GoogleMapsAutocomplete
                         value={formData.deliveryAddress}
                         onChange={(val) => setFormData({ ...formData, deliveryAddress: val })}
-                        onPlaceSelect={(place) => setFormData({ ...formData, deliveryAddress: `${place.street}${place.city ? ', ' + place.city : ''}` })}
+                        onPlaceSelect={(place) => {
+                          console.log('Delivery place selected:', place);
+                          setFormData({ ...formData, deliveryAddress: `${place.street}${place.city ? ', ' + place.city : ''}`, deliveryPlace: place });
+                        }}
+                        onBlur={() => {
+                          // Geocode if user typed manually and didn't select from dropdown
+                          if (formData.deliveryAddress && !formData.deliveryPlace?.coordinates) {
+                            geocodeAddress(formData.deliveryAddress, 'delivery');
+                          }
+                        }}
                         placeholder="456 Oak Avenue"
                         className="w-full"
                       />
+                      {formData.deliveryPlace?.coordinates && (
+                        <p className="text-xs text-green-600 mt-1">✓ Location captured: {formData.deliveryPlace.coordinates.lat.toFixed(4)}, {formData.deliveryPlace.coordinates.lng.toFixed(4)}</p>
+                      )}
                     </div>
 
                     <div>
@@ -1133,7 +1208,7 @@ export default function SmartRideBooking() {
             <div>
               <Button
                 variant="primary"
-                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#0A0A0A] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
+                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#000000] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
                 onClick={() => router.push('/')}
               >
                 Back home
@@ -1276,7 +1351,7 @@ export default function SmartRideBooking() {
             <div className="flex gap-4">
               <button
                 type="button"
-                className="px-4 py-2 mt-6 bg-white border border-gray-200 hover:bg-gray-50 rounded-full transition-colors text-[#1E1E1E] font-medium text-[15px]"
+                className="px-4 py-2 mt-6 bg-white border border-gray-200 hover:bg-gray-50 rounded-full transition-colors text-[#000000] font-medium text-[15px]"
                 onClick={() => setCurrentStep('form')}
               >
                 Back
@@ -1313,7 +1388,7 @@ export default function SmartRideBooking() {
             <div>
               <Button
                 variant="primary"
-                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#0A0A0A] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
+                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#000000] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
                 onClick={() => router.push('/')}
               >
                 Back home
@@ -1412,7 +1487,7 @@ export default function SmartRideBooking() {
             <div>
               <Button
                 variant="primary"
-                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#0A0A0A] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
+                className="!bg-[#FFFFFF] border-[1.5px] border-[#0A0A0A] text-[#000000] text-sm hover:!bg-[#FFFFFF] rounded-full px-4 py-2 inline-flex"
                 onClick={() => router.push('/')}
               >
                 Back home
@@ -1431,41 +1506,18 @@ export default function SmartRideBooking() {
             <GoogleMap
               center={{ lat: 6.5244, lng: 3.3792 }}
               zoom={13}
-              showMarker={true}
+              pickupLocation={formData.pickupPlace?.coordinates || { lat: 6.5244, lng: 3.3792 }}
+              deliveryLocation={formData.deliveryPlace?.coordinates || { lat: 6.5344, lng: 3.3892 }}
+              riderLocation={{ lat: 6.5294, lng: 3.3842 }}
+              showRoute={true}
               className="w-full h-full"
             />
-
-            {/* Route line overlay */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
-              <line x1="25%" y1="65%" x2="75%" y2="35%" stroke="#00B75A" strokeWidth="4" />
-            </svg>
-
-            {/* Pickup marker */}
-            <div className="absolute" style={{ left: '25%', top: '65%', transform: 'translate(-50%, -50%)', zIndex: 2 }}>
-              <div className="relative">
-                <div className="w-10 h-10 bg-[#00B75A] rounded-full border-4 border-white shadow-lg"></div>
-                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap bg-white px-2 py-1 rounded shadow text-xs font-medium">
-                  Pickup
-                </div>
+            {/* Debug info */}
+            {(!formData.pickupPlace?.coordinates || !formData.deliveryPlace?.coordinates) && (
+              <div className="absolute top-4 left-4 bg-yellow-100 border border-yellow-300 rounded px-3 py-2 text-xs text-yellow-800 z-10">
+                ⚠️ Using default coordinates. Please select addresses from autocomplete dropdown.
               </div>
-            </div>
-
-            {/* Delivery marker */}
-            <div className="absolute" style={{ left: '75%', top: '35%', transform: 'translate(-50%, -50%)', zIndex: 2 }}>
-              <div className="relative">
-                <div className="w-10 h-10 bg-red-500 rounded-full border-4 border-white shadow-lg"></div>
-                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap bg-white px-2 py-1 rounded shadow text-xs font-medium">
-                  Delivery
-                </div>
-              </div>
-            </div>
-
-            {/* Rider current position */}
-            <div className="absolute" style={{ left: '45%', top: '52%', transform: 'translate(-50%, -50%)', zIndex: 3 }}>
-              <div className="w-14 h-14 bg-[#00B75A] rounded-full flex items-center justify-center shadow-xl border-4 border-white">
-                <Bike className="w-7 h-7 text-white" />
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Rider Details Card */}

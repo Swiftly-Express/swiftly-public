@@ -74,13 +74,13 @@ const Footer = () => {
                 <div className="w-6 h-6 mt-1 flex-shrink-0">
                   <Image src="/telephone.svg" alt="Phone" width={24} height={24} className="object-contain" />
                 </div>
-                <YummyText className="text-gray-400 text-sm font-[300]">+1 (800) SWIFTLY</YummyText>
+                <YummyText className="text-gray-400 text-sm font-[300]">+234 08089000013</YummyText>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 mt-1 flex-shrink-0">
                   <Image src="/mailicon.svg" alt="Email" width={24} height={24} className="object-contain" />
                 </div>
-                <YummyText className="text-gray-400 text-sm font-[300]">support@swiftlyexpress.com</YummyText>
+                <YummyText className="text-gray-400 text-sm font-[300]">support@swiftlyxpress.com</YummyText>
               </li>
             </ul>
           </div>

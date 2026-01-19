@@ -57,7 +57,7 @@ interface ContactInfoCardProps {
 }
 
 const ContactInfoCard: React.FC<ContactInfoCardProps> = ({ icon, title, lines, subtext }) => (
-  <div className="bg-white rounded-lg p-6 !px-5 border border-gray-200 text-left duration-300">
+  <div className="bg-white rounded-lg p-6 !px-5 border border-gray-200 text-left duration-300 h-full flex flex-col justify-between">
     <div className="mb-4">
       <div className="w-12 h-12 rounded-full bg-[#00D68F1A] flex items-center justify-center">
         <Image src={icon} alt={title} width={24} height={24} />
@@ -126,19 +126,19 @@ export default function Contact() {
     {
       icon: '/telephone.svg',
       title: 'Phone',
-      lines: ['+1 (555) 123-4567', '+1 (555) 765-4321'],
+      lines: ['+234 08089000013'],
       subtext: 'Mon-Fri 9am-6pm'
     },
     {
       icon: '/mailicon.svg',
       title: 'Email',
-      lines: ['support@swiftly.com', 'business@swiftly.com'],
+      lines: ['support@swiftlyxpress.com'],
       subtext: 'We respond within 24 hours'
     },
     {
       icon: '/clockicon.svg',
       title: 'Support Hours',
-      lines: ['24/7 Emergency Support', 'Live Chat 9am-9pm'],
+      lines: ['24/7 Emergency Support'],
       subtext: 'Always here when you need us'
     }
   ];
@@ -406,9 +406,9 @@ export default function Contact() {
           data-section="contact-info"
           ref={el => sectionRefs.current['contact-info'] = el}
           className="py-4 md:py-6 lg:py-4 px-4 md:px-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {contactInfo.map((info, index) => (
-              <div key={index} data-reveal className={`reveal-hidden reveal-stagger-${index + 1}`}>
+              <div key={index} data-reveal className={`reveal-hidden reveal-stagger-${index + 1} h-full`}>
                 <ContactInfoCard
                   icon={info.icon}
                   title={info.title}

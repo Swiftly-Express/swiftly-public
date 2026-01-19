@@ -79,11 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         )}
 
-        {/* Paystack Inline SDK */}
-        <Script
-          src="https://js.paystack.co/v1/inline.js"
-          strategy="afterInteractive"
-        />
+        {/* Paystack Inline SDK removed — using hosted checkout URLs to avoid inline/fingerprint issues */}
 
         <Layout>{children}</Layout>
       </body>

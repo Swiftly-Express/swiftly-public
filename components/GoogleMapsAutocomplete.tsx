@@ -26,6 +26,7 @@ interface GoogleMapsAutocompleteProps {
     placeholder?: string;
     className?: string;
     onPlaceSelect?: (place: PlaceResult) => void;
+    onBlur?: () => void;
 }
 
 const GoogleMapsAutocomplete: React.FC<GoogleMapsAutocompleteProps> = ({
@@ -33,7 +34,8 @@ const GoogleMapsAutocomplete: React.FC<GoogleMapsAutocompleteProps> = ({
     onChange,
     placeholder = "Enter Location...",
     className = "",
-    onPlaceSelect
+    onPlaceSelect,
+    onBlur
 }) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const dropdownRef = useRef<HTMLUListElement>(null);
@@ -396,6 +398,14 @@ const GoogleMapsAutocomplete: React.FC<GoogleMapsAutocompleteProps> = ({
                     className={`w-full px-4 py-3 rounded-xl bg-[#F8F9FA] text-sm md:text-base text-[#0F172A] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00D68F] border-none ${className}`}
                     onChange={(e) => onChange(e.target.value)}
                     onFocus={() => predictions.length > 0 && setIsOpen(true)}
+                    onBlur={() => {
+                        // Close dropdown after a small delay to allow click events
+                        setTimeout(() => setIsOpen(false), 200);
+                        // Call parent onBlur if provided
+                        if (onBlur) {
+                            setTimeout(() => onBlur(), 300);
+                        }
+                    }}
                     onKeyDown={handleKeyDown}
                     type="text"
                     placeholder={placeholder}
