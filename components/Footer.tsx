@@ -6,6 +6,7 @@ import PageWrapper from './PageWrapper';
 import InstagramIcon from './icons/InstagramIcon';
 import FacebookIcon from './icons/FacebookIcon';
 import WhatsAppIcon from './icons/WhatsAppIcon';
+import CookieConsent from './CookieConsent';
 
 const Footer = () => {
   return (
@@ -89,15 +90,16 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <YummyText className="text-gray-500 text-sm font-[300]">
-            © 2025 Swiftly Xpress. All rights reserved.
+            © 2026 Swiftly Xpress. All rights reserved.
           </YummyText>
           <div className="flex gap-6">
-            <a href="#" className="text-gray-500 hover:text-[#10b981] text-sm font-[300] transition-colors">Privacy Policy</a>
+            <Link href="/privacy-policy" className="text-gray-500 hover:text-[#10b981] text-sm font-[300] transition-colors">Privacy Policy</Link>
             <Link href="/terms-of-service" className="text-gray-500 hover:text-[#10b981] text-sm font-[300] transition-colors">Terms of Service</Link>
-            <a href="#" className="text-gray-500 hover:text-[#10b981] text-sm font-[300] transition-colors">Cookie Policy</a>
+            <Link href="/cookie-policy" className="text-gray-500 hover:text-[#10b981] text-sm font-[300] transition-colors">Cookie Policy</Link>
           </div>
         </div>
       </PageWrapper>
+      <CookieConsent />
     </footer>
   );
 };
