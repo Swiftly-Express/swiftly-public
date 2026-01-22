@@ -215,13 +215,13 @@ export default function NavBar({ className = '' }: NavBarProps) {
           <div className={`mt-6 mb-6 text-center ${isMenuOpen ? 'menu-social-slide' : ''}`}>
             <div className="text-sm text-gray-500 mb-3">Connect with us on</div>
             <div className="flex items-center justify-center gap-2">
-              <a href="#" aria-label="Instagram" className="w-10 h-10 rounded-full flex items-center justify-center">
+              <a href="https://www.instagram.com/swiftly_ng?igsh=MW00czA1Y2JwdGxmNg==" aria-label="Instagram" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full flex items-center justify-center">
                 <InstagramIcon width="32" height="32" className="text-[#111827]" />
               </a>
-              <a href="#" aria-label="Facebook" className="w-10 h-10 rounded-full flex items-center justify-center">
+              <a href="https://www.facebook.com/share/17rSyYsXcC/" aria-label="Facebook" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full flex items-center justify-center">
                 <FacebookIcon width="32" height="32" className="text-[#111827]" />
               </a>
-              <a href="#" aria-label="WhatsApp" className="w-10 h-10 rounded-full flex items-center justify-center">
+              <a href="https://wa.me/message/BCLZQ6YENMS4H1" aria-label="WhatsApp" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full flex items-center justify-center">
                 <WhatsAppIcon width="34" height="34" className="text-[#111827]" />
               </a>
             </div>

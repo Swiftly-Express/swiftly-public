@@ -406,10 +406,6 @@ export default function SwiftlyLanding() {
       {/* Navbar */}
       <div className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <PageWrapper className="py-0 flex items-center justify-between">
-          {/* <YummyText className="text-3xl px-3 font-sm text-black">
-            Swiftly
-          </YummyText> */}
-
           <NavBar />
           <div className="hidden md:flex items-center px-4 gap-3">
             <Button

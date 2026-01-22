@@ -6,6 +6,7 @@ import PageWrapper from './PageWrapper';
 import InstagramIcon from './icons/InstagramIcon';
 import FacebookIcon from './icons/FacebookIcon';
 import WhatsAppIcon from './icons/WhatsAppIcon';
+import SwiftlyLogo from './icons/SwiftlyLogo';
 import CookieConsent from './CookieConsent';
 
 const Footer = () => {
@@ -15,8 +16,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           {/* Company Info */}
           <div>
-            <Link href="/" className="inline-block mb-4">
-              <img src="/swiftly-logo.svg" alt="Swiftly Xpress" className="h-8" />
+            <Link href="/" className="inline-block mb-4 text-white">
+              <SwiftlyLogo width="40" height="32" className="h-8 text-[#ffffff]" />
             </Link>
             <YummyText className="flex text-gray-400 text-sm font-[300] leading-relaxed mb-6">
               Your trusted logistics partner delivering excellence across the nation with speed, security, and reliability.
@@ -24,13 +25,13 @@ const Footer = () => {
 
             {/* Social Icons */}
             <div className="flex gap-3">
-              <a href="#" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors text-gray-400 hover:text-white">
+              <a href="https://www.facebook.com/share/17rSyYsXcC/" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors text-gray-400 hover:text-white">
                 <FacebookIcon width="18" height="18" className="text-current" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors text-gray-400 hover:text-white">
+              <a href="https://www.instagram.com/swiftly_ng?igsh=MW00czA1Y2JwdGxmNg==" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors text-gray-400 hover:text-white">
                 <InstagramIcon width="18" height="18" className="text-current" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors text-gray-400 hover:text-white">
+              <a href="https://wa.me/message/BCLZQ6YENMS4H1" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center hover:bg-[#10b981] transition-colors text-gray-400 hover:text-white">
                 <WhatsAppIcon width="18" height="18" className="text-current" />
               </a>
             </div>
@@ -40,12 +41,9 @@ const Footer = () => {
           <div>
             <YummyText className="text-lg font-medium mb-4">Quick Links</YummyText>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">About Us</a></li>
               <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">Our Services</a></li>
               <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">Smart Ride</a></li>
               <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">Track Package</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">Careers</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">Blog</a></li>
             </ul>
           </div>
 
@@ -54,9 +52,7 @@ const Footer = () => {
             <YummyText className="text-lg font-medium mb-4">Services</YummyText>
             <ul className="space-y-3">
               <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">Express Delivery</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">E-commerce Fulfillment</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">Interstate Logistics</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">Corporate Delivery</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">SmartRide  Booking</a></li>
               <li><a href="#" className="text-gray-400 hover:text-[#10b981] text-sm font-[300] transition-colors">Same-Day Delivery</a></li>
             </ul>
           </div>
@@ -96,6 +92,7 @@ const Footer = () => {
             <Link href="/privacy-policy" className="text-gray-500 hover:text-[#10b981] text-sm font-[300] transition-colors">Privacy Policy</Link>
             <Link href="/terms-of-service" className="text-gray-500 hover:text-[#10b981] text-sm font-[300] transition-colors">Terms of Service</Link>
             <Link href="/cookie-policy" className="text-gray-500 hover:text-[#10b981] text-sm font-[300] transition-colors">Cookie Policy</Link>
+            <Link href="/refund-policy" className="text-gray-500 hover:text-[#10b981] text-sm font-[300] transition-colors">Refund Policy</Link>
           </div>
         </div>
       </PageWrapper>
