@@ -15,6 +15,20 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
   const [showAuthChoice, setShowAuthChoice] = useState(false);
 
+  // determine whether to show auth choice for unauthenticated users when modal opens
+  React.useEffect(() => {
+    if (!isOpen) {
+      setShowAuthChoice(false);
+      return;
+    }
+    const token = getCookie('customer_token') || getCookie('access_token') || getCookie('token') || null;
+    if (token) {
+      setShowAuthChoice(false);
+    } else {
+      setShowAuthChoice(true);
+    }
+  }, [isOpen]);
+
   // prevent background scrolling when modal is open
   React.useEffect(() => {
     if (isOpen) {
@@ -139,15 +153,34 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
 
                   const bookingPath = '/customer/book?delivery=smart_ride';
 
+                  // If already authenticated, go straight to booking
                   if (token) {
                     onClose();
-                    // user appears authenticated — open dashboard booking directly
                     window.location.href = `${dashboardBaseUrl}${bookingPath}`;
                     return;
                   }
 
-                  // Not authenticated: show a small choice inside the modal for Signup vs Login
-                  setShowAuthChoice(true);
+                  // Not authenticated: attempt to detect if user is "existing" by checking remembered email
+                  let remembered = '';
+                  try {
+                    remembered = (typeof window !== 'undefined' && (localStorage.getItem('customer_email') || '')) || '';
+                  } catch (e) {
+                    remembered = '';
+                  }
+                  if (!remembered) remembered = getCookie('customer_email') || '';
+
+                  const returnUrl = encodeURIComponent(bookingPath);
+
+                  if (remembered) {
+                    // Likely an existing user: send to login
+                    onClose();
+                    window.location.href = `${dashboardBaseUrl}/auth/customer/login?returnUrl=${returnUrl}`;
+                    return;
+                  }
+
+                  // Default: new user flow — send to signup
+                  onClose();
+                  window.location.href = `${dashboardBaseUrl}/auth/customer/signup?returnUrl=${returnUrl}`;
                 }}
                 className="flex-1 bg-[#00D68F] hover:bg-[#00B876] text-white whitespace-nowrap font-semibold py-3 px-4 rounded-full transition-colors text-sm"
               >
@@ -160,40 +193,6 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
                 Maybe Later
               </button>
             </div>
-
-            {/* Auth choice shown when user isn't authenticated */}
-            {showAuthChoice && (
-              <div className="mt-4 bg-gray-50 border border-gray-200 rounded-md p-3">
-                <p className="text-sm text-gray-700 mb-2">Already have an account? Choose an option to proceed to the dashboard:</p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      const isDevelopment = typeof window !== 'undefined' &&
-                        (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || process.env.NODE_ENV !== 'production');
-                      const dashboardBaseUrl = isDevelopment ? 'http://localhost:8080' : 'https://dashboard.swiftlyxpress.com';
-                      const returnUrl = encodeURIComponent('/customer/book?delivery=smart_ride');
-                      window.location.href = `${dashboardBaseUrl}/auth/customer/signup?returnUrl=${returnUrl}`;
-                    }}
-                    className="flex-1 bg-white border border-gray-300 text-gray-800 py-2 rounded-md text-sm"
-                  >
-                    Create Account
-                  </button>
-                  <button
-                    onClick={() => {
-                      const isDevelopment = typeof window !== 'undefined' &&
-                        (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || process.env.NODE_ENV !== 'production');
-                      const dashboardBaseUrl = isDevelopment ? 'http://localhost:8080' : 'https://dashboard.swiftlyxpress.com';
-                      const returnUrl = encodeURIComponent('/customer/book?delivery=smart_ride');
-                      window.location.href = `${dashboardBaseUrl}/auth/customer/login?returnUrl=${returnUrl}`;
-                    }}
-                    className="flex-1 bg-[#00D68F] text-white py-2 rounded-md text-sm"
-                  >
-                    I Have an Account (Login)
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* Footer Text */}
             <p className="text-center text-[10px] text-gray-500 mt-3">
               No credit card required to get started • Cancel anytime
