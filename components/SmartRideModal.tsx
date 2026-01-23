@@ -137,7 +137,7 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
 
                   const dashboardBaseUrl = isDevelopment ? 'http://localhost:8080' : 'https://dashboard.swiftlyxpress.com';
 
-                  const bookingPath = '/customer/smartride-booking';
+                  const bookingPath = '/customer/book?delivery=smart_ride';
 
                   if (token) {
                     onClose();
@@ -171,7 +171,7 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
                       const isDevelopment = typeof window !== 'undefined' &&
                         (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || process.env.NODE_ENV !== 'production');
                       const dashboardBaseUrl = isDevelopment ? 'http://localhost:8080' : 'https://dashboard.swiftlyxpress.com';
-                      const returnUrl = encodeURIComponent('/customer/smartride-booking');
+                      const returnUrl = encodeURIComponent('/customer/book?delivery=smart_ride');
                       window.location.href = `${dashboardBaseUrl}/auth/customer/signup?returnUrl=${returnUrl}`;
                     }}
                     className="flex-1 bg-white border border-gray-300 text-gray-800 py-2 rounded-md text-sm"
@@ -183,7 +183,7 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
                       const isDevelopment = typeof window !== 'undefined' &&
                         (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') || process.env.NODE_ENV !== 'production');
                       const dashboardBaseUrl = isDevelopment ? 'http://localhost:8080' : 'https://dashboard.swiftlyxpress.com';
-                      const returnUrl = encodeURIComponent('/customer/smartride-booking');
+                      const returnUrl = encodeURIComponent('/customer/book?delivery=smart_ride');
                       window.location.href = `${dashboardBaseUrl}/auth/customer/login?returnUrl=${returnUrl}`;
                     }}
                     className="flex-1 bg-[#00D68F] text-white py-2 rounded-md text-sm"
