@@ -68,7 +68,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <link rel="icon" type="image/svg+xml" href="/swiftly-logo.svg" />
+        <link rel="icon" type="image/svg+xml" href="/swiftly-icon.svg" />
+        <link rel="apple-touch-icon" href="/swiftly-icon.svg" />
+        <meta name="theme-color" content="#00B75A" />
       </head>
       <body className="bricolage-font overflow-x-hidden">
         {/* Google Maps Script - conditional loading */}
