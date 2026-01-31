@@ -31,17 +31,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://swiftlyxpress.com/blog</loc>
-    <lastmod>2025-12-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://swiftlyxpress.com/careers</loc>
-    <lastmod>2025-12-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+  <!-- Blog and Careers temporarily hidden from public navigation and search indexing -->
   <url>
     <loc>https://swiftlyxpress.com/privacy-policy</loc>
     <lastmod>2025-12-03</lastmod>

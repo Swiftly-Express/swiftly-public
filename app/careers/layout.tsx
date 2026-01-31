@@ -15,6 +15,10 @@ export const metadata: Metadata = {
     title: 'Careers - Swiftly Xpress',
     description: 'Join our team. Explore career opportunities at Swiftly Xpress.',
   },
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default function CareersLayout({

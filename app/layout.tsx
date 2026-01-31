@@ -10,8 +10,8 @@ export const metadata = {
     default: 'Swiftly Xpress - Fast, Reliable Delivery Services',
     template: '%s | Swiftly Xpress'
   },
-  description: 'Swiftly Xpress offers same-day delivery, next-day shipping, and international courier services. Track your packages in real-time with our reliable delivery solutions.',
-  keywords: ['delivery service', 'courier', 'same-day delivery', 'package tracking', 'shipping', 'express delivery', 'international shipping', 'logistics'],
+  description: 'Swiftly Xpress offers same-day delivery, next-day shipping, and courier services. Track your packages in real-time with our reliable delivery solutions.',
+  keywords: ['delivery service', 'courier', 'same-day delivery', 'package tracking', 'shipping', 'express delivery', 'logistics'],
   authors: [{ name: 'Swiftly Xpress' }],
   creator: 'Swiftly Xpress',
   publisher: 'Swiftly Xpress',
@@ -22,7 +22,7 @@ export const metadata = {
   },
   openGraph: {
     title: 'Swiftly Xpress - Fast, Reliable Delivery Services',
-    description: 'Same-day delivery, next-day shipping, and international courier services. Track your packages in real-time.',
+    description: 'Same-day delivery, next-day shipping, and courier services. Track your packages in real-time.',
     url: 'https://swiftlyxpress.com',
     siteName: 'Swiftly Xpress',
     images: [
@@ -39,7 +39,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Swiftly Xpress - Fast, Reliable Delivery Services',
-    description: 'Same-day delivery, next-day shipping, and international courier services.',
+    description: 'Same-day delivery, next-day shipping, and courier services.',
     images: ['https://swiftlyxpress.com/og-image.png'],
     creator: '@swiftlyxpress',
   },

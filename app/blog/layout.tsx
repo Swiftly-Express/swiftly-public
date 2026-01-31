@@ -15,6 +15,10 @@ export const metadata: Metadata = {
     title: 'Blog - Swiftly Xpress',
     description: 'Delivery tips, shipping guides, and industry insights.',
   },
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default function BlogLayout({
