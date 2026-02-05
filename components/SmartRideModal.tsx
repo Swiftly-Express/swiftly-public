@@ -102,7 +102,7 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
               </div>
 
               {/* Feature 2 */}
-              <div className="flex items-start gap-3">
+              {/* <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                   <Shield className="w-5 h-5 text-green-600" />
                 </div>
@@ -114,7 +114,7 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
                     Every package is insured up to $500 with real-time GPS tracking
                   </p>
                 </div>
-              </div>
+              </div> */}
 
               {/* Feature 3 */}
               <div className="flex items-start gap-3">
