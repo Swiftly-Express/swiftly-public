@@ -133,11 +133,11 @@ const SmartRideModal: React.FC<SmartRideModalProps> = ({ isOpen, onClose }) => {
             </div>
 
             {/* Promo Banner */}
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-2 mb-3">
+            {/* <div className="bg-orange-50 border border-orange-200 rounded-lg p-2 mb-3">
               <p className="text-center text-xs">
                 🎉 <span className="font-semibold text-orange-600">Limited Time Offer:</span> First delivery <span className="font-bold text-orange-600">50% OFF</span> for new users!
               </p>
-            </div>
+            </div> */}
 
             {/* Action Buttons - ensure they stay visible */}
             <div className="flex gap-3 mt-1">
